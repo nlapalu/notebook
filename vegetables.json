@@ -1,0 +1,37 @@
+{
+    "tags": {
+	        "globalTitle": "My Web site"
+    },
+	   
+	       "pageOptions": {
+  	       "index2.md": {
+		                "title": "Accueil",
+	        "menu": [
+	            {
+                    "uri": "category/python/index.html",
+                    "label": "Python"
+                    },
+                    {
+	            "uri": "another-page.html",
+	            "label": "Other"
+	            }
+	            ]
+    },
+	
+	            "category/python/*": {
+		                "title": "Python",
+				"menu": [
+					{
+						"uri": "category/python/python-s1.html",
+						"label":"Initiation POO Python"
+					},
+					{
+						"uri": "category/python/python-s2.html",
+						"label":"POO Python suite"
+					}
+				]
+					        }
+
+		    }
+}
+
