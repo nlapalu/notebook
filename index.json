@@ -1,5 +1,8 @@
 {
 	"pages": [
-		{"title": "Test Website Nicolas Lapalu", "text": "Test Website Nicolas Lapalu\n", "tags": "", "url": "index.html"}
+		{"title": "Python", "text": "Python\ntest\nblabla\n", "tags": "", "url": "category/python/index.html"},
+		{"title": "Python", "text": "Initiation POO Python\nIntroduction\nPour cette première approche de la programmation objet en Python, nous allons principalement faire de la revue de code et une implémentation naive d&#39;un petit use case. Le but principal de cette première session est de s&#39;inspirer de code existant dans le but de comprendre la logique de développement et la modularité qu&#39;apporte une conception objet. \nRevue de code : Bio.Seq.py\nPour rester proche du monde de la bioinformatique, nous allons regarder le package BioPython et plus particulièrement la classe Seq pour commencer. Le code de cette classe est disponible ici. Comme vous allez très vite le constater cette classe est très grande. Son rôle premier est de stocker des informations de séquence, mais elle est capable de faire plus comme par exemple des traitements de type traduction en proteine. Ces traitements peuvent se faire via des appels à ce que l&#39;on nomme des &quot;méthodes&quot;, ce qui est l&#39;équivalent des &quot;fonctions&quot; pour les modules. Ci-dessous une première extraction du code de la classe.\nClass Seq\nCe que l&#39;on peut d&#39;ores et déjà remarquer, c&#39;est la facilité de compréhension de chaque méthode de la classe. En effet\n", "tags": "", "url": "category/python/python-s1.html"},
+		{"title": "POO Python suite", "text": "POO Python suite\nMaintenant que nous avons abordé la POO par des exemples simples, nous allons pouvoir rajouter quelques notions plus complexes qui mettent en avant l&#39;intérêt de l&#39;approche objet.\n", "tags": "", "url": "category/python/python-s2.html"},
+		{"title": "Welcome!", "text": "Welcome!\nSome content\n", "tags": "", "url": "index.html"}
 	]
 }

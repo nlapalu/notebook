@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<title>Python</title>
+	<link rel="stylesheet" href="../../assets/css/reveal/reveal.css">
+	<link rel="stylesheet" href="../../assets/css/reveal/theme/white.css">
+	<link rel="stylesheet" href="../../assets/css/highlight-hybrid.css">
+	<link rel="stylesheet" href="../../assets/css/slideshow.css">
+	<style>
+	</style>
+	<!--  -->
+</head>
+<body>
+	<div class="reveal">
+		<div class="slides">
+			<section data-markdown
+			data-separator="(^#HSLIDE$|^#HSLIDE\?.*)"
+			data-separator-vertical="(^#VSLIDE$|^#VSLIDE\?.*)"
+			data-separator-notes="^Presentation note:"
+			data-charset="utf-8">
+			<script type="text/template">
+				# Initiation POO Python
+#HSLIDE
+
+# Introduction
+Pour cette première approche de la programmation objet en Python, nous allons principalement faire de la revue de code et une implémentation naive d&#39;un petit use case. Le but principal de cette première session est de s&#39;inspirer de code existant dans le but de comprendre la logique de développement et la modularité qu&#39;apporte une conception objet. 
+
+#HSLIDE
+
+## Revue de code : Bio.Seq.py
+Pour rester proche du monde de la bioinformatique, nous allons regarder le package BioPython et plus particulièrement la classe Seq pour commencer. Le code de cette classe est disponible [ici](https://github.com/biopython/biopython/blob/master/Bio/Seq.py). Comme vous allez très vite le constater cette classe est très grande. Son rôle premier est de stocker des informations de séquence, mais elle est capable de faire plus comme par exemple des traitements de type traduction en proteine. Ces traitements peuvent se faire via des appels à ce que l&#39;on nomme des &quot;méthodes&quot;, ce qui est l&#39;équivalent des &quot;fonctions&quot; pour les modules. Ci-dessous une première extraction du code de la classe.
+
+```
+Class Seq
+```
+Ce que l&#39;on peut d&#39;ores et déjà remarquer, c&#39;est la facilité de compréhension de chaque méthode de la classe. En effet
+
+
+			</script>
+		</section>
+	</div>
+</div>
+
+<script src="../../assets/js/reveal/reveal.js"></script>
+<script src="../../assets/js/reveal/lib/head.min.js"></script>
+<script src="../../assets/js/jquery.js"></script>
+<script>
+Reveal.initialize({
+	embedded: true,
+	margin: 0.0,
+	showNotes: false,
+	transition: 'slide',
+	autoSlide: 0,
+	loop: false,
+	center: true,
+	rtl: false,
+	shuffle: false,
+	mouseWheel: false,
+	history: true,
+
+	// disabled for now
+	// math: {
+	// 	mathjax: 'https://cdn.mathjax.org/mathjax/latest/MathJax.js',
+	// 	config: 'TeX-AMS_HTML-full'
+	// },
+
+	dependencies: [
+		{ src: "../../assets/js/reveal/plugin/markdown/marked.js"},
+		{ src: "../../assets/js/reveal/plugin/markdown/markdown.js"},
+		{ src: "../../assets/js/reveal/plugin/notes/notes.js"},
+		// { src: "../../assets/js/reveal/plugin/math/math.js", async: true }
+		{ src: "../../assets/js/reveal/plugin/highlight/highlight.js", async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
+	]
+});
+
+Reveal.configure({
+	keyboard: {
+		67: function() { // bind "s" key to "select" code block content
+
+		var currentSlide = Reveal.getCurrentSlide();
+		var preBlock = $(currentSlide).find("pre");
+
+		if(preBlock.length > 0) {
+
+			if (window.getSelection) {
+				var range = document.createRange();
+				range.selectNodeContents(preBlock[0]);
+				var selection = window.getSelection();
+				selection.removeAllRanges();
+				selection.addRange(range);
+			}
+		}
+	}
+}
+});
+
+</script>
+
+</body>
+</html>
