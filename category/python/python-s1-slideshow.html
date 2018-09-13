@@ -33,7 +33,50 @@ Pour cette première approche de la programmation objet en Python, nous allons p
 Pour rester proche du monde de la bioinformatique, nous allons regarder le package BioPython et plus particulièrement la classe Seq pour commencer. Le code de cette classe est disponible [ici](https://github.com/biopython/biopython/blob/master/Bio/Seq.py). Comme vous allez très vite le constater cette classe est très grande. Son rôle premier est de stocker des informations de séquence, mais elle est capable de faire plus comme par exemple des traitements de type traduction en proteine. Ces traitements peuvent se faire via des appels à ce que l&#39;on nomme des &quot;méthodes&quot;, ce qui est l&#39;équivalent des &quot;fonctions&quot; pour les modules. Ci-dessous une première extraction du code de la classe.
 
 ```
-Class Seq
+class Seq(object):
+    """Read-only sequence object (essentially a string with an alphabet).
+    Like normal python strings, our basic sequence object is immutable.
+    This prevents you from doing my_seq[5] = "A" for example, but does allow
+    Seq objects to be used as dictionary keys.
+    The Seq object provides a number of string like methods (such as count,
+    find, split and strip), which are alphabet aware where appropriate.
+    In addition to the string like sequence, the Seq object has an alphabet
+    property. This is an instance of an Alphabet class from Bio.Alphabet,
+    for example generic DNA, or IUPAC DNA. This describes the type of molecule
+    (e.g. RNA, DNA, protein) and may also indicate the expected symbols
+    (letters).
+    The Seq object also provides some biological methods, such as complement,
+    reverse_complement, transcribe, back_transcribe and translate (which are
+    not applicable to sequences with a protein alphabet).
+    """
+
+    def __init__(self, data, alphabet=Alphabet.generic_alphabet):
+        """Create a Seq object.
+        Arguments:
+         - seq - Sequence, required (string)
+         - alphabet - Optional argument, an Alphabet object from
+           Bio.Alphabet
+        You will typically use Bio.SeqIO to read in sequences from files as
+        SeqRecord objects, whose sequence will be exposed as a Seq object via
+        the seq property.
+        However, will often want to create your own Seq objects directly:
+        >>> from Bio.Seq import Seq
+        >>> from Bio.Alphabet import IUPAC
+        >>> my_seq = Seq("MKQHKAMIVALIVICITAVVAALVTRKDLCEVHIRTGQTEVAVF",
+        ...              IUPAC.protein)
+        >>> my_seq
+        Seq('MKQHKAMIVALIVICITAVVAALVTRKDLCEVHIRTGQTEVAVF', IUPACProtein())
+        >>> print(my_seq)
+        MKQHKAMIVALIVICITAVVAALVTRKDLCEVHIRTGQTEVAVF
+        >>> my_seq.alphabet
+        IUPACProtein()
+        """
+        # Enforce string storage
+        if not isinstance(data, basestring):
+            raise TypeError("The sequence data given to a Seq object should "
+                            "be a string (not another Seq object etc)")
+        self._data = data
+self.alphabet = alphabet # Seq API requirement
 ```
 Ce que l&#39;on peut d&#39;ores et déjà remarquer, c&#39;est la facilité de compréhension de chaque méthode de la classe. En effet
 
