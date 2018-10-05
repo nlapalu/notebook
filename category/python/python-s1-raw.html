@@ -1,6 +1,6 @@
 <pre># Initiation POO Python
 
-# Introduction
+## Introduction
 
 Pour cette première approche de la programmation objet en Python, nous allons principalement faire de la revue de code et une implémentation naive d'un petit use case. Le but principal de cette première session est de s'inspirer de code existant dans le but de comprendre la logique de développement et la modularité qu'apporte une conception objet. 
 
@@ -8,54 +8,248 @@ Pour cette première approche de la programmation objet en Python, nous allons p
 
 Pour rester proche du monde de la bioinformatique, nous allons regarder le package BioPython et plus particulièrement la classe Seq pour commencer. Le code de cette classe est disponible [ici](https://github.com/biopython/biopython/blob/master/Bio/Seq.py). Comme vous allez très vite le constater cette classe est très grande. Son rôle premier est de stocker des informations de séquence, mais elle est capable de faire plus comme par exemple des traitements de type traduction en proteine. Ces traitements peuvent se faire via des appels à ce que l'on nomme des "méthodes", ce qui est l'équivalent des "fonctions" pour les modules. Ci-dessous une première extraction du code de la classe.
 
+### Bio.Seq.py extract 1
+
 ```
 class Seq(object):
-    """Read-only sequence object (essentially a string with an alphabet).
-    Like normal python strings, our basic sequence object is immutable.
-    This prevents you from doing my_seq[5] = "A" for example, but does allow
-    Seq objects to be used as dictionary keys.
-    The Seq object provides a number of string like methods (such as count,
-    find, split and strip), which are alphabet aware where appropriate.
-    In addition to the string like sequence, the Seq object has an alphabet
-    property. This is an instance of an Alphabet class from Bio.Alphabet,
-    for example generic DNA, or IUPAC DNA. This describes the type of molecule
-    (e.g. RNA, DNA, protein) and may also indicate the expected symbols
-    (letters).
-    The Seq object also provides some biological methods, such as complement,
-    reverse_complement, transcribe, back_transcribe and translate (which are
-    not applicable to sequences with a protein alphabet).
-    """
+    """Read-only sequence object (essentially a string with an alphabet)."""
+    ...
 
     def __init__(self, data, alphabet=Alphabet.generic_alphabet):
+        """Create a Seq object."""
+        ...
+
+    def translate(self, table="Standard", stop_symbol="*", to_stop=False,
+                  cds=False, gap=None):
+        """Turn a nucleotide sequence into a protein sequence by creating a new Seq object."""
+        ...
+```
+
+
+Ce que l'on peut d'ores et déjà remarquer, c'est la facilité de compréhension du code. Même sans connaissance a priori de la syntaxe objet Python, on comprend tout de suite, que grace au mot `class`, on va commencer l'implementation d'une classe qui s'apellera **Seq** et qui sera construite sur la base d'un type appelé **object**. La spécification du type object ou non, a une influence seulement sur la version 2 de Python. Sans rentrer dans les détails, ceci permettra d'avoir ou non des classes de nouveau ou de vieux style. Dans le cas de Python 3, toutes les classes sot de nouveau style, il y n'y a donc aucune obligation de spécifié **object**. Nous reviendrons plus tard sur les types de classes, notamment quand nous aborderons l'héritage.
+
+Nous avons ensuite une méthode `__init__`, qui comme on peut le supposer sert à l'initiation de la classe. Plus précisement, cette méthode va servir à instancier des objets du type de la classe **Seq**.
+
+De même une classe peut avoir une méthode `__del__` qui sera appelé lorsque l'objet sera détruit. Par défaut, il n'est pas souvent nécéssaire d'implementer le destructeur de la classe, mais si vous souhaitez déclencher une action lorsqu'un objet est détruit cela peut être intéressant.
+
+Comme on peut le voir, chaque méthode de la classe a pour premier argument **self**. Ce mot clef, donné par convention (on pourrait utiliser n'importe quel autre nom), est une référence sur l'objet crée, il faudra donc le spécifier à chaque nouvelle méthode crée.
+
+Pour créer un objet, rien de plus simple. Il suffit que la classe à partir de laquelle on souhaite instancier un objet, soit disponible dans l'espace de nom et pour cela il faut importer la classe. Puis il suffit de déclarer une variable qui sera notre instance et d'appeler la classe avec les attributs nécessaires, ici une chaine de caractère. La notion d'attribut d'objet est abordée dans la section suivante.
+```
+from Bio.Seq import Seq
+
+seq = Seq("ATGTGTAGGATGCGCTCGTAGAGATGCGCT")
+```
+Une foir l'objet instancié, on peut appeler des méthodes pour faire des traitements.
+```
+print(seq.translate())
+MCRMRS*RCA
+```
+### Bio.Seq.py extract 3
+
+Nous avons vu qu'un objet possède des méthodes, qui lui permettent de réaliser des traitements. Un objet possède aussi des variables appelées attributs, qui vont lui permettent de stocker de l'information. Si nous reprenons le code de notre classe, nous voyons qu'un objet Seq à 2 attributs déclarés à l'initialisation: `_data` et `alphabet`.
+
+```
+   def __init__(self, data, alphabet=Alphabet.generic_alphabet):
         """Create a Seq object.
         Arguments:
          - seq - Sequence, required (string)
          - alphabet - Optional argument, an Alphabet object from
            Bio.Alphabet
-        You will typically use Bio.SeqIO to read in sequences from files as
-        SeqRecord objects, whose sequence will be exposed as a Seq object via
-        the seq property.
-        However, will often want to create your own Seq objects directly:
-        >>> from Bio.Seq import Seq
-        >>> from Bio.Alphabet import IUPAC
-        >>> my_seq = Seq("MKQHKAMIVALIVICITAVVAALVTRKDLCEVHIRTGQTEVAVF",
-        ...              IUPAC.protein)
-        >>> my_seq
-        Seq('MKQHKAMIVALIVICITAVVAALVTRKDLCEVHIRTGQTEVAVF', IUPACProtein())
-        >>> print(my_seq)
-        MKQHKAMIVALIVICITAVVAALVTRKDLCEVHIRTGQTEVAVF
-        >>> my_seq.alphabet
-        IUPACProtein()
-        """
-        # Enforce string storage
-        if not isinstance(data, basestring):
-            raise TypeError("The sequence data given to a Seq object should "
-                            "be a string (not another Seq object etc)")
+
+        ...
         self._data = data
-self.alphabet = alphabet # Seq API requirement
+        self.alphabet = alphabet # Seq API requirement 
+``` 
+
+Pour appeler un attribut il suffit de faire:
+```
+seq = Seq("ATGC")
+print(seq.alphabet)
+``` 
+Nous pouvons aussi faire:
+```
+seq = Seq("ATGC")
+print(seq._data)
+``` 
+Mais c'est une très mauvaise pratique à cause du _ placé avant le nom de l'attribut. Commencer un nom d'attribut ou de méthode d'un objet par un underscore est une convention de nommage pour spécifier le type "privé". Nous aborderons ça dans le chapitre suivant.
+
+
+
+### Bio.Seq.py extract 2
+
+```
+class Seq(object):
+    """Read-only sequence object (essentially a string with an alphabet)."""
+    ...
+
+    def __init__(self, data, alphabet=Alphabet.generic_alphabet):
+        """Create a Seq object."""
+        ...
+
+    def __repr__(self):
+        """Return (truncated) representation of the sequence for debugging."""
+        ...
+
+    def __str__(self):
+        """Return the full sequence as a python string, use str(my_seq).
+        ...
 ```
 
-Ce que l'on peut d'ores et déjà remarquer, c'est la facilité de compréhension de chaque méthode de la classe. En effet
+Interessons nous maintenant aux méthodes particulières qui commencent par 2 underscores et se terminent par 2 underscores. Ces méthodes sont appelés "dunder" ou "méthodes magiques". Le nom des ces méthodes est réservé par le langage, elles sont appelées dans des conditions particulières. Par exemple, comme nous l'avons déjà vu, la méthode `__init__` est appelée à la création d'un objet. Nous avons aussi ici les méthodes `__repr__` et `__str__` qui ont des fonctions très proches de réprésentation de l'objet dans différentes conditions. Nous ne préciserons pas cela ici, mais il sera intéressant de revenir dessus plus tard. 
 
- 
+Ainsi, dans le cas où aucune méthode de réprésentation de l'objet n'est pas implémentée c'est l'adresse mémoire qui est renvoyée.
+
+```
+seq = Seq("ATGC")
+print(seq)
+
+<Seq.Seq object at 0x7fe8f15b12e8>
+```
+
+Si on implemente la fonction `__str__` de façon à ce quelle retourne sa séquence sous forme de caractères:
+
+```
+    def __str__(self):
+        """Return the full sequence as a python string, use str(my_seq)."""
+
+        return self.data
+```
+
+```
+seq = Seq("ATGC")
+print(seq)
+
+ATGC
+```
+
+
+### Bio.Seq.py extract 4 
+
+Maintenant si vous souhaitez pouvoir comparer 2 objets `Seq`, de la même façon que vous comparez 2 nombres, il est nécessaire d'implementer des méthodes particulières dites de "comparaisons riches". Il y a des astuces pour ne pas avoir à toutes les implémenter, mais je conseille quand même de le faire. En python 3, la méthode `__cmp__` n'existe plus, il faut implémenter chaque méthode pour chaque comparaison:
+
+```python
+ object.__lt__(self, other) # object1 < object2
+ object.__le__(self, other) # object1 <= object2
+ object.__eq__(self, other) # object1 == object2  
+ object.__ne__(self, other) # object1 != object2
+ object.__gt__(self, other) # object1 > object2
+ object.__ge__(self, other) # object1 >= object2
+```
+
+Si nous regardons maintenant de plus près l'implémentation de ces méthodes dans l'object Seq:
+
+```python
+    def __eq__(self, other):
+        """Compare the sequence to another sequence or a string (README)"""
+    ....
+        if hasattr(other, "alphabet"):
+            # other could be a Seq or a MutableSeq
+            if not Alphabet._check_type_compatible([self.alphabet,
+                                                    other.alphabet]):
+                warnings.warn("Incompatible alphabets {0!r} and {1!r}".format(
+                              self.alphabet, other.alphabet),
+                              BiopythonWarning)
+        return str(self) == str(other)
+```
+La méthode de comparaison va simplement retourner le résultat de la comparaison sous la forme de string de nos 2 objets. On peut néanmoins constater que cette comparaison n'a lieu que si l'objet auquel il est comparé a lui aussi un attribut de type `alphabet` afin de s'assurer de pouvoir executer la comparaison. De façon plus générale, une bonne pratique d'implémentation de cette méthode est d'envisager par défaut une comparaion impossible entre 2 objets de classes différentes, en retournant la constante (built-in) `NotImplemented`:
+```python
+    def __eq__(self, other):
+        # test class equality
+        if not isinstance(other, type(self):
+            return NotImplemented
+        # return specific comparison
+       ... 
+``` 
+Par ailleurs la non-équivalence peut aussi simplement se faire en retournant le résulat inverse de l'équivalence:
+```python
+    def __ne__(self,other):
+        return not self == other
+```
+
+Finir
+
+
+Il existe un grand nombre de "dunder", qui une fois implémentés peuvent simplifier la manipulation de vos objets. Une liste complète peut être obtenue ici ou encore ici. Juste pour finir, 2 méthodes implémentées dans la classe `Seq`: `__len__` et `__add__`.
+
+La méthode `__len__` est appelé via la fonction `len()` et est censée renvoyé un nombre:
+```python
+seq = Seq("ATGC")
+seq.__len__() # 4
+# equals
+len(seq) # 4
+```
+La méthode `__add__` est une méthode arithmétique qui va permettre de pouvoir additionner 2 objets, en retournant un nouvel objet.
+```python
+seq1 = Seq("ATGC")
+seq1 + seq1
+Seq('ATGCATGC', Alphabet())
+seq2 = seq1 + seq1
+seq2
+Seq('ATGCATGC', Alphabet())
+```
+
+### Implementation
+
+L'exercise consiste à implementer une classe **Gene** qui possède toute une liste d'attributs (seq,start,end,...) dont une séquence par lien de composition. Cette classe **Gene** doit pouvoir être utilisée dans des comparaisons et avoir une réprésentation simplifiée. De même, elle possède une méthode de représentation en format bed.
+
+```python
+class Gene(object):
+    """Gene class"""
+
+    def __init__(self, ref, start, end, seq):
+        """constructor"""
+
+        ref=ref
+        start=start
+        end=end
+        seq=Seq(seq)
+
+    def __repr__(self):
+        """representation"""
+
+    def __str__(self):
+        """string"""
+
+    def toBed(self):
+        """export in bed format"""
+  
+        
+```
+
+L'utilisation d'une classe dans une autre classe se nomme en modélisation, une rélation de composition. Pour être exacte il y a le lien de composition comme ici. C'est à dire que l'object qui est instancié par un autre objet, sera détruit en même temps que l'object instanciateur. En revanche dans le cas d'une relation d'aggregation, un objet se sert d'un autre objet, mais chaque objet est instancié séparement. Ainsi la destruction de l'objet aggregateur n'a pas d'influence sur l'autre objet. Dans le cas de notre classe **Gene** cela aurait nécessité de construire un objet Seq avant et de fournir cette objet à l'objet **Gene**. Pour cela nous aurions pu modifier la méthode instanciatrice de l'objet de cette façon:
+
+```
+class Gene(object):
+    """Gene class"""
+
+    def __init__(self, ref, start, end, seq):
+        """constructor"""
+
+        ref=ref
+        start=start
+        end=end
+        seq=seq
+```
+
+Instanciation de l'objet:
+
+```
+seq = Seq("ATGTGTAGT")
+gene = Gene("seq1",10,200,seq)
+```
+au lieu de:
+```
+gene = Gene("seq1",10,200,"ATGTGTAGT")
+```
+
+## References 
+
+https://stackoverflow.com/questions/19861785/composition-and-aggregation-in-python
+https://www.programiz.com/python-programming 
+http://openbookproject.net/thinkcs/python/english3e/index.html#
+https://hackernoon.com/understanding-the-underscore-of-python-309d1a029edc
+https://www.geeksforgeeks.org/dunder-magic-methods-python/
+https://rszalski.github.io/magicmethods/
+https://docs.python.org/3/reference/datamodel.html
 </pre>
