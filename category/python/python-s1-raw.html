@@ -34,7 +34,7 @@ De même une classe peut avoir une méthode `__del__` qui sera appelé lorsque l
 
 Comme on peut le voir, chaque méthode de la classe a pour premier argument **self**. Ce mot clef, donné par convention (on pourrait utiliser n'importe quel autre nom), est une référence sur l'objet crée, il faudra donc le spécifier à chaque nouvelle méthode crée.
 
-Pour créer un objet, rien de plus simple. Il suffit que la classe à partir de laquelle on souhaite instancier un objet, soit disponible dans l'espace de nom et pour cela il faut importer la classe. Puis il suffit de déclarer une variable qui sera notre instance et d'appeler la classe avec les attributs nécessaires, ici une chaine de caractère. La notion d'attribut d'objet est abordée dans la section suivante.
+Pour créer un objet, rien de plus simple. Il suffit que la classe à partir de laquelle on souhaite instancier un objet, soit disponible dans l'espace de nom et pour cela il faut importer la classe. Puis il suffit de déclarer une variable qui sera notre instance et d'appeler la classe avec les attributs nécessaires, ici une chaine de caractère (la notion d'attribut d'objet est abordée dans la section suivante).
 ```
 from Bio.Seq import Seq
 
@@ -56,8 +56,9 @@ Nous avons vu qu'un objet possède des méthodes, qui lui permettent de réalise
          - seq - Sequence, required (string)
          - alphabet - Optional argument, an Alphabet object from
            Bio.Alphabet
-
         ...
+        """
+
         self._data = data
         self.alphabet = alphabet # Seq API requirement 
 ``` 
@@ -72,7 +73,7 @@ Nous pouvons aussi faire:
 seq = Seq("ATGC")
 print(seq._data)
 ``` 
-Mais c'est une très mauvaise pratique à cause du _ placé avant le nom de l'attribut. Commencer un nom d'attribut ou de méthode d'un objet par un underscore est une convention de nommage pour spécifier le type "privé". Nous aborderons ça dans le chapitre suivant.
+Mais c'est une très mauvaise pratique à cause du " _ " placé avant le nom de l'attribut. Commencer un nom d'attribut ou de méthode d'un objet par un underscore est une convention de nommage pour spécifier le type "privé". Nous aborderons ça dans le chapitre suivant.
 
 
 
@@ -189,9 +190,28 @@ seq2
 Seq('ATGCATGC', Alphabet())
 ```
 
+### Modélisation UML
+
+En parallèle de l'apprentissage de l'objet en Python, je vous propose d'aborder la modélisation objet sous le langage UML. UML signifie "Unified Modeling Language", pour faire vite, c'est un pseudo-langage sous forme graphique qui propose plusieurs types de diagrammes pour modéliser les structures de données (diagramme de classe, diagramme d'objet, ...) ou les comportements/interactions (diagramme d'activité, diagramme de cas d'utilisation, ...). Dans un premier temps nous nous interesserons seulement au diagramme de classe. L'intérêt de ce genre de diagramme est de proposer une vision au niveau de notre structure de code, sans spécificité de langage. Ainsi un diagramme UML sera valable dans tous les langages, seule l'implementation est spécifique. Un diagramme de classe est un outil très appréciable pour appréhender des modules très complexes et peut aussi vous aider à concevoir vos programmes.
+Il existe de nombreux outils disponibles pour faire de la modélisation UML, vous trouverez une liste [ici](https://manurnx.wp.imt.fr/2017/01/23/choix-d-un-outil-de-modelisation-uml/).
+
+Dans un diagramme de classe, une classe est modélisée par un rectangle divisé en 3 compartiments (cela peut aller jusqu'à 5, mais nous n'aborderons pas cela). On retrouve le nom de classe, puis les attributs et enfin les méthodes (opérations). Voici notre classe Seq:
+
+![Seq](../../images/seq.class.png)
+
+Nous avons 2 attributs, `alphabet` avec un "+" devant pour signifié qu'il est publique et `_data` avec un "-" devant pour signifier qu'il est privé. Par souci d'efficacité et de lisibilité, j'ai choisi de ne pas représenter les méthodes "dunder" qui sont propres au langage. Nous n'avons donc vu qu'une seule méthode publique `translate` qui prend un ensemble d'arguments. Dans ce cas précis, les arguments sont tous optionnels, car des valeurs par défaut sont proposées dans l'implémentation. Nous aurions pu modéliser cela, en rajoutant ces informations sur le diagramme, mais cela aurait complexifier la lecture, ce qui n'est pas le but premier ici. Vous pouvez remarquer aussi que la méthode `translate` retourne un autre objet `Seq`. 
+
+Important: Python est un langage dynamique et permissif dans le sens où, il n'y a pas de véritable mécanisme dans le langage qui empêche d'accéder à n'importe quelle variable. Ainsi comme nous le verrons, définir des attributs ou des méthodes dits "privés" permet de respecter le paradigme objet et se fait par des conventions de nommage.  
+
 ### Implementation
 
-L'exercise consiste à implementer une classe **Gene** qui possède toute une liste d'attributs (seq,start,end,...) dont une séquence par lien de composition. Cette classe **Gene** doit pouvoir être utilisée dans des comparaisons et avoir une réprésentation simplifiée. De même, elle possède une méthode de représentation en format bed.
+L'exercise consiste à implementer une classe **CDS** qui possède toute une liste d'attributs (seq,start,end,...) dont une séquence par lien de composition (la séquence du gène est un objet Seq). Cette classe **CDS** doit pouvoir être utilisée dans des comparaisons et avoir une réprésentation simplifiée. De même, elle possède une méthode de représentation en format bed et peut être traduite en proteine.
+
+Pour vous aider voici une modélisation UML en diagramme de classe de l'implémentation attendue:
+
+
+
+La solution est [ici](tricheur.html)
 
 ```python
 class Gene(object):
@@ -252,4 +272,5 @@ https://hackernoon.com/understanding-the-underscore-of-python-309d1a029edc
 https://www.geeksforgeeks.org/dunder-magic-methods-python/
 https://rszalski.github.io/magicmethods/
 https://docs.python.org/3/reference/datamodel.html
+[UML2: diagramme de classe](https://laurent-audibert.developpez.com/Cours-UML/?page=diagramme-classes#L3)
 </pre>

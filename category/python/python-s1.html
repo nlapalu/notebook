@@ -60,6 +60,9 @@
 <a href="#bio-seq-py-extract-4">Bio.Seq.py extract 4</a>
 </p>
 <p class="toc-3">
+<a href="#mod-lisation-uml">Modélisation UML</a>
+</p>
+<p class="toc-3">
 <a href="#implementation">Implementation</a>
 </p>
 <p class="toc-2">
@@ -117,7 +120,7 @@ active
 <p>Nous avons ensuite une méthode <code>__init__</code>, qui comme on peut le supposer sert à l&#39;initiation de la classe. Plus précisement, cette méthode va servir à instancier des objets du type de la classe <strong>Seq</strong>.</p>
 <p>De même une classe peut avoir une méthode <code>__del__</code> qui sera appelé lorsque l&#39;objet sera détruit. Par défaut, il n&#39;est pas souvent nécéssaire d&#39;implementer le destructeur de la classe, mais si vous souhaitez déclencher une action lorsqu&#39;un objet est détruit cela peut être intéressant.</p>
 <p>Comme on peut le voir, chaque méthode de la classe a pour premier argument <strong>self</strong>. Ce mot clef, donné par convention (on pourrait utiliser n&#39;importe quel autre nom), est une référence sur l&#39;objet crée, il faudra donc le spécifier à chaque nouvelle méthode crée.</p>
-<p>Pour créer un objet, rien de plus simple. Il suffit que la classe à partir de laquelle on souhaite instancier un objet, soit disponible dans l&#39;espace de nom et pour cela il faut importer la classe. Puis il suffit de déclarer une variable qui sera notre instance et d&#39;appeler la classe avec les attributs nécessaires, ici une chaine de caractère. La notion d&#39;attribut d&#39;objet est abordée dans la section suivante.</p>
+<p>Pour créer un objet, rien de plus simple. Il suffit que la classe à partir de laquelle on souhaite instancier un objet, soit disponible dans l&#39;espace de nom et pour cela il faut importer la classe. Puis il suffit de déclarer une variable qui sera notre instance et d&#39;appeler la classe avec les attributs nécessaires, ici une chaine de caractère (la notion d&#39;attribut d&#39;objet est abordée dans la section suivante).</p>
 <pre><code>from Bio.Seq import Seq
 
 seq = Seq(&quot;ATGTGTAGGATGCGCTCGTAGAGATGCGCT&quot;)
@@ -132,8 +135,9 @@ MCRMRS*RCA
          - seq - Sequence, required (string)
          - alphabet - Optional argument, an Alphabet object from
            Bio.Alphabet
-
         ...
+        &quot;&quot;&quot;
+
         self._data = data
         self.alphabet = alphabet # Seq API requirement 
 </code></pre><p>Pour appeler un attribut il suffit de faire:</p>
@@ -142,7 +146,7 @@ print(seq.alphabet)
 </code></pre><p>Nous pouvons aussi faire:</p>
 <pre><code>seq = Seq(&quot;ATGC&quot;)
 print(seq._data)
-</code></pre><p>Mais c&#39;est une très mauvaise pratique à cause du _ placé avant le nom de l&#39;attribut. Commencer un nom d&#39;attribut ou de méthode d&#39;un objet par un underscore est une convention de nommage pour spécifier le type &quot;privé&quot;. Nous aborderons ça dans le chapitre suivant.</p>
+</code></pre><p>Mais c&#39;est une très mauvaise pratique à cause du &quot; _ &quot; placé avant le nom de l&#39;attribut. Commencer un nom d&#39;attribut ou de méthode d&#39;un objet par un underscore est une convention de nommage pour spécifier le type &quot;privé&quot;. Nous aborderons ça dans le chapitre suivant.</p>
 <h3 id="bio-seq-py-extract-2">Bio.Seq.py extract 2</h3>
 <pre><code>class Seq(object):
     &quot;&quot;&quot;Read-only sequence object (essentially a string with an alphabet).&quot;&quot;&quot;
@@ -224,8 +228,17 @@ seq2 = seq1 + seq1
 seq2
 Seq(&#39;ATGCATGC&#39;, Alphabet())
 </code></pre>
+<h3 id="mod-lisation-uml">Modélisation UML</h3>
+<p>En parallèle de l&#39;apprentissage de l&#39;objet en Python, je vous propose d&#39;aborder la modélisation objet sous le langage UML. UML signifie &quot;Unified Modeling Language&quot;, pour faire vite, c&#39;est un pseudo-langage sous forme graphique qui propose plusieurs types de diagrammes pour modéliser les structures de données (diagramme de classe, diagramme d&#39;objet, ...) ou les comportements/interactions (diagramme d&#39;activité, diagramme de cas d&#39;utilisation, ...). Dans un premier temps nous nous interesserons seulement au diagramme de classe. L&#39;intérêt de ce genre de diagramme est de proposer une vision au niveau de notre structure de code, sans spécificité de langage. Ainsi un diagramme UML sera valable dans tous les langages, seule l&#39;implementation est spécifique. Un diagramme de classe est un outil très appréciable pour appréhender des modules très complexes et peut aussi vous aider à concevoir vos programmes.
+Il existe de nombreux outils disponibles pour faire de la modélisation UML, vous trouverez une liste <a href="https://manurnx.wp.imt.fr/2017/01/23/choix-d-un-outil-de-modelisation-uml/">ici</a>.</p>
+<p>Dans un diagramme de classe, une classe est modélisée par un rectangle divisé en 3 compartiments (cela peut aller jusqu&#39;à 5, mais nous n&#39;aborderons pas cela). On retrouve le nom de classe, puis les attributs et enfin les méthodes (opérations). Voici notre classe Seq:</p>
+<p><img src="../../images/seq.class.png" alt="Seq"></p>
+<p>Nous avons 2 attributs, <code>alphabet</code> avec un &quot;+&quot; devant pour signifié qu&#39;il est publique et <code>_data</code> avec un &quot;-&quot; devant pour signifier qu&#39;il est privé. Par souci d&#39;efficacité et de lisibilité, j&#39;ai choisi de ne pas représenter les méthodes &quot;dunder&quot; qui sont propres au langage. Nous n&#39;avons donc vu qu&#39;une seule méthode publique <code>translate</code> qui prend un ensemble d&#39;arguments. Dans ce cas précis, les arguments sont tous optionnels, car des valeurs par défaut sont proposées dans l&#39;implémentation. Nous aurions pu modéliser cela, en rajoutant ces informations sur le diagramme, mais cela aurait complexifier la lecture, ce qui n&#39;est pas le but premier ici. Vous pouvez remarquer aussi que la méthode <code>translate</code> retourne un autre objet <code>Seq</code>. </p>
+<p>Important: Python est un langage dynamique et permissif dans le sens où, il n&#39;y a pas de véritable mécanisme dans le langage qui empêche d&#39;accéder à n&#39;importe quelle variable. Ainsi comme nous le verrons, définir des attributs ou des méthodes dits &quot;privés&quot; permet de respecter le paradigme objet et se fait par des conventions de nommage.  </p>
 <h3 id="implementation">Implementation</h3>
-<p>L&#39;exercise consiste à implementer une classe <strong>Gene</strong> qui possède toute une liste d&#39;attributs (seq,start,end,...) dont une séquence par lien de composition. Cette classe <strong>Gene</strong> doit pouvoir être utilisée dans des comparaisons et avoir une réprésentation simplifiée. De même, elle possède une méthode de représentation en format bed.</p>
+<p>L&#39;exercise consiste à implementer une classe <strong>CDS</strong> qui possède toute une liste d&#39;attributs (seq,start,end,...) dont une séquence par lien de composition (la séquence du gène est un objet Seq). Cette classe <strong>CDS</strong> doit pouvoir être utilisée dans des comparaisons et avoir une réprésentation simplifiée. De même, elle possède une méthode de représentation en format bed et peut être traduite en proteine.</p>
+<p>Pour vous aider voici une modélisation UML en diagramme de classe de l&#39;implémentation attendue:</p>
+<p>La solution est <a href="tricheur.html">ici</a></p>
 <pre><code class="lang-python">class Gene(object):
     &quot;&quot;&quot;Gene class&quot;&quot;&quot;
 
@@ -271,7 +284,8 @@ gene = Gene(&quot;seq1&quot;,10,200,seq)
 <a href="https://hackernoon.com/understanding-the-underscore-of-python-309d1a029edc">https://hackernoon.com/understanding-the-underscore-of-python-309d1a029edc</a>
 <a href="https://www.geeksforgeeks.org/dunder-magic-methods-python/">https://www.geeksforgeeks.org/dunder-magic-methods-python/</a>
 <a href="https://rszalski.github.io/magicmethods/">https://rszalski.github.io/magicmethods/</a>
-<a href="https://docs.python.org/3/reference/datamodel.html">https://docs.python.org/3/reference/datamodel.html</a></p>
+<a href="https://docs.python.org/3/reference/datamodel.html">https://docs.python.org/3/reference/datamodel.html</a>
+<a href="https://laurent-audibert.developpez.com/Cours-UML/?page=diagramme-classes#L3">UML2: diagramme de classe</a></p>
 
 				</article>
 			</div>
@@ -295,6 +309,6 @@ gene = Gene(&quot;seq1&quot;,10,200,seq)
 			});
 		</script>
 		
-		<!-- Generated by Vegetables from 'category/python/python-s1.md' with format 'default' - '2018-10-5 17:02:35' -->
+		<!-- Generated by Vegetables from 'category/python/python-s1.md' with format 'default' - '2018-10-11 16:33:30' -->
 	</body>
 </html>
