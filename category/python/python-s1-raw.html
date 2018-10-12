@@ -171,7 +171,9 @@ Par ailleurs la non-équivalence peut aussi simplement se faire en retournant le
 Finir
 
 
-Il existe un grand nombre de "dunder", qui une fois implémentés peuvent simplifier la manipulation de vos objets. Une liste complète peut être obtenue ici ou encore ici. Juste pour finir, 2 méthodes implémentées dans la classe `Seq`: `__len__` et `__add__`.
+Il existe un grand nombre de "dunder", qui une fois implémentés peuvent simplifier la manipulation de vos objets. Une liste complète peut être obtenue ici ou encore ici. 
+
+Juste pour finir, voyons 2 méthodes implémentées dans la classe `Seq`: `__len__` et `__add__`.
 
 La méthode `__len__` est appelé via la fonction `len()` et est censée renvoyé un nombre:
 ```python
@@ -190,6 +192,8 @@ seq2
 Seq('ATGCATGC', Alphabet())
 ```
 
+Il est important de retenir qu'un grand nombre d'opération sont possibles sur les objets à travers de méthodes 'built-in' qu'il suffit d'implémenter. Il n'est donc pas forcémment nécéssaire de créer de nouvelles méthodes, il suffit d'implementer les bonnes.
+
 ### Modélisation UML
 
 En parallèle de l'apprentissage de l'objet en Python, je vous propose d'aborder la modélisation objet sous le langage UML. UML signifie "Unified Modeling Language", pour faire vite, c'est un pseudo-langage sous forme graphique qui propose plusieurs types de diagrammes pour modéliser les structures de données (diagramme de classe, diagramme d'objet, ...) ou les comportements/interactions (diagramme d'activité, diagramme de cas d'utilisation, ...). Dans un premier temps nous nous interesserons seulement au diagramme de classe. L'intérêt de ce genre de diagramme est de proposer une vision au niveau de notre structure de code, sans spécificité de langage. Ainsi un diagramme UML sera valable dans tous les langages, seule l'implementation est spécifique. Un diagramme de classe est un outil très appréciable pour appréhender des modules très complexes et peut aussi vous aider à concevoir vos programmes.
@@ -199,13 +203,13 @@ Dans un diagramme de classe, une classe est modélisée par un rectangle divisé
 
 ![Seq](../../images/seq.class.png)
 
-Nous avons 2 attributs, `alphabet` avec un "+" devant pour signifié qu'il est publique et `_data` avec un "-" devant pour signifier qu'il est privé. Par souci d'efficacité et de lisibilité, j'ai choisi de ne pas représenter les méthodes "dunder" qui sont propres au langage. Nous n'avons donc vu qu'une seule méthode publique `translate` qui prend un ensemble d'arguments. Dans ce cas précis, les arguments sont tous optionnels, car des valeurs par défaut sont proposées dans l'implémentation. Nous aurions pu modéliser cela, en rajoutant ces informations sur le diagramme, mais cela aurait complexifier la lecture, ce qui n'est pas le but premier ici. Vous pouvez remarquer aussi que la méthode `translate` retourne un autre objet `Seq`. 
+Nous avons 2 attributs, `alphabet` avec un "+" devant pour signifier qu'il est publique et `_data` avec un "-" devant pour signifier qu'il est privé. Par souci d'efficacité et de lisibilité, j'ai choisi de ne pas représenter les méthodes "dunder" qui sont propres au langage. Nous n'avons donc vu qu'une seule méthode publique `translate` qui prend un ensemble d'arguments. Dans ce cas précis, les arguments sont tous optionnels, car des valeurs par défaut sont proposées dans l'implémentation. Nous aurions pu modéliser cela, en rajoutant ces informations sur le diagramme, mais cela aurait complexifier la lecture, ce qui n'est pas le but premier ici. Vous pouvez remarquer aussi que la méthode `translate` retourne un autre objet `Seq`. 
 
 Important: Python est un langage dynamique et permissif dans le sens où, il n'y a pas de véritable mécanisme dans le langage qui empêche d'accéder à n'importe quelle variable. Ainsi comme nous le verrons, définir des attributs ou des méthodes dits "privés" permet de respecter le paradigme objet et se fait par des conventions de nommage.  
 
 ### Implementation
 
-L'exercise consiste à implementer une classe **CDS** qui possède toute une liste d'attributs (seq,start,end,...) dont une séquence par lien de composition (la séquence du gène est un objet Seq). Cette classe **CDS** doit pouvoir être utilisée dans des comparaisons et avoir une réprésentation simplifiée. De même, elle possède une méthode de représentation en format bed et peut être traduite en proteine.
+L'exercise consiste à implementer une classe **CDS** qui possède toute une liste d'attributs (seq,start,end,...) dont une séquence par lien de composition (la séquence du gène est un objet Seq). Cette classe **CDS** doit pouvoir être utilisée dans des comparaisons et avoir une réprésentation simplifiée. De même, elle possède une méthode de représentation en format fasta, bed et peut être reverse-complémentée.
 
 Pour vous aider voici une modélisation UML en diagramme de classe de l'implémentation attendue:
 

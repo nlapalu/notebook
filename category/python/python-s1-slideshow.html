@@ -192,7 +192,9 @@ Par ailleurs la non-équivalence peut aussi simplement se faire en retournant le
 ```
 Finir
 
-Il existe un grand nombre de &quot;dunder&quot;, qui une fois implémentés peuvent simplifier la manipulation de vos objets. Une liste complète peut être obtenue ici ou encore ici. Juste pour finir, 2 méthodes implémentées dans la classe `Seq`: `__len__` et `__add__`.
+Il existe un grand nombre de &quot;dunder&quot;, qui une fois implémentés peuvent simplifier la manipulation de vos objets. Une liste complète peut être obtenue ici ou encore ici. 
+
+Juste pour finir, voyons 2 méthodes implémentées dans la classe `Seq`: `__len__` et `__add__`.
 
 La méthode `__len__` est appelé via la fonction `len()` et est censée renvoyé un nombre:
 
@@ -212,6 +214,8 @@ seq2 = seq1 + seq1
 seq2
 Seq('ATGCATGC', Alphabet())
 ```
+Il est important de retenir qu&#39;un grand nombre d&#39;opération sont possibles sur les objets à travers de méthodes &#39;built-in&#39; qu&#39;il suffit d&#39;implémenter. Il n&#39;est donc pas forcémment nécéssaire de créer de nouvelles méthodes, il suffit d&#39;implementer les bonnes.
+
 #VSLIDE
 
 ### Modélisation UML
@@ -222,14 +226,14 @@ Dans un diagramme de classe, une classe est modélisée par un rectangle divisé
 
 ![Seq](../../images/seq.class.png)
 
-Nous avons 2 attributs, `alphabet` avec un &quot;+&quot; devant pour signifié qu&#39;il est publique et `_data` avec un &quot;-&quot; devant pour signifier qu&#39;il est privé. Par souci d&#39;efficacité et de lisibilité, j&#39;ai choisi de ne pas représenter les méthodes &quot;dunder&quot; qui sont propres au langage. Nous n&#39;avons donc vu qu&#39;une seule méthode publique `translate` qui prend un ensemble d&#39;arguments. Dans ce cas précis, les arguments sont tous optionnels, car des valeurs par défaut sont proposées dans l&#39;implémentation. Nous aurions pu modéliser cela, en rajoutant ces informations sur le diagramme, mais cela aurait complexifier la lecture, ce qui n&#39;est pas le but premier ici. Vous pouvez remarquer aussi que la méthode `translate` retourne un autre objet `Seq`. 
+Nous avons 2 attributs, `alphabet` avec un &quot;+&quot; devant pour signifier qu&#39;il est publique et `_data` avec un &quot;-&quot; devant pour signifier qu&#39;il est privé. Par souci d&#39;efficacité et de lisibilité, j&#39;ai choisi de ne pas représenter les méthodes &quot;dunder&quot; qui sont propres au langage. Nous n&#39;avons donc vu qu&#39;une seule méthode publique `translate` qui prend un ensemble d&#39;arguments. Dans ce cas précis, les arguments sont tous optionnels, car des valeurs par défaut sont proposées dans l&#39;implémentation. Nous aurions pu modéliser cela, en rajoutant ces informations sur le diagramme, mais cela aurait complexifier la lecture, ce qui n&#39;est pas le but premier ici. Vous pouvez remarquer aussi que la méthode `translate` retourne un autre objet `Seq`. 
 
 Important: Python est un langage dynamique et permissif dans le sens où, il n&#39;y a pas de véritable mécanisme dans le langage qui empêche d&#39;accéder à n&#39;importe quelle variable. Ainsi comme nous le verrons, définir des attributs ou des méthodes dits &quot;privés&quot; permet de respecter le paradigme objet et se fait par des conventions de nommage.  
 
 #VSLIDE
 
 ### Implementation
-L&#39;exercise consiste à implementer une classe **CDS** qui possède toute une liste d&#39;attributs (seq,start,end,...) dont une séquence par lien de composition (la séquence du gène est un objet Seq). Cette classe **CDS** doit pouvoir être utilisée dans des comparaisons et avoir une réprésentation simplifiée. De même, elle possède une méthode de représentation en format bed et peut être traduite en proteine.
+L&#39;exercise consiste à implementer une classe **CDS** qui possède toute une liste d&#39;attributs (seq,start,end,...) dont une séquence par lien de composition (la séquence du gène est un objet Seq). Cette classe **CDS** doit pouvoir être utilisée dans des comparaisons et avoir une réprésentation simplifiée. De même, elle possède une méthode de représentation en format fasta, bed et peut être reverse-complémentée.
 
 Pour vous aider voici une modélisation UML en diagramme de classe de l&#39;implémentation attendue:
 

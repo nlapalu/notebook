@@ -213,7 +213,8 @@ ATGC
         return not self == other
 </code></pre>
 <p>Finir</p>
-<p>Il existe un grand nombre de &quot;dunder&quot;, qui une fois implémentés peuvent simplifier la manipulation de vos objets. Une liste complète peut être obtenue ici ou encore ici. Juste pour finir, 2 méthodes implémentées dans la classe <code>Seq</code>: <code>__len__</code> et <code>__add__</code>.</p>
+<p>Il existe un grand nombre de &quot;dunder&quot;, qui une fois implémentés peuvent simplifier la manipulation de vos objets. Une liste complète peut être obtenue ici ou encore ici. </p>
+<p>Juste pour finir, voyons 2 méthodes implémentées dans la classe <code>Seq</code>: <code>__len__</code> et <code>__add__</code>.</p>
 <p>La méthode <code>__len__</code> est appelé via la fonction <code>len()</code> et est censée renvoyé un nombre:</p>
 <pre><code class="lang-python">seq = Seq(&quot;ATGC&quot;)
 seq.__len__() # 4
@@ -228,15 +229,16 @@ seq2 = seq1 + seq1
 seq2
 Seq(&#39;ATGCATGC&#39;, Alphabet())
 </code></pre>
+<p>Il est important de retenir qu&#39;un grand nombre d&#39;opération sont possibles sur les objets à travers de méthodes &#39;built-in&#39; qu&#39;il suffit d&#39;implémenter. Il n&#39;est donc pas forcémment nécéssaire de créer de nouvelles méthodes, il suffit d&#39;implementer les bonnes.</p>
 <h3 id="mod-lisation-uml">Modélisation UML</h3>
 <p>En parallèle de l&#39;apprentissage de l&#39;objet en Python, je vous propose d&#39;aborder la modélisation objet sous le langage UML. UML signifie &quot;Unified Modeling Language&quot;, pour faire vite, c&#39;est un pseudo-langage sous forme graphique qui propose plusieurs types de diagrammes pour modéliser les structures de données (diagramme de classe, diagramme d&#39;objet, ...) ou les comportements/interactions (diagramme d&#39;activité, diagramme de cas d&#39;utilisation, ...). Dans un premier temps nous nous interesserons seulement au diagramme de classe. L&#39;intérêt de ce genre de diagramme est de proposer une vision au niveau de notre structure de code, sans spécificité de langage. Ainsi un diagramme UML sera valable dans tous les langages, seule l&#39;implementation est spécifique. Un diagramme de classe est un outil très appréciable pour appréhender des modules très complexes et peut aussi vous aider à concevoir vos programmes.
 Il existe de nombreux outils disponibles pour faire de la modélisation UML, vous trouverez une liste <a href="https://manurnx.wp.imt.fr/2017/01/23/choix-d-un-outil-de-modelisation-uml/">ici</a>.</p>
 <p>Dans un diagramme de classe, une classe est modélisée par un rectangle divisé en 3 compartiments (cela peut aller jusqu&#39;à 5, mais nous n&#39;aborderons pas cela). On retrouve le nom de classe, puis les attributs et enfin les méthodes (opérations). Voici notre classe Seq:</p>
 <p><img src="../../images/seq.class.png" alt="Seq"></p>
-<p>Nous avons 2 attributs, <code>alphabet</code> avec un &quot;+&quot; devant pour signifié qu&#39;il est publique et <code>_data</code> avec un &quot;-&quot; devant pour signifier qu&#39;il est privé. Par souci d&#39;efficacité et de lisibilité, j&#39;ai choisi de ne pas représenter les méthodes &quot;dunder&quot; qui sont propres au langage. Nous n&#39;avons donc vu qu&#39;une seule méthode publique <code>translate</code> qui prend un ensemble d&#39;arguments. Dans ce cas précis, les arguments sont tous optionnels, car des valeurs par défaut sont proposées dans l&#39;implémentation. Nous aurions pu modéliser cela, en rajoutant ces informations sur le diagramme, mais cela aurait complexifier la lecture, ce qui n&#39;est pas le but premier ici. Vous pouvez remarquer aussi que la méthode <code>translate</code> retourne un autre objet <code>Seq</code>. </p>
+<p>Nous avons 2 attributs, <code>alphabet</code> avec un &quot;+&quot; devant pour signifier qu&#39;il est publique et <code>_data</code> avec un &quot;-&quot; devant pour signifier qu&#39;il est privé. Par souci d&#39;efficacité et de lisibilité, j&#39;ai choisi de ne pas représenter les méthodes &quot;dunder&quot; qui sont propres au langage. Nous n&#39;avons donc vu qu&#39;une seule méthode publique <code>translate</code> qui prend un ensemble d&#39;arguments. Dans ce cas précis, les arguments sont tous optionnels, car des valeurs par défaut sont proposées dans l&#39;implémentation. Nous aurions pu modéliser cela, en rajoutant ces informations sur le diagramme, mais cela aurait complexifier la lecture, ce qui n&#39;est pas le but premier ici. Vous pouvez remarquer aussi que la méthode <code>translate</code> retourne un autre objet <code>Seq</code>. </p>
 <p>Important: Python est un langage dynamique et permissif dans le sens où, il n&#39;y a pas de véritable mécanisme dans le langage qui empêche d&#39;accéder à n&#39;importe quelle variable. Ainsi comme nous le verrons, définir des attributs ou des méthodes dits &quot;privés&quot; permet de respecter le paradigme objet et se fait par des conventions de nommage.  </p>
 <h3 id="implementation">Implementation</h3>
-<p>L&#39;exercise consiste à implementer une classe <strong>CDS</strong> qui possède toute une liste d&#39;attributs (seq,start,end,...) dont une séquence par lien de composition (la séquence du gène est un objet Seq). Cette classe <strong>CDS</strong> doit pouvoir être utilisée dans des comparaisons et avoir une réprésentation simplifiée. De même, elle possède une méthode de représentation en format bed et peut être traduite en proteine.</p>
+<p>L&#39;exercise consiste à implementer une classe <strong>CDS</strong> qui possède toute une liste d&#39;attributs (seq,start,end,...) dont une séquence par lien de composition (la séquence du gène est un objet Seq). Cette classe <strong>CDS</strong> doit pouvoir être utilisée dans des comparaisons et avoir une réprésentation simplifiée. De même, elle possède une méthode de représentation en format fasta, bed et peut être reverse-complémentée.</p>
 <p>Pour vous aider voici une modélisation UML en diagramme de classe de l&#39;implémentation attendue:</p>
 <p>La solution est <a href="tricheur.html">ici</a></p>
 <pre><code class="lang-python">class Gene(object):
@@ -309,6 +311,6 @@ gene = Gene(&quot;seq1&quot;,10,200,seq)
 			});
 		</script>
 		
-		<!-- Generated by Vegetables from 'category/python/python-s1.md' with format 'default' - '2018-10-11 16:33:30' -->
+		<!-- Generated by Vegetables from 'category/python/python-s1.md' with format 'default' - '2018-10-12 18:12:50' -->
 	</body>
 </html>
