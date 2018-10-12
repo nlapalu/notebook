@@ -213,7 +213,73 @@ L'exercise consiste à implementer une classe **CDS** qui possède toute une lis
 
 Pour vous aider voici une modélisation UML en diagramme de classe de l'implémentation attendue:
 
+Implementez les 2 classes dans le même fichier et rajoutez le code suivant, à la suite des 2 classes.
 
+```python
+if  __name__ == '__main__':
+
+    cds1 = CDS("chr1",20,65,-1,"CDS1",Seq("ATGAAAAAAAAAATTTTTTTTTTCCCCCCCCCCGGGGGGGGGGGTA","nuc"))
+    print("## cds1 ##")
+    print(cds1)
+    print("## cds1.rc() ##")
+    print(cds1.rc())
+    print("## cds1.toBed() ##")
+    print(cds1.toBed())
+    print("## cds1.toFasta() ##")
+    print(cds1.toFasta())
+    print("## cds1.toFasta(5) ##")
+    print(cds1.toFasta(5))
+    print("## len(cds1) ##")
+    print(len(cds1))
+    cds2 = CDS("chr2",120,155,1,"CDS2",Seq("ATGAAAAAAAAAATTTTTTTTTTCCCCCCCCCCGGG","nuc"))
+    print("## len(cds2) ##")
+    print(len(cds2))
+    print("## cds1 != cds2 ##")
+    print(cds1 != cds2)
+    print("## cds1 < cds2 ##")
+    print(cds1 < cds2)
+    print("## cds1 > cds2 ##")
+    print(cds1 > cds2)
+    print("## cds1 == cds2 ##")
+    print(cds1 == cds2)
+```
+Executez le script, voici le résultat que vous devez obtenir:
+
+```
+## cds1 ##
+CDS: name=CDS1,start=20,stop=65,ref=chr1
+## cds1.rc() ##
+TACCCCCCCCCCCGGGGGGGGGGAAAAAAAAAATTTTTTTTTTCAT
+## cds1.toBed() ##
+chr1    19      65
+## cds1.toFasta() ##
+>CDS1
+ATGAAAAAAAAAATTTTTTTTTTCCCCCCCCCCGGGGGGGGGGGTA
+## cds1.toFasta(5) ##
+>CDS1
+ATGAA
+AAAAA
+AAATT
+TTTTT
+TTTCC
+CCCCC
+CCCGG
+GGGGG
+GGGGT
+A
+## len(cds1) ##
+46
+## len(cds2) ##
+36
+## cds1 != cds2 ##
+True
+## cds1 < cds2 ##
+False
+## cds1 > cds2 ##
+True
+## cds1 == cds2 ##
+False
+```
 
 La solution est [ici](tricheur.html)
 
