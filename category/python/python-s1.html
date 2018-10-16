@@ -2,7 +2,7 @@
 	<head>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<title>Python - My Web site</title>
+		<title>Python - Nicolas Lapalu</title>
 		<link rel="stylesheet" href="../../assets/css/highlight.min.css">
 		<link rel="stylesheet" href="../../assets/css/bootstrap.min.css">
 		<link rel="stylesheet" href="../../assets/css/tipuesearch.css">
@@ -18,7 +18,7 @@
 						<span class="icon-bar"></span>
 						<span class="icon-bar"></span>
 					</button>
-					<a class="navbar-brand" href="../../">My Web site</a> <p class="navbar-text hidden-xs">Python</p>
+					<a class="navbar-brand" href="../../">Nicolas Lapalu</a> <p class="navbar-text hidden-xs">Python</p>
 				</div>
 
 				<div class="collapse navbar-collapse" id="navbar-collapse-1">
@@ -48,25 +48,28 @@
 <a href="#revue-de-code-bio-seq-py">Revue de code : Bio.Seq.py</a>
 </p>
 <p class="toc-3">
-<a href="#bio-seq-py-extract-1">Bio.Seq.py extract 1</a>
+<a href="#bio-seq-py-extrait-1">Bio.Seq.py - extrait 1</a>
 </p>
 <p class="toc-3">
-<a href="#bio-seq-py-extract-3">Bio.Seq.py extract 3</a>
+<a href="#bio-seq-py-extrait-2">Bio.Seq.py - extrait 2</a>
 </p>
 <p class="toc-3">
-<a href="#bio-seq-py-extract-2">Bio.Seq.py extract 2</a>
+<a href="#bio-seq-py-extrait-3">Bio.Seq.py - extrait 3</a>
 </p>
 <p class="toc-3">
-<a href="#bio-seq-py-extract-4">Bio.Seq.py extract 4</a>
+<a href="#bio-seq-py-extrait-4">Bio.Seq.py - extrait 4</a>
 </p>
-<p class="toc-3">
+<p class="toc-2">
 <a href="#mod-lisation-uml">Modélisation UML</a>
 </p>
-<p class="toc-3">
+<p class="toc-2">
 <a href="#implementation">Implementation</a>
 </p>
 <p class="toc-2">
-<a href="#references">References</a>
+<a href="#retour-sur-l-39-atelier">Retour sur l&amp;#39;atelier</a>
+</p>
+<p class="toc-2">
+<a href="#r-ferences">Réferences</a>
 </p>
 </div>
 -->
@@ -103,7 +106,7 @@ active
 <p>Pour cette première approche de la programmation objet en Python, nous allons principalement faire de la revue de code et une implémentation naive d&#39;un petit use case. Le but principal de cette première session est de s&#39;inspirer de code existant dans le but de comprendre la logique de développement et la modularité qu&#39;apporte une conception objet. </p>
 <h2 id="revue-de-code-bio-seq-py">Revue de code : Bio.Seq.py</h2>
 <p>Pour rester proche du monde de la bioinformatique, nous allons regarder le package BioPython et plus particulièrement la classe Seq pour commencer. Le code de cette classe est disponible <a href="https://github.com/biopython/biopython/blob/master/Bio/Seq.py">ici</a>. Comme vous allez très vite le constater cette classe est très grande. Son rôle premier est de stocker des informations de séquence, mais elle est capable de faire plus comme par exemple des traitements de type traduction en proteine. Ces traitements peuvent se faire via des appels à ce que l&#39;on nomme des &quot;méthodes&quot;, ce qui est l&#39;équivalent des &quot;fonctions&quot; pour les modules. Ci-dessous une première extraction du code de la classe.</p>
-<h3 id="bio-seq-py-extract-1">Bio.Seq.py extract 1</h3>
+<h3 id="bio-seq-py-extrait-1">Bio.Seq.py - extrait 1</h3>
 <pre><code>class Seq(object):
     &quot;&quot;&quot;Read-only sequence object (essentially a string with an alphabet).&quot;&quot;&quot;
     ...
@@ -116,10 +119,10 @@ active
                   cds=False, gap=None):
         &quot;&quot;&quot;Turn a nucleotide sequence into a protein sequence by creating a new Seq object.&quot;&quot;&quot;
         ...
-</code></pre><p>Ce que l&#39;on peut d&#39;ores et déjà remarquer, c&#39;est la facilité de compréhension du code. Même sans connaissance a priori de la syntaxe objet Python, on comprend tout de suite, que grace au mot <code>class</code>, on va commencer l&#39;implementation d&#39;une classe qui s&#39;apellera <strong>Seq</strong> et qui sera construite sur la base d&#39;un type appelé <strong>object</strong>. La spécification du type object ou non, a une influence seulement sur la version 2 de Python. Sans rentrer dans les détails, ceci permettra d&#39;avoir ou non des classes de nouveau ou de vieux style. Dans le cas de Python 3, toutes les classes sot de nouveau style, il y n&#39;y a donc aucune obligation de spécifié <strong>object</strong>. Nous reviendrons plus tard sur les types de classes, notamment quand nous aborderons l&#39;héritage.</p>
-<p>Nous avons ensuite une méthode <code>__init__</code>, qui comme on peut le supposer sert à l&#39;initiation de la classe. Plus précisement, cette méthode va servir à instancier des objets du type de la classe <strong>Seq</strong>.</p>
-<p>De même une classe peut avoir une méthode <code>__del__</code> qui sera appelé lorsque l&#39;objet sera détruit. Par défaut, il n&#39;est pas souvent nécéssaire d&#39;implementer le destructeur de la classe, mais si vous souhaitez déclencher une action lorsqu&#39;un objet est détruit cela peut être intéressant.</p>
-<p>Comme on peut le voir, chaque méthode de la classe a pour premier argument <strong>self</strong>. Ce mot clef, donné par convention (on pourrait utiliser n&#39;importe quel autre nom), est une référence sur l&#39;objet crée, il faudra donc le spécifier à chaque nouvelle méthode crée.</p>
+</code></pre><p>Ce que l&#39;on peut d&#39;ores et déjà remarquer, c&#39;est la facilité de compréhension du code. Même sans connaissance a priori de la syntaxe objet Python, on comprend tout de suite, que grace au mot <code>class</code>, on va commencer l&#39;implementation d&#39;une classe qui s&#39;apellera <code>Seq</code> et qui sera construite sur la base d&#39;un type appelé <code>object</code>. La spécification du type <code>object</code> ou non, a une influence seulement sur la version 2 de Python. Sans rentrer dans les détails, ceci permettra d&#39;avoir ou non des classes de nouveau ou de vieux style. Dans le cas de Python 3, toutes les classes sont de nouveau style, il y n&#39;y a donc aucune obligation de spécifié <code>object</code>. Nous reviendrons plus tard sur les types de classes, notamment quand nous aborderons l&#39;héritage.</p>
+<p>Nous avons ensuite une méthode <code>__init__</code>, qui comme on peut le supposer sert à l&#39;initiation de la classe. Plus précisement, cette méthode va servir à instancier des objets du type de la classe <code>Seq</code>.</p>
+<p>De même une classe peut avoir une méthode <code>__del__</code> qui sera appelée lorsque l&#39;objet sera détruit. Par défaut, il n&#39;est pas souvent nécéssaire d&#39;implementer le destructeur de la classe, mais si vous souhaitez déclencher une action lorsqu&#39;un objet est détruit cela peut être intéressant.</p>
+<p>Comme on peut le voir, chaque méthode de la classe a pour premier argument <code>self</code>. Ce mot clef, donné par convention (on pourrait utiliser n&#39;importe quel autre nom), est une référence sur l&#39;objet créé, il faudra donc le spécifier à chaque nouvelle méthode créée.</p>
 <p>Pour créer un objet, rien de plus simple. Il suffit que la classe à partir de laquelle on souhaite instancier un objet, soit disponible dans l&#39;espace de nom et pour cela il faut importer la classe. Puis il suffit de déclarer une variable qui sera notre instance et d&#39;appeler la classe avec les attributs nécessaires, ici une chaine de caractère (la notion d&#39;attribut d&#39;objet est abordée dans la section suivante).</p>
 <pre><code>from Bio.Seq import Seq
 
@@ -127,7 +130,7 @@ seq = Seq(&quot;ATGTGTAGGATGCGCTCGTAGAGATGCGCT&quot;)
 </code></pre><p>Une foir l&#39;objet instancié, on peut appeler des méthodes pour faire des traitements.</p>
 <pre><code>print(seq.translate())
 MCRMRS*RCA
-</code></pre><h3 id="bio-seq-py-extract-3">Bio.Seq.py extract 3</h3>
+</code></pre><h3 id="bio-seq-py-extrait-2">Bio.Seq.py - extrait 2</h3>
 <p>Nous avons vu qu&#39;un objet possède des méthodes, qui lui permettent de réaliser des traitements. Un objet possède aussi des variables appelées attributs, qui vont lui permettent de stocker de l&#39;information. Si nous reprenons le code de notre classe, nous voyons qu&#39;un objet Seq à 2 attributs déclarés à l&#39;initialisation: <code>_data</code> et <code>alphabet</code>.</p>
 <pre><code>   def __init__(self, data, alphabet=Alphabet.generic_alphabet):
         &quot;&quot;&quot;Create a Seq object.
@@ -141,14 +144,16 @@ MCRMRS*RCA
         self._data = data
         self.alphabet = alphabet # Seq API requirement 
 </code></pre><p>Pour appeler un attribut il suffit de faire:</p>
-<pre><code>seq = Seq(&quot;ATGC&quot;)
+<pre><code class="lang-python">seq = Seq(&quot;ATGC&quot;)
 print(seq.alphabet)
-</code></pre><p>Nous pouvons aussi faire:</p>
-<pre><code>seq = Seq(&quot;ATGC&quot;)
+</code></pre>
+<p>Nous pouvons aussi faire:</p>
+<pre><code class="lang-python">seq = Seq(&quot;ATGC&quot;)
 print(seq._data)
-</code></pre><p>Mais c&#39;est une très mauvaise pratique à cause du &quot; _ &quot; placé avant le nom de l&#39;attribut. Commencer un nom d&#39;attribut ou de méthode d&#39;un objet par un underscore est une convention de nommage pour spécifier le type &quot;privé&quot;. Nous aborderons ça dans le chapitre suivant.</p>
-<h3 id="bio-seq-py-extract-2">Bio.Seq.py extract 2</h3>
-<pre><code>class Seq(object):
+</code></pre>
+<p>Mais c&#39;est une très mauvaise pratique à cause du &quot; _ &quot; placé avant le nom de l&#39;attribut. Commencer un nom d&#39;attribut ou de méthode d&#39;un objet par un underscore est une convention de nommage pour spécifier le type &quot;privé&quot;. Nous aborderons ça dans le chapitre suivant.</p>
+<h3 id="bio-seq-py-extrait-3">Bio.Seq.py - extrait 3</h3>
+<pre><code class="lang-python">class Seq(object):
     &quot;&quot;&quot;Read-only sequence object (essentially a string with an alphabet).&quot;&quot;&quot;
     ...
 
@@ -163,22 +168,25 @@ print(seq._data)
     def __str__(self):
         &quot;&quot;&quot;Return the full sequence as a python string, use str(my_seq).
         ...
-</code></pre><p>Interessons nous maintenant aux méthodes particulières qui commencent par 2 underscores et se terminent par 2 underscores. Ces méthodes sont appelés &quot;dunder&quot; ou &quot;méthodes magiques&quot;. Le nom des ces méthodes est réservé par le langage, elles sont appelées dans des conditions particulières. Par exemple, comme nous l&#39;avons déjà vu, la méthode <code>__init__</code> est appelée à la création d&#39;un objet. Nous avons aussi ici les méthodes <code>__repr__</code> et <code>__str__</code> qui ont des fonctions très proches de réprésentation de l&#39;objet dans différentes conditions. Nous ne préciserons pas cela ici, mais il sera intéressant de revenir dessus plus tard. </p>
+</code></pre>
+<p>Interessons nous maintenant aux méthodes particulières qui commencent par 2 underscores et se terminent par 2 underscores. Ces méthodes sont appelés &quot;dunder&quot; ou &quot;méthodes magiques&quot;. Le nom des ces méthodes est réservé par le langage, elles sont appelées dans des conditions particulières. Par exemple, comme nous l&#39;avons déjà vu, la méthode <code>__init__</code> est appelée à la création d&#39;un objet. Nous avons aussi ici les méthodes <code>__repr__</code> et <code>__str__</code> qui ont des fonctions très proches de réprésentation de l&#39;objet dans différentes conditions. Nous ne préciserons pas cela ici, mais il sera intéressant de revenir dessus plus tard. </p>
 <p>Ainsi, dans le cas où aucune méthode de réprésentation de l&#39;objet n&#39;est pas implémentée c&#39;est l&#39;adresse mémoire qui est renvoyée.</p>
-<pre><code>seq = Seq(&quot;ATGC&quot;)
+<pre><code class="lang-python">seq = Seq(&quot;ATGC&quot;)
 print(seq)
 
 &lt;Seq.Seq object at 0x7fe8f15b12e8&gt;
-</code></pre><p>Si on implemente la fonction <code>__str__</code> de façon à ce quelle retourne sa séquence sous forme de caractères:</p>
-<pre><code>    def __str__(self):
+</code></pre>
+<p>Si on implemente la fonction <code>__str__</code> de façon à ce quelle retourne sa séquence sous forme de caractères:</p>
+<pre><code class="lang-python">    def __str__(self):
         &quot;&quot;&quot;Return the full sequence as a python string, use str(my_seq).&quot;&quot;&quot;
 
         return self.data
-</code></pre><pre><code>seq = Seq(&quot;ATGC&quot;)
+</code></pre>
+<pre><code>seq = Seq(&quot;ATGC&quot;)
 print(seq)
 
 ATGC
-</code></pre><h3 id="bio-seq-py-extract-4">Bio.Seq.py extract 4</h3>
+</code></pre><h3 id="bio-seq-py-extrait-4">Bio.Seq.py - extrait 4</h3>
 <p>Maintenant si vous souhaitez pouvoir comparer 2 objets <code>Seq</code>, de la même façon que vous comparez 2 nombres, il est nécessaire d&#39;implementer des méthodes particulières dites de &quot;comparaisons riches&quot;. Il y a des astuces pour ne pas avoir à toutes les implémenter, mais je conseille quand même de le faire. En python 3, la méthode <code>__cmp__</code> n&#39;existe plus, il faut implémenter chaque méthode pour chaque comparaison:</p>
 <pre><code class="lang-python"> object.__lt__(self, other) # object1 &lt; object2
  object.__le__(self, other) # object1 &lt;= object2
@@ -187,7 +195,7 @@ ATGC
  object.__gt__(self, other) # object1 &gt; object2
  object.__ge__(self, other) # object1 &gt;= object2
 </code></pre>
-<p>Si nous regardons maintenant de plus près l&#39;implémentation de ces méthodes dans l&#39;object Seq:</p>
+<p>Si nous regardons maintenant de plus près l&#39;implémentation de ces méthodes dans l&#39;object <code>Seq</code>:</p>
 <pre><code class="lang-python">    def __eq__(self, other):
         &quot;&quot;&quot;Compare the sequence to another sequence or a string (README)&quot;&quot;&quot;
     ....
@@ -212,8 +220,7 @@ ATGC
 <pre><code class="lang-python">    def __ne__(self,other):
         return not self == other
 </code></pre>
-<p>Finir</p>
-<p>Il existe un grand nombre de &quot;dunder&quot;, qui une fois implémentés peuvent simplifier la manipulation de vos objets. Une liste complète peut être obtenue ici ou encore ici. </p>
+<p>Il existe un grand nombre de &quot;dunder&quot;, qui une fois implémentés peuvent simplifier la manipulation de vos objets. Une liste complète peut être obtenue <a href="https://rszalski.github.io/magicmethods/">ici</a> ou encore <a href="https://docs.python.org/3/reference/datamodel.html">ici</a>. </p>
 <p>Juste pour finir, voyons 2 méthodes implémentées dans la classe <code>Seq</code>: <code>__len__</code> et <code>__add__</code>.</p>
 <p>La méthode <code>__len__</code> est appelé via la fonction <code>len()</code> et est censée renvoyé un nombre:</p>
 <pre><code class="lang-python">seq = Seq(&quot;ATGC&quot;)
@@ -230,20 +237,21 @@ seq2
 Seq(&#39;ATGCATGC&#39;, Alphabet())
 </code></pre>
 <p>Il est important de retenir qu&#39;un grand nombre d&#39;opération sont possibles sur les objets à travers de méthodes &#39;built-in&#39; qu&#39;il suffit d&#39;implémenter. Il n&#39;est donc pas forcémment nécéssaire de créer de nouvelles méthodes, il suffit d&#39;implementer les bonnes.</p>
-<h3 id="mod-lisation-uml">Modélisation UML</h3>
-<p>En parallèle de l&#39;apprentissage de l&#39;objet en Python, je vous propose d&#39;aborder la modélisation objet sous le langage UML. UML signifie &quot;Unified Modeling Language&quot;, pour faire vite, c&#39;est un pseudo-langage sous forme graphique qui propose plusieurs types de diagrammes pour modéliser les structures de données (diagramme de classe, diagramme d&#39;objet, ...) ou les comportements/interactions (diagramme d&#39;activité, diagramme de cas d&#39;utilisation, ...). Dans un premier temps nous nous interesserons seulement au diagramme de classe. L&#39;intérêt de ce genre de diagramme est de proposer une vision au niveau de notre structure de code, sans spécificité de langage. Ainsi un diagramme UML sera valable dans tous les langages, seule l&#39;implementation est spécifique. Un diagramme de classe est un outil très appréciable pour appréhender des modules très complexes et peut aussi vous aider à concevoir vos programmes.
+<h2 id="mod-lisation-uml">Modélisation UML</h2>
+<p>En parallèle de l&#39;apprentissage de l&#39;objet en Python, je vous propose d&#39;aborder la modélisation objet sous le langage UML(&quot;Unified Modeling Language&quot;). Pour faire vite, c&#39;est un pseudo-langage sous forme graphique qui propose plusieurs types de diagrammes pour modéliser les structures de données (diagramme de classe, diagramme d&#39;objet, ...) ou les comportements/interactions (diagramme d&#39;activité, diagramme de cas d&#39;utilisation, ...). Dans un premier temps nous nous intéresserons seulement au diagramme de classe. L&#39;intérêt de ce genre de diagramme est de proposer une vision au niveau de notre structure de code, sans spécificité de langage. Ainsi un diagramme UML sera valable dans tous les langages, seule l&#39;implementation est spécifique. Un diagramme de classe est un outil très appréciable pour appréhender des modules très complexes et peut aussi vous aider à concevoir vos programmes.
 Il existe de nombreux outils disponibles pour faire de la modélisation UML, vous trouverez une liste <a href="https://manurnx.wp.imt.fr/2017/01/23/choix-d-un-outil-de-modelisation-uml/">ici</a>.</p>
-<p>Dans un diagramme de classe, une classe est modélisée par un rectangle divisé en 3 compartiments (cela peut aller jusqu&#39;à 5, mais nous n&#39;aborderons pas cela). On retrouve le nom de classe, puis les attributs et enfin les méthodes (opérations). Voici notre classe Seq:</p>
+<p>Dans un diagramme de classe, une classe est modélisée par un rectangle divisé en 3 compartiments (cela peut aller jusqu&#39;à 5, mais nous n&#39;aborderons pas cela). On retrouve le nom de classe, puis les attributs et enfin les méthodes (opérations). Voici notre classe <code>Seq</code>:</p>
 <p><img src="../../images/seq.class.png" alt="Seq"></p>
 <p>Nous avons 2 attributs, <code>alphabet</code> avec un &quot;+&quot; devant pour signifier qu&#39;il est publique et <code>_data</code> avec un &quot;-&quot; devant pour signifier qu&#39;il est privé. Par souci d&#39;efficacité et de lisibilité, j&#39;ai choisi de ne pas représenter les méthodes &quot;dunder&quot; qui sont propres au langage. Nous n&#39;avons donc vu qu&#39;une seule méthode publique <code>translate</code> qui prend un ensemble d&#39;arguments. Dans ce cas précis, les arguments sont tous optionnels, car des valeurs par défaut sont proposées dans l&#39;implémentation. Nous aurions pu modéliser cela, en rajoutant ces informations sur le diagramme, mais cela aurait complexifier la lecture, ce qui n&#39;est pas le but premier ici. Vous pouvez remarquer aussi que la méthode <code>translate</code> retourne un autre objet <code>Seq</code>. </p>
 <p>Important: Python est un langage dynamique et permissif dans le sens où, il n&#39;y a pas de véritable mécanisme dans le langage qui empêche d&#39;accéder à n&#39;importe quelle variable. Ainsi comme nous le verrons, définir des attributs ou des méthodes dits &quot;privés&quot; permet de respecter le paradigme objet et se fait par des conventions de nommage.  </p>
-<h3 id="implementation">Implementation</h3>
-<p>L&#39;exercise consiste à implementer une classe <strong>CDS</strong> qui possède toute une liste d&#39;attributs (seq,start,end,...) dont une séquence par lien de composition (la séquence du gène est un objet Seq). Cette classe <strong>CDS</strong> doit pouvoir être utilisée dans des comparaisons et avoir une réprésentation simplifiée. De même, elle possède une méthode de représentation en format fasta, bed et peut être reverse-complémentée.</p>
+<h2 id="implementation">Implementation</h2>
+<p>L&#39;exercise consiste à implementer une classe <code>CDS</code> qui possède toute une liste d&#39;attributs (seq,start,end,...) dont une séquence par lien de composition (la séquence du gène est un objet <code>Seq</code>). Cette classe <code>CDS</code> doit pouvoir être utilisée dans des comparaisons et avoir une réprésentation simplifiée. De même, elle possède une méthode de représentation en format fasta, bed et peut être reverse-complémentée.</p>
 <p>Pour vous aider voici une modélisation UML en diagramme de classe de l&#39;implémentation attendue:</p>
+<p><img src="../../images/cds-seq.class.png" alt="CDS"></p>
 <p>Implementez les 2 classes dans le même fichier et rajoutez le code suivant, à la suite des 2 classes.</p>
 <pre><code class="lang-python">if  __name__ == &#39;__main__&#39;:
 
-    cds1 = CDS(&quot;chr1&quot;,20,65,-1,&quot;CDS1&quot;,Seq(&quot;ATGAAAAAAAAAATTTTTTTTTTCCCCCCCCCCGGGGGGGGGGGTA&quot;,&quot;nuc&quot;))
+    cds1 = CDS(&quot;chr1&quot;,20,65,-1,&quot;CDS1&quot;,&quot;ATGAAAAAAAAAATTTTTTTTTTCCCCCCCCCCGGGGGGGGGGGTA&quot;)
     print(&quot;## cds1 ##&quot;)
     print(cds1)
     print(&quot;## cds1.rc() ##&quot;)
@@ -256,7 +264,7 @@ Il existe de nombreux outils disponibles pour faire de la modélisation UML, vou
     print(cds1.toFasta(5))
     print(&quot;## len(cds1) ##&quot;)
     print(len(cds1))
-    cds2 = CDS(&quot;chr2&quot;,120,155,1,&quot;CDS2&quot;,Seq(&quot;ATGAAAAAAAAAATTTTTTTTTTCCCCCCCCCCGGG&quot;,&quot;nuc&quot;))
+    cds2 = CDS(&quot;chr2&quot;,120,155,1,&quot;CDS2&quot;,&quot;ATGAAAAAAAAAATTTTTTTTTTCCCCCCCCCCGGG&quot;)
     print(&quot;## len(cds2) ##&quot;)
     print(len(cds2))
     print(&quot;## cds1 != cds2 ##&quot;)
@@ -322,34 +330,27 @@ False
 
     def toBed(self):
         &quot;&quot;&quot;export in bed format&quot;&quot;&quot;
-
-
 </code></pre>
-<p>L&#39;utilisation d&#39;une classe dans une autre classe se nomme en modélisation, une rélation de composition. Pour être exacte il y a le lien de composition comme ici. C&#39;est à dire que l&#39;object qui est instancié par un autre objet, sera détruit en même temps que l&#39;object instanciateur. En revanche dans le cas d&#39;une relation d&#39;aggregation, un objet se sert d&#39;un autre objet, mais chaque objet est instancié séparement. Ainsi la destruction de l&#39;objet aggregateur n&#39;a pas d&#39;influence sur l&#39;autre objet. Dans le cas de notre classe <strong>Gene</strong> cela aurait nécessité de construire un objet Seq avant et de fournir cette objet à l&#39;objet <strong>Gene</strong>. Pour cela nous aurions pu modifier la méthode instanciatrice de l&#39;objet de cette façon:</p>
-<pre><code>class Gene(object):
-    &quot;&quot;&quot;Gene class&quot;&quot;&quot;
-
-    def __init__(self, ref, start, end, seq):
-        &quot;&quot;&quot;constructor&quot;&quot;&quot;
-
-        ref=ref
-        start=start
-        end=end
-        seq=seq
-</code></pre><p>Instanciation de l&#39;objet:</p>
-<pre><code>seq = Seq(&quot;ATGTGTAGT&quot;)
-gene = Gene(&quot;seq1&quot;,10,200,seq)
-</code></pre><p>au lieu de:</p>
-<pre><code>gene = Gene(&quot;seq1&quot;,10,200,&quot;ATGTGTAGT&quot;)
-</code></pre><h2 id="references">References</h2>
-<p><a href="https://stackoverflow.com/questions/19861785/composition-and-aggregation-in-python">https://stackoverflow.com/questions/19861785/composition-and-aggregation-in-python</a>
-<a href="https://www.programiz.com/python-programming">https://www.programiz.com/python-programming</a> 
-<a href="http://openbookproject.net/thinkcs/python/english3e/index.html#">http://openbookproject.net/thinkcs/python/english3e/index.html#</a>
-<a href="https://hackernoon.com/understanding-the-underscore-of-python-309d1a029edc">https://hackernoon.com/understanding-the-underscore-of-python-309d1a029edc</a>
-<a href="https://www.geeksforgeeks.org/dunder-magic-methods-python/">https://www.geeksforgeeks.org/dunder-magic-methods-python/</a>
-<a href="https://rszalski.github.io/magicmethods/">https://rszalski.github.io/magicmethods/</a>
-<a href="https://docs.python.org/3/reference/datamodel.html">https://docs.python.org/3/reference/datamodel.html</a>
-<a href="https://laurent-audibert.developpez.com/Cours-UML/?page=diagramme-classes#L3">UML2: diagramme de classe</a></p>
+<h2 id="retour-sur-l-atelier">Retour sur l&#39;atelier</h2>
+<p>Dans cet atelier nous avons abordé:</p>
+<ul>
+<li>le concept de programmation objet sous Python.</li>
+<li>la notion d&#39;attribut et de méthode (publiques)</li>
+<li>les méthodes magiques ou &quot;dunder&quot;</li>
+<li>le concept de modélisation UML</li>
+</ul>
+<h2 id="r-ferences">Réferences</h2>
+<p>Quelques liens intéressants qui ont servi à faire cet atelier:</p>
+<ul>
+<li><a href="https://www.programiz.com/python-programming">https://www.programiz.com/python-programming</a> </li>
+<li><a href="http://openbookproject.net/thinkcs/python/english3e/index.html#">http://openbookproject.net/thinkcs/python/english3e/index.html#</a></li>
+<li><a href="https://hackernoon.com/understanding-the-underscore-of-python-309d1a029edc">https://hackernoon.com/understanding-the-underscore-of-python-309d1a029edc</a></li>
+<li><a href="https://www.geeksforgeeks.org/dunder-magic-methods-python/">https://www.geeksforgeeks.org/dunder-magic-methods-python/</a></li>
+<li><a href="https://rszalski.github.io/magicmethods/">magic methods</a></li>
+<li><a href="https://docs.python.org/3/reference/datamodel.html">magic methods</a></li>
+<li><a href="https://laurent-audibert.developpez.com/Cours-UML/?page=diagramme-classes#L3">UML2: diagramme de classe</a></li>
+<li><a href="https://stackoverflow.com/questions/19861785/composition-and-aggregation-in-python">https://stackoverflow.com/questions/19861785/composition-and-aggregation-in-python</a></li>
+</ul>
 
 				</article>
 			</div>
@@ -373,6 +374,6 @@ gene = Gene(&quot;seq1&quot;,10,200,seq)
 			});
 		</script>
 		
-		<!-- Generated by Vegetables from 'category/python/python-s1.md' with format 'default' - '2018-10-12 18:20:51' -->
+		<!-- Generated by Vegetables from 'category/python/python-s1.md' with format 'default' - '2018-10-16 16:18:09' -->
 	</body>
 </html>

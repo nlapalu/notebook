@@ -34,7 +34,7 @@ Pour rester proche du monde de la bioinformatique, nous allons regarder le packa
 
 #VSLIDE
 
-### Bio.Seq.py extract 1
+### Bio.Seq.py - extrait 1
 ```
 class Seq(object):
     """Read-only sequence object (essentially a string with an alphabet)."""
@@ -49,13 +49,13 @@ class Seq(object):
         """Turn a nucleotide sequence into a protein sequence by creating a new Seq object."""
         ...
 ```
-Ce que l&#39;on peut d&#39;ores et déjà remarquer, c&#39;est la facilité de compréhension du code. Même sans connaissance a priori de la syntaxe objet Python, on comprend tout de suite, que grace au mot `class`, on va commencer l&#39;implementation d&#39;une classe qui s&#39;apellera **Seq** et qui sera construite sur la base d&#39;un type appelé **object**. La spécification du type object ou non, a une influence seulement sur la version 2 de Python. Sans rentrer dans les détails, ceci permettra d&#39;avoir ou non des classes de nouveau ou de vieux style. Dans le cas de Python 3, toutes les classes sot de nouveau style, il y n&#39;y a donc aucune obligation de spécifié **object**. Nous reviendrons plus tard sur les types de classes, notamment quand nous aborderons l&#39;héritage.
+Ce que l&#39;on peut d&#39;ores et déjà remarquer, c&#39;est la facilité de compréhension du code. Même sans connaissance a priori de la syntaxe objet Python, on comprend tout de suite, que grace au mot `class`, on va commencer l&#39;implementation d&#39;une classe qui s&#39;apellera `Seq` et qui sera construite sur la base d&#39;un type appelé `object`. La spécification du type `object` ou non, a une influence seulement sur la version 2 de Python. Sans rentrer dans les détails, ceci permettra d&#39;avoir ou non des classes de nouveau ou de vieux style. Dans le cas de Python 3, toutes les classes sont de nouveau style, il y n&#39;y a donc aucune obligation de spécifié `object`. Nous reviendrons plus tard sur les types de classes, notamment quand nous aborderons l&#39;héritage.
 
-Nous avons ensuite une méthode `__init__`, qui comme on peut le supposer sert à l&#39;initiation de la classe. Plus précisement, cette méthode va servir à instancier des objets du type de la classe **Seq**.
+Nous avons ensuite une méthode `__init__`, qui comme on peut le supposer sert à l&#39;initiation de la classe. Plus précisement, cette méthode va servir à instancier des objets du type de la classe `Seq`.
 
-De même une classe peut avoir une méthode `__del__` qui sera appelé lorsque l&#39;objet sera détruit. Par défaut, il n&#39;est pas souvent nécéssaire d&#39;implementer le destructeur de la classe, mais si vous souhaitez déclencher une action lorsqu&#39;un objet est détruit cela peut être intéressant.
+De même une classe peut avoir une méthode `__del__` qui sera appelée lorsque l&#39;objet sera détruit. Par défaut, il n&#39;est pas souvent nécéssaire d&#39;implementer le destructeur de la classe, mais si vous souhaitez déclencher une action lorsqu&#39;un objet est détruit cela peut être intéressant.
 
-Comme on peut le voir, chaque méthode de la classe a pour premier argument **self**. Ce mot clef, donné par convention (on pourrait utiliser n&#39;importe quel autre nom), est une référence sur l&#39;objet crée, il faudra donc le spécifier à chaque nouvelle méthode crée.
+Comme on peut le voir, chaque méthode de la classe a pour premier argument `self`. Ce mot clef, donné par convention (on pourrait utiliser n&#39;importe quel autre nom), est une référence sur l&#39;objet créé, il faudra donc le spécifier à chaque nouvelle méthode créée.
 
 Pour créer un objet, rien de plus simple. Il suffit que la classe à partir de laquelle on souhaite instancier un objet, soit disponible dans l&#39;espace de nom et pour cela il faut importer la classe. Puis il suffit de déclarer une variable qui sera notre instance et d&#39;appeler la classe avec les attributs nécessaires, ici une chaine de caractère (la notion d&#39;attribut d&#39;objet est abordée dans la section suivante).
 
@@ -72,7 +72,7 @@ MCRMRS*RCA
 ```
 #VSLIDE
 
-### Bio.Seq.py extract 3
+### Bio.Seq.py - extrait 2
 Nous avons vu qu&#39;un objet possède des méthodes, qui lui permettent de réaliser des traitements. Un objet possède aussi des variables appelées attributs, qui vont lui permettent de stocker de l&#39;information. Si nous reprenons le code de notre classe, nous voyons qu&#39;un objet Seq à 2 attributs déclarés à l&#39;initialisation: `_data` et `alphabet`.
 
 ```
@@ -90,13 +90,13 @@ Nous avons vu qu&#39;un objet possède des méthodes, qui lui permettent de réa
 ```
 Pour appeler un attribut il suffit de faire:
 
-```
+```python
 seq = Seq("ATGC")
 print(seq.alphabet)
 ```
 Nous pouvons aussi faire:
 
-```
+```python
 seq = Seq("ATGC")
 print(seq._data)
 ```
@@ -104,8 +104,8 @@ Mais c&#39;est une très mauvaise pratique à cause du &quot; _ &quot; placé av
 
 #VSLIDE
 
-### Bio.Seq.py extract 2
-```
+### Bio.Seq.py - extrait 3
+```python
 class Seq(object):
     """Read-only sequence object (essentially a string with an alphabet)."""
     ...
@@ -126,7 +126,7 @@ Interessons nous maintenant aux méthodes particulières qui commencent par 2 un
 
 Ainsi, dans le cas où aucune méthode de réprésentation de l&#39;objet n&#39;est pas implémentée c&#39;est l&#39;adresse mémoire qui est renvoyée.
 
-```
+```python
 seq = Seq("ATGC")
 print(seq)
 
@@ -134,7 +134,7 @@ print(seq)
 ```
 Si on implemente la fonction `__str__` de façon à ce quelle retourne sa séquence sous forme de caractères:
 
-```
+```python
     def __str__(self):
         """Return the full sequence as a python string, use str(my_seq)."""
 
@@ -148,7 +148,7 @@ ATGC
 ```
 #VSLIDE
 
-### Bio.Seq.py extract 4
+### Bio.Seq.py - extrait 4
 Maintenant si vous souhaitez pouvoir comparer 2 objets `Seq`, de la même façon que vous comparez 2 nombres, il est nécessaire d&#39;implementer des méthodes particulières dites de &quot;comparaisons riches&quot;. Il y a des astuces pour ne pas avoir à toutes les implémenter, mais je conseille quand même de le faire. En python 3, la méthode `__cmp__` n&#39;existe plus, il faut implémenter chaque méthode pour chaque comparaison:
 
 ```python
@@ -159,7 +159,7 @@ Maintenant si vous souhaitez pouvoir comparer 2 objets `Seq`, de la même façon
  object.__gt__(self, other) # object1 > object2
  object.__ge__(self, other) # object1 >= object2
 ```
-Si nous regardons maintenant de plus près l&#39;implémentation de ces méthodes dans l&#39;object Seq:
+Si nous regardons maintenant de plus près l&#39;implémentation de ces méthodes dans l&#39;object `Seq`:
 
 ```python
     def __eq__(self, other):
@@ -190,9 +190,7 @@ Par ailleurs la non-équivalence peut aussi simplement se faire en retournant le
     def __ne__(self,other):
         return not self == other
 ```
-Finir
-
-Il existe un grand nombre de &quot;dunder&quot;, qui une fois implémentés peuvent simplifier la manipulation de vos objets. Une liste complète peut être obtenue ici ou encore ici. 
+Il existe un grand nombre de &quot;dunder&quot;, qui une fois implémentés peuvent simplifier la manipulation de vos objets. Une liste complète peut être obtenue [ici](https://rszalski.github.io/magicmethods/) ou encore [ici](https://docs.python.org/3/reference/datamodel.html). 
 
 Juste pour finir, voyons 2 méthodes implémentées dans la classe `Seq`: `__len__` et `__add__`.
 
@@ -216,13 +214,13 @@ Seq('ATGCATGC', Alphabet())
 ```
 Il est important de retenir qu&#39;un grand nombre d&#39;opération sont possibles sur les objets à travers de méthodes &#39;built-in&#39; qu&#39;il suffit d&#39;implémenter. Il n&#39;est donc pas forcémment nécéssaire de créer de nouvelles méthodes, il suffit d&#39;implementer les bonnes.
 
-#VSLIDE
+#HSLIDE
 
-### Modélisation UML
-En parallèle de l&#39;apprentissage de l&#39;objet en Python, je vous propose d&#39;aborder la modélisation objet sous le langage UML. UML signifie &quot;Unified Modeling Language&quot;, pour faire vite, c&#39;est un pseudo-langage sous forme graphique qui propose plusieurs types de diagrammes pour modéliser les structures de données (diagramme de classe, diagramme d&#39;objet, ...) ou les comportements/interactions (diagramme d&#39;activité, diagramme de cas d&#39;utilisation, ...). Dans un premier temps nous nous interesserons seulement au diagramme de classe. L&#39;intérêt de ce genre de diagramme est de proposer une vision au niveau de notre structure de code, sans spécificité de langage. Ainsi un diagramme UML sera valable dans tous les langages, seule l&#39;implementation est spécifique. Un diagramme de classe est un outil très appréciable pour appréhender des modules très complexes et peut aussi vous aider à concevoir vos programmes.
+## Modélisation UML
+En parallèle de l&#39;apprentissage de l&#39;objet en Python, je vous propose d&#39;aborder la modélisation objet sous le langage UML(&quot;Unified Modeling Language&quot;). Pour faire vite, c&#39;est un pseudo-langage sous forme graphique qui propose plusieurs types de diagrammes pour modéliser les structures de données (diagramme de classe, diagramme d&#39;objet, ...) ou les comportements/interactions (diagramme d&#39;activité, diagramme de cas d&#39;utilisation, ...). Dans un premier temps nous nous intéresserons seulement au diagramme de classe. L&#39;intérêt de ce genre de diagramme est de proposer une vision au niveau de notre structure de code, sans spécificité de langage. Ainsi un diagramme UML sera valable dans tous les langages, seule l&#39;implementation est spécifique. Un diagramme de classe est un outil très appréciable pour appréhender des modules très complexes et peut aussi vous aider à concevoir vos programmes.
 Il existe de nombreux outils disponibles pour faire de la modélisation UML, vous trouverez une liste [ici](https://manurnx.wp.imt.fr/2017/01/23/choix-d-un-outil-de-modelisation-uml/).
 
-Dans un diagramme de classe, une classe est modélisée par un rectangle divisé en 3 compartiments (cela peut aller jusqu&#39;à 5, mais nous n&#39;aborderons pas cela). On retrouve le nom de classe, puis les attributs et enfin les méthodes (opérations). Voici notre classe Seq:
+Dans un diagramme de classe, une classe est modélisée par un rectangle divisé en 3 compartiments (cela peut aller jusqu&#39;à 5, mais nous n&#39;aborderons pas cela). On retrouve le nom de classe, puis les attributs et enfin les méthodes (opérations). Voici notre classe `Seq`:
 
 ![Seq](../../images/seq.class.png)
 
@@ -230,19 +228,21 @@ Nous avons 2 attributs, `alphabet` avec un &quot;+&quot; devant pour signifier q
 
 Important: Python est un langage dynamique et permissif dans le sens où, il n&#39;y a pas de véritable mécanisme dans le langage qui empêche d&#39;accéder à n&#39;importe quelle variable. Ainsi comme nous le verrons, définir des attributs ou des méthodes dits &quot;privés&quot; permet de respecter le paradigme objet et se fait par des conventions de nommage.  
 
-#VSLIDE
+#HSLIDE
 
-### Implementation
-L&#39;exercise consiste à implementer une classe **CDS** qui possède toute une liste d&#39;attributs (seq,start,end,...) dont une séquence par lien de composition (la séquence du gène est un objet Seq). Cette classe **CDS** doit pouvoir être utilisée dans des comparaisons et avoir une réprésentation simplifiée. De même, elle possède une méthode de représentation en format fasta, bed et peut être reverse-complémentée.
+## Implementation
+L&#39;exercise consiste à implementer une classe `CDS` qui possède toute une liste d&#39;attributs (seq,start,end,...) dont une séquence par lien de composition (la séquence du gène est un objet `Seq`). Cette classe `CDS` doit pouvoir être utilisée dans des comparaisons et avoir une réprésentation simplifiée. De même, elle possède une méthode de représentation en format fasta, bed et peut être reverse-complémentée.
 
 Pour vous aider voici une modélisation UML en diagramme de classe de l&#39;implémentation attendue:
+
+![CDS](../../images/cds-seq.class.png)
 
 Implementez les 2 classes dans le même fichier et rajoutez le code suivant, à la suite des 2 classes.
 
 ```python
 if  __name__ == '__main__':
 
-    cds1 = CDS("chr1",20,65,-1,"CDS1",Seq("ATGAAAAAAAAAATTTTTTTTTTCCCCCCCCCCGGGGGGGGGGGTA","nuc"))
+    cds1 = CDS("chr1",20,65,-1,"CDS1","ATGAAAAAAAAAATTTTTTTTTTCCCCCCCCCCGGGGGGGGGGGTA")
     print("## cds1 ##")
     print(cds1)
     print("## cds1.rc() ##")
@@ -255,7 +255,7 @@ if  __name__ == '__main__':
     print(cds1.toFasta(5))
     print("## len(cds1) ##")
     print(len(cds1))
-    cds2 = CDS("chr2",120,155,1,"CDS2",Seq("ATGAAAAAAAAAATTTTTTTTTTCCCCCCCCCCGGG","nuc"))
+    cds2 = CDS("chr2",120,155,1,"CDS2","ATGAAAAAAAAAATTTTTTTTTTCCCCCCCCCCGGG")
     print("## len(cds2) ##")
     print(len(cds2))
     print("## cds1 != cds2 ##")
@@ -326,45 +326,32 @@ class Gene(object):
 
     def toBed(self):
         """export in bed format"""
-
-
-```
-L&#39;utilisation d&#39;une classe dans une autre classe se nomme en modélisation, une rélation de composition. Pour être exacte il y a le lien de composition comme ici. C&#39;est à dire que l&#39;object qui est instancié par un autre objet, sera détruit en même temps que l&#39;object instanciateur. En revanche dans le cas d&#39;une relation d&#39;aggregation, un objet se sert d&#39;un autre objet, mais chaque objet est instancié séparement. Ainsi la destruction de l&#39;objet aggregateur n&#39;a pas d&#39;influence sur l&#39;autre objet. Dans le cas de notre classe **Gene** cela aurait nécessité de construire un objet Seq avant et de fournir cette objet à l&#39;objet **Gene**. Pour cela nous aurions pu modifier la méthode instanciatrice de l&#39;objet de cette façon:
-
-```
-class Gene(object):
-    """Gene class"""
-
-    def __init__(self, ref, start, end, seq):
-        """constructor"""
-
-        ref=ref
-        start=start
-        end=end
-        seq=seq
-```
-Instanciation de l&#39;objet:
-
-```
-seq = Seq("ATGTGTAGT")
-gene = Gene("seq1",10,200,seq)
-```
-au lieu de:
-
-```
-gene = Gene("seq1",10,200,"ATGTGTAGT")
 ```
 #HSLIDE
 
-## References
-https://stackoverflow.com/questions/19861785/composition-and-aggregation-in-python
-https://www.programiz.com/python-programming 
-http://openbookproject.net/thinkcs/python/english3e/index.html#
-https://hackernoon.com/understanding-the-underscore-of-python-309d1a029edc
-https://www.geeksforgeeks.org/dunder-magic-methods-python/
-https://rszalski.github.io/magicmethods/
-https://docs.python.org/3/reference/datamodel.html
-[UML2: diagramme de classe](https://laurent-audibert.developpez.com/Cours-UML/?page=diagramme-classes#L3)
+## Retour sur l'atelier
+Dans cet atelier nous avons abordé:
+
+
+- le concept de programmation objet sous Python.
+- la notion d&#39;attribut et de méthode (publiques)
+- les méthodes magiques ou &quot;dunder&quot;
+- le concept de modélisation UML
+
+#HSLIDE
+
+## Réferences
+Quelques liens intéressants qui ont servi à faire cet atelier:
+
+
+- https://www.programiz.com/python-programming 
+- http://openbookproject.net/thinkcs/python/english3e/index.html#
+- https://hackernoon.com/understanding-the-underscore-of-python-309d1a029edc
+- https://www.geeksforgeeks.org/dunder-magic-methods-python/
+- [magic methods](https://rszalski.github.io/magicmethods/)
+- [magic methods](https://docs.python.org/3/reference/datamodel.html)
+- [UML2: diagramme de classe](https://laurent-audibert.developpez.com/Cours-UML/?page=diagramme-classes#L3)
+- https://stackoverflow.com/questions/19861785/composition-and-aggregation-in-python
 
 
 			</script>
