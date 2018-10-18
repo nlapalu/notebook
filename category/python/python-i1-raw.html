@@ -139,6 +139,31 @@ if  __name__ == '__main__':
 
 L'utilisation d'une classe dans une autre classe se nomme en modélisation, une relation de composition. Pour être exacte il y a le lien de composition comme dans le code ci-dessus et il y a aussi le lien d'aggrégation. Dans le premier cas, un object est instancié par un autre objet, et sera détruit en même temps que l'object instanciateur. Dans le deuxième cas, un objet se sert d'un autre objet, mais chaque objet est instancié séparement. Ainsi la destruction de l'objet aggregateur n'a pas d'influence sur l'autre objet. Dans le cas de notre classe `CDS` cela aurait nécessité de construire un objet `Seq` avant et de fournir cet objet à l'objet `CDS`. Pour cela nous aurions pu modifier la méthode instanciatrice de l'objet de cette façon:
 
+``
+
+Instanciation de l'objet:
+
+```python
+class CDS(object):
+
+    def __init__(self,ref,start,stop,name,seq):
+
+        if (stop-start+1)!= len(seq):
+            raise Exception("different size for coordinates and seq length")
+
+        self.ref = ref
+        self.start = start
+        self.stop = stop
+        self.name = name
+        self.seq = seq
+
+...
+
+seq = Seq("ATGAAAAAAAAAATTTTTTTTTTCCCCCCCCCCGGGGGGGGGGGTA","nuc")
+cds1 = CDS("chr1",20,65,"CDS1",seq)
+```
+au lieu de:
+
 ```python
 class CDS(object):
 
@@ -153,17 +178,8 @@ class CDS(object):
         self.name = name
         self.seq = Seq(seq,"nuc")
 
+...
 
-```
-
-Instanciation de l'objet:
-
-```python
-seq = Seq("ATGAAAAAAAAAATTTTTTTTTTCCCCCCCCCCGGGGGGGGGGGTA","nuc")
-cds1 = CDS("chr1",20,65,"CDS1",seq)
-```
-au lieu de:
-```python
 cds1 = CDS("chr1",20,65,"CDS1","ATGAAAAAAAAAATTTTTTTTTTCCCCCCCCCCGGGGGGGGGGGTA")
 ```
 
