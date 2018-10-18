@@ -161,8 +161,6 @@ if  __name__ == '__main__':
 ```
 L&#39;utilisation d&#39;une classe dans une autre classe se nomme en modélisation, une relation de composition. Pour être exacte il y a le lien de composition comme dans le code ci-dessus et il y a aussi le lien d&#39;aggrégation. Dans le premier cas, un object est instancié par un autre objet, et sera détruit en même temps que l&#39;object instanciateur. Dans le deuxième cas, un objet se sert d&#39;un autre objet, mais chaque objet est instancié séparement. Ainsi la destruction de l&#39;objet aggregateur n&#39;a pas d&#39;influence sur l&#39;autre objet. Dans le cas de notre classe `CDS` cela aurait nécessité de construire un objet `Seq` avant et de fournir cet objet à l&#39;objet `CDS`. Pour cela nous aurions pu modifier la méthode instanciatrice de l&#39;objet de cette façon:
 
-``
-
 Instanciation de l&#39;objet:
 
 ```python
