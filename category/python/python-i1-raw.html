@@ -142,7 +142,7 @@ L'utilisation d'une classe dans une autre classe se nomme en modélisation, une 
 ```python
 class CDS(object):
 
-    def __init__(self,ref,start,stop,strand,name,seq):
+    def __init__(self,ref,start,stop,name,seq):
 
         if (stop-start+1)!= len(seq):
             raise Exception("different size for coordinates and seq length")
@@ -150,7 +150,6 @@ class CDS(object):
         self.ref = ref
         self.start = start
         self.stop = stop
-        self.strand
         self.name = name
         self.seq = Seq(seq,"nuc")
 
