@@ -40,7 +40,7 @@ from Bio.Seq import Seq
 
 seq = Seq("ATGTGTAGGATGCGCTCGTAGAGATGCGCT")
 ```
-Une foir l'objet instancié, on peut appeler des méthodes pour faire des traitements.
+Une foir l'objet instancié, on peut appeler des méthodes pour faire des traitements. Syntaxe: `"instance de l'objet"."nom de la méthode()"`
 ```
 print(seq.translate())
 MCRMRS*RCA
@@ -63,7 +63,7 @@ Nous avons vu qu'un objet possède des méthodes, qui lui permettent de réalise
         self.alphabet = alphabet # Seq API requirement 
 ``` 
 
-Pour appeler un attribut il suffit de faire:
+Pour appeler un attribut il suffit de faire: `"instance de l'objet"."nom de l'attribut"`
 ```python
 seq = Seq("ATGC")
 print(seq.alphabet)
