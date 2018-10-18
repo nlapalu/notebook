@@ -84,7 +84,7 @@ class Seq(object):
 
 class CDS(object):
 
-    def __init__(self,ref,start,stop,strand,name,seq):
+    def __init__(self,ref,start,stop,name,seq):
 
         if (stop-start+1)!= len(seq):
             raise Exception("different size for coordinates and seq length")
@@ -92,7 +92,6 @@ class CDS(object):
         self.ref = ref
         self.start = start
         self.stop = stop
-        self.strand = strand
         self.name = name
         self.seq = Seq(seq,"nuc")
 
@@ -135,7 +134,7 @@ class CDS(object):
 
 if  __name__ == '__main__':
 
-    cds1 = CDS("chr1",20,65,-1,"CDS1","ATGAAAAAAAAAATTTTTTTTTTCCCCCCCCCCGGGGGGGGGGGTA")
+    cds1 = CDS("chr1",20,65,"CDS1","ATGAAAAAAAAAATTTTTTTTTTCCCCCCCCCCGGGGGGGGGGGTA")
     print("## cds1 ##")
     print(cds1)
     print("## cds1.rc() ##")
@@ -148,7 +147,7 @@ if  __name__ == '__main__':
     print(cds1.toFasta(5))
     print("## len(cds1) ##")
     print(len(cds1))
-    cds2 = CDS("chr2",120,155,1,"CDS2","ATGAAAAAAAAAATTTTTTTTTTCCCCCCCCCCGGG")
+    cds2 = CDS("chr2",120,155,"CDS2","ATGAAAAAAAAAATTTTTTTTTTCCCCCCCCCCGGG")
     print("## len(cds2) ##")
     print(len(cds2))
     print("## cds1 != cds2 ##")
@@ -183,12 +182,12 @@ Instanciation de l&#39;objet:
 
 ```python
 seq = Seq("ATGAAAAAAAAAATTTTTTTTTTCCCCCCCCCCGGGGGGGGGGGTA","nuc")
-cds1 = CDS("chr1",20,65,-1,"CDS1",seq)
+cds1 = CDS("chr1",20,65,"CDS1",seq)
 ```
 au lieu de:
 
 ```python
-cds1 = CDS("chr1",20,65,-1,"CDS1","ATGAAAAAAAAAATTTTTTTTTTCCCCCCCCCCGGGGGGGGGGGTA")
+cds1 = CDS("chr1",20,65,"CDS1","ATGAAAAAAAAAATTTTTTTTTTCCCCCCCCCCGGGGGGGGGGGTA")
 ```
 
 			</script>

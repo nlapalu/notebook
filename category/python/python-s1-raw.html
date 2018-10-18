@@ -217,7 +217,7 @@ Implementez les 2 classes dans le même fichier et rajoutez le code suivant, à 
 ```python
 if  __name__ == '__main__':
 
-    cds1 = CDS("chr1",20,65,-1,"CDS1","ATGAAAAAAAAAATTTTTTTTTTCCCCCCCCCCGGGGGGGGGGGTA")
+    cds1 = CDS("chr1",20,65,"CDS1","ATGAAAAAAAAAATTTTTTTTTTCCCCCCCCCCGGGGGGGGGGGTA")
     print("## cds1 ##")
     print(cds1)
     print("## cds1.rc() ##")
@@ -230,7 +230,7 @@ if  __name__ == '__main__':
     print(cds1.toFasta(5))
     print("## len(cds1) ##")
     print(len(cds1))
-    cds2 = CDS("chr2",120,155,1,"CDS2","ATGAAAAAAAAAATTTTTTTTTTCCCCCCCCCCGGG")
+    cds2 = CDS("chr2",120,155,"CDS2","ATGAAAAAAAAAATTTTTTTTTTCCCCCCCCCCGGG")
     print("## len(cds2) ##")
     print(len(cds2))
     print("## cds1 != cds2 ##")
@@ -280,7 +280,7 @@ True
 False
 ```
 
-La solution est [ici](tricheur.html)
+La solution est [ici](python-i1.html)
 
 ```python
 class Gene(object):
