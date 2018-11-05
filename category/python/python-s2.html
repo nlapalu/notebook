@@ -60,6 +60,9 @@
 <a href="#abstraction-interfaces">Abstraction, Interfaces</a>
 </p>
 <p class="toc-2">
+<a href="#impl-mentation">Implémentation</a>
+</p>
+<p class="toc-2">
 <a href="#retour-sur-l-39-atelier">Retour sur l&amp;#39;atelier</a>
 </p>
 <p class="toc-2">
@@ -102,7 +105,7 @@ active
 <p>Nous allons tout d&#39;abord aborder la notion d&#39;encapsulation, qui repose sur le fait d&#39;authoriser l&#39;accès à des attributs ou des méthodes dans des situations particulières. Ainsi, un attribut de type privé ne sera accessible que par la classe qui possède l&#39;attribut, dans le cas de protégé l&#39;attribut sera aussi accessible par les classes filles (héritage) et dans le cas publique, il n&#39;y a pas de restriction. En python pour différencier les 3 types on utilise les _. Ainsi on ajoute 2 _ pour le type privé, 1 _ pour protégé. Il n&#39;y a rien à faire dans le cas publique.
 Dans le cas de Python, il est important de comprendre que l&#39;encapsulation n&#39;est pas quelque-chose d&#39;important par rapport à l&#39;esprit du langage qui se veut simple. Ainsi, il n&#39;y a pas de mécanisme fort d&#39;encapsulation, ni de pratique commune, chacun peux implementer des fonctionnements différents.</p>
 <p>Voici un exemple d&#39;une classe <code>Network</code> de la biopython (<a href="https://github.com/biopython/biopython/blob/master/Bio/Pathway/__init__.py">ici</a>). Nous allons utiliser ce code pour visualiser différents mécanismes possibles.</p>
-<p>Implementation initiale:</p>
+<p><strong>Implementation initiale:</strong></p>
 <pre><code class="lang-python">class System(object):
     &quot;&quot;&quot;Abstraction for a collection of reactions.
     This class is used in the Bio.Pathway framework to represent an arbitrary
@@ -138,15 +141,62 @@ Dans le cas de Python, il est important de comprendre que l&#39;encapsulation n&
         Note the order is arbitrary!
         &quot;&quot;&quot;
         # TODO - Define __lt__ so that Reactions can be sorted on Python?
-return list(self.__reactions)
+        return list(self.__reactions)
+</code></pre>
+<p>Ainsi, si vous appelez directement l&#39;attribut privé <code>__reactions</code>, vous obtenez une erreur:</p>
+<pre><code class="lang-python">from Bio.Pathway import System, Reaction
+
+reac1 = Reaction()
+reac2 = Reaction()
+syst = System((reac1, reac2))
+print(syst.__reactions)
+
+Traceback (most recent call last):
+  File &quot;./python-s2-implementation.py&quot;, line 8, in &lt;module&gt;
+    print(syst.__reactions)
+AttributeError: &#39;System&#39; object has no attribute &#39;__reactions&#39; 
+```python
+Vous êtes obligés, d&#39;utiliser la méthode d&#39;accès proposée: `reactions`
+</code></pre>
+<p>print(syst.reactions())</p>
+<p>[Reaction({},[],None,0)]</p>
+<pre><code class="lang-python">Mais il faut savoir que Python triche, il renomme simplement l&#39;attribut de façon à le masquer. Il reste accessible avec cette petite astuce:
+```python
+# ref instance._Class__nameAttribute
+print(syst._System__reactions)
+
+set([Reaction({},[],None,0)])
+</code></pre>
+<p><strong>Implementation avec accesseurs</strong>
+Nous allons faire une implementation basique avec nos propres accesseurs (=mutators)</p>
+<pre><code class="lang-python">class System(object):
+
+    def __init__(self, reactions=()):
+        &quot;&quot;&quot;Initialize a new System object.&quot;&quot;&quot;
+        self.__reactions = set(reactions)
+
+    def get_reactions(self):
+        return self.__reactions
+
+    def set_reactions(self, reactions):
+        self.__reactions = set(reactions)
+</code></pre>
+<p><strong>Implementation avec accesseurs dunder</strong>
+Nous allons remplacer nos accesseurs &quot;maison&quot; par des méthodes dunder </p>
+<pre><code class="lang-python">
+</code></pre>
+<p><strong>Implementation avec décorateurs</strong></p>
+<pre><code class="lang-python">
 </code></pre>
 <p>Nous avons vu ici le mécanisme de property pour contrôler l&#39;accès aux données. Attention, il est recommandé d&#39;éviter ce genre d&#39;implementation si il y a nécéssité d&#39;accès important et récurrent aux données.</p>
+<p>Si nous résumons cette partie, il faut garder à l&#39;esprit que la notion d&#39;encapsulation en python n&#39;est pas aussi restrictive que dans d&#39;autres langages comme Java par exemple. Elle est surtout utilisée pour vous aider à structurer votre code en choisissant d&#39;exposer plus ou moins certaines parties du code. L&#39;encapsulation se fait par convention de nommage et il est possible d&#39;utiliser plusieurs mécanismes pour accéder aux données ou méthodes.</p>
 <h2 id="attributs-et-methodes-de-classe">Attributs et methodes de classe</h2>
 <p>Attributs de Classe</p>
 <p>Méthodes de Classe</p>
 <h2 id="polymorphisme">Polymorphisme</h2>
 <h2 id="h-ritage">Héritage</h2>
 <h2 id="abstraction-interfaces">Abstraction, Interfaces</h2>
+<h2 id="impl-mentation">Implémentation</h2>
 <h2 id="retour-sur-l-atelier">Retour sur l&#39;atelier</h2>
 <h2 id="r-f-rences">Références</h2>
 <p><a href="https://openclassrooms.com/fr/courses/4302126-decouvrez-la-programmation-orientee-objet-avec-python/4313211-comprenez-lencapsulation">encapsulation</a></p>
@@ -173,6 +223,6 @@ return list(self.__reactions)
 			});
 		</script>
 		
-		<!-- Generated by Vegetables from 'category/python/python-s2.md' with format 'default' - '2018-11-5 15:17:17' -->
+		<!-- Generated by Vegetables from 'category/python/python-s2.md' with format 'default' - '2018-11-5 16:58:02' -->
 	</body>
 </html>

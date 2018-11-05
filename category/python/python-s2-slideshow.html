@@ -37,7 +37,7 @@ Dans le cas de Python, il est important de comprendre que l&#39;encapsulation n&
 
 Voici un exemple d&#39;une classe `Network` de la biopython ([ici](https://github.com/biopython/biopython/blob/master/Bio/Pathway/__init__.py)). Nous allons utiliser ce code pour visualiser différents mécanismes possibles.
 
-Implementation initiale:
+**Implementation initiale:**
 
 ```python
 class System(object):
@@ -75,9 +75,67 @@ class System(object):
         Note the order is arbitrary!
         """
         # TODO - Define __lt__ so that Reactions can be sorted on Python?
-return list(self.__reactions)
+        return list(self.__reactions)
+```
+Ainsi, si vous appelez directement l&#39;attribut privé `__reactions`, vous obtenez une erreur:
+
+```python
+from Bio.Pathway import System, Reaction
+
+reac1 = Reaction()
+reac2 = Reaction()
+syst = System((reac1, reac2))
+print(syst.__reactions)
+
+Traceback (most recent call last):
+  File "./python-s2-implementation.py", line 8, in <module>
+    print(syst.__reactions)
+AttributeError: 'System' object has no attribute '__reactions' 
+```python
+Vous êtes obligés, d'utiliser la méthode d'accès proposée: `reactions`
+```
+print(syst.reactions())
+
+[Reaction({},[],None,0)]
+
+```python
+Mais il faut savoir que Python triche, il renomme simplement l'attribut de façon à le masquer. Il reste accessible avec cette petite astuce:
+```python
+# ref instance._Class__nameAttribute
+print(syst._System__reactions)
+
+set([Reaction({},[],None,0)])
+```
+**Implementation avec accesseurs**
+Nous allons faire une implementation basique avec nos propres accesseurs (=mutators)
+
+```python
+class System(object):
+
+    def __init__(self, reactions=()):
+        """Initialize a new System object."""
+        self.__reactions = set(reactions)
+
+    def get_reactions(self):
+        return self.__reactions
+
+    def set_reactions(self, reactions):
+        self.__reactions = set(reactions)
+```
+**Implementation avec accesseurs dunder**
+Nous allons remplacer nos accesseurs &quot;maison&quot; par des méthodes dunder 
+
+```python
+
+```
+**Implementation avec décorateurs**
+
+```python
+
 ```
 Nous avons vu ici le mécanisme de property pour contrôler l&#39;accès aux données. Attention, il est recommandé d&#39;éviter ce genre d&#39;implementation si il y a nécéssité d&#39;accès important et récurrent aux données.
+
+Si nous résumons cette partie, il faut garder à l&#39;esprit que la notion d&#39;encapsulation en python n&#39;est pas aussi restrictive que dans d&#39;autres langages comme Java par exemple. Elle est surtout utilisée pour vous aider à structurer votre code en choisissant d&#39;exposer plus ou moins certaines parties du code. L&#39;encapsulation se fait par convention de nommage et il est possible d&#39;utiliser plusieurs mécanismes pour accéder aux données ou méthodes.
 
 #HSLIDE
 
@@ -95,6 +153,9 @@ Méthodes de Classe
 #HSLIDE
 
 ## Abstraction, Interfaces
+#HSLIDE
+
+## Implémentation
 #HSLIDE
 
 ## Retour sur l'atelier
