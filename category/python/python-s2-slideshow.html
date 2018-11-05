@@ -24,20 +24,77 @@
 				#HSLIDE
 
 # POO Python suite
-Maintenant que nous avons abordé la POO par des exemples simples, nous allons pouvoir rajouter quelques notions plus complexes qui mettent en avant l&#39;intérêt de l&#39;approche objet.
+#HSLIDE
+
+## Introduction
+Maintenant que nous avons abordé la POO par des exemples simples, nous allons pouvoir rajouter quelques notions plus complexes qui mettent en avant l&#39;intérêt de l&#39;approche objet. De la même façon que pour l&#39;atelier précédent, nous allons extraire du code de logiciel, qui nous servira de support au explication. 
 
 #HSLIDE
 
-## Encapsulation: Notion de public, privé, protected et convention de nommage
+## Encapsulation: public, privé, protected et convention de nommage
+Nous allons tout d&#39;abord aborder la notion d&#39;encapsulation, qui repose sur le fait d&#39;authoriser l&#39;accès à des attributs ou des méthodes dans des situations particulières. Ainsi, un attribut de type privé ne sera accessible que par la classe qui possède l&#39;attribut, dans le cas de protégé l&#39;attribut sera aussi accessible par les classes filles (héritage) et dans le cas publique, il n&#39;y a pas de restriction. En python pour différencier les 3 types on utilise les _. Ainsi on ajoute 2 _ pour le type privé, 1 _ pour protégé. Il n&#39;y a rien à faire dans le cas publique.
+Dans le cas de Python, il est important de comprendre que l&#39;encapsulation n&#39;est pas quelque-chose d&#39;important par rapport à l&#39;esprit du langage qui se veut simple. Ainsi, il n&#39;y a pas de mécanisme fort d&#39;encapsulation, ni de pratique commune, chacun peux implementer des fonctionnements différents.
+
+Voici un exemple d&#39;une classe `Network` de la biopython ([ici](https://github.com/biopython/biopython/blob/master/Bio/Pathway/__init__.py)). Nous allons utiliser ce code pour visualiser différents mécanismes possibles.
+
+Implementation initiale:
+
+```python
+class System(object):
+    """Abstraction for a collection of reactions.
+    This class is used in the Bio.Pathway framework to represent an arbitrary
+    collection of reactions without explicitly defined links.
+    Attributes:
+     - None
+    """
+
+    def __init__(self, reactions=()):
+        """Initialize a new System object."""
+        self.__reactions = set(reactions)
+
+    def __repr__(self):
+        """Return a debugging string representation of self."""
+        return "System(" + ",".join(map(repr, self.__reactions)) + ")"
+
+    def __str__(self):
+        """Return a string representation of self."""
+        return "System of " + str(len(self.__reactions)) + \
+               " reactions involving " + str(len(self.species())) + \
+               " species"
+
+    def add_reaction(self, reaction):
+        """Add reaction to self."""
+        self.__reactions.add(reaction)
+
+    def remove_reaction(self, reaction):
+        """Remove reaction from self."""
+        self.__reactions.remove(reaction)
+
+    def reactions(self):
+        """Return a list of the reactions in this system.
+        Note the order is arbitrary!
+        """
+        # TODO - Define __lt__ so that Reactions can be sorted on Python?
+return list(self.__reactions)
+```
+Nous avons vu ici le mécanisme de property pour contrôler l&#39;accès aux données. Attention, il est recommandé d&#39;éviter ce genre d&#39;implementation si il y a nécéssité d&#39;accès important et récurrent aux données.
+
 #HSLIDE
 
-## Attributs de Classe
+## Attributs et methodes de classe
+Attributs de Classe
+
+Méthodes de Classe
+
 #HSLIDE
 
 ## Polymorphisme
 #HSLIDE
 
 ## Héritage
+#HSLIDE
+
+## Abstraction, Interfaces
 #HSLIDE
 
 ## Retour sur l'atelier

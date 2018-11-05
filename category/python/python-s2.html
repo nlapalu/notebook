@@ -42,16 +42,22 @@
 <a href="#poo-python-suite">POO Python suite</a>
 </p>
 <p class="toc-2">
-<a href="#encapsulation-notion-de-public-priv-protected-et-convention-de-nommage">Encapsulation: Notion de public, privé, protected et convention de nommage</a>
+<a href="#introduction">Introduction</a>
 </p>
 <p class="toc-2">
-<a href="#attributs-de-classe">Attributs de Classe</a>
+<a href="#encapsulation-public-priv-protected-et-convention-de-nommage">Encapsulation: public, privé, protected et convention de nommage</a>
+</p>
+<p class="toc-2">
+<a href="#attributs-et-methodes-de-classe">Attributs et methodes de classe</a>
 </p>
 <p class="toc-2">
 <a href="#polymorphisme">Polymorphisme</a>
 </p>
 <p class="toc-2">
 <a href="#h-ritage">Héritage</a>
+</p>
+<p class="toc-2">
+<a href="#abstraction-interfaces">Abstraction, Interfaces</a>
 </p>
 <p class="toc-2">
 <a href="#retour-sur-l-39-atelier">Retour sur l&amp;#39;atelier</a>
@@ -90,11 +96,57 @@ active
 				</header>
 				<article id="content" class="col-lg-10 col-sm-9">
 					<h1 id="poo-python-suite">POO Python suite</h1>
-<p>Maintenant que nous avons abordé la POO par des exemples simples, nous allons pouvoir rajouter quelques notions plus complexes qui mettent en avant l&#39;intérêt de l&#39;approche objet.</p>
-<h2 id="encapsulation-notion-de-public-priv-protected-et-convention-de-nommage">Encapsulation: Notion de public, privé, protected et convention de nommage</h2>
-<h2 id="attributs-de-classe">Attributs de Classe</h2>
+<h2 id="introduction">Introduction</h2>
+<p>Maintenant que nous avons abordé la POO par des exemples simples, nous allons pouvoir rajouter quelques notions plus complexes qui mettent en avant l&#39;intérêt de l&#39;approche objet. De la même façon que pour l&#39;atelier précédent, nous allons extraire du code de logiciel, qui nous servira de support au explication. </p>
+<h2 id="encapsulation-public-priv-protected-et-convention-de-nommage">Encapsulation: public, privé, protected et convention de nommage</h2>
+<p>Nous allons tout d&#39;abord aborder la notion d&#39;encapsulation, qui repose sur le fait d&#39;authoriser l&#39;accès à des attributs ou des méthodes dans des situations particulières. Ainsi, un attribut de type privé ne sera accessible que par la classe qui possède l&#39;attribut, dans le cas de protégé l&#39;attribut sera aussi accessible par les classes filles (héritage) et dans le cas publique, il n&#39;y a pas de restriction. En python pour différencier les 3 types on utilise les _. Ainsi on ajoute 2 _ pour le type privé, 1 _ pour protégé. Il n&#39;y a rien à faire dans le cas publique.
+Dans le cas de Python, il est important de comprendre que l&#39;encapsulation n&#39;est pas quelque-chose d&#39;important par rapport à l&#39;esprit du langage qui se veut simple. Ainsi, il n&#39;y a pas de mécanisme fort d&#39;encapsulation, ni de pratique commune, chacun peux implementer des fonctionnements différents.</p>
+<p>Voici un exemple d&#39;une classe <code>Network</code> de la biopython (<a href="https://github.com/biopython/biopython/blob/master/Bio/Pathway/__init__.py">ici</a>). Nous allons utiliser ce code pour visualiser différents mécanismes possibles.</p>
+<p>Implementation initiale:</p>
+<pre><code class="lang-python">class System(object):
+    &quot;&quot;&quot;Abstraction for a collection of reactions.
+    This class is used in the Bio.Pathway framework to represent an arbitrary
+    collection of reactions without explicitly defined links.
+    Attributes:
+     - None
+    &quot;&quot;&quot;
+
+    def __init__(self, reactions=()):
+        &quot;&quot;&quot;Initialize a new System object.&quot;&quot;&quot;
+        self.__reactions = set(reactions)
+
+    def __repr__(self):
+        &quot;&quot;&quot;Return a debugging string representation of self.&quot;&quot;&quot;
+        return &quot;System(&quot; + &quot;,&quot;.join(map(repr, self.__reactions)) + &quot;)&quot;
+
+    def __str__(self):
+        &quot;&quot;&quot;Return a string representation of self.&quot;&quot;&quot;
+        return &quot;System of &quot; + str(len(self.__reactions)) + \
+               &quot; reactions involving &quot; + str(len(self.species())) + \
+               &quot; species&quot;
+
+    def add_reaction(self, reaction):
+        &quot;&quot;&quot;Add reaction to self.&quot;&quot;&quot;
+        self.__reactions.add(reaction)
+
+    def remove_reaction(self, reaction):
+        &quot;&quot;&quot;Remove reaction from self.&quot;&quot;&quot;
+        self.__reactions.remove(reaction)
+
+    def reactions(self):
+        &quot;&quot;&quot;Return a list of the reactions in this system.
+        Note the order is arbitrary!
+        &quot;&quot;&quot;
+        # TODO - Define __lt__ so that Reactions can be sorted on Python?
+return list(self.__reactions)
+</code></pre>
+<p>Nous avons vu ici le mécanisme de property pour contrôler l&#39;accès aux données. Attention, il est recommandé d&#39;éviter ce genre d&#39;implementation si il y a nécéssité d&#39;accès important et récurrent aux données.</p>
+<h2 id="attributs-et-methodes-de-classe">Attributs et methodes de classe</h2>
+<p>Attributs de Classe</p>
+<p>Méthodes de Classe</p>
 <h2 id="polymorphisme">Polymorphisme</h2>
 <h2 id="h-ritage">Héritage</h2>
+<h2 id="abstraction-interfaces">Abstraction, Interfaces</h2>
 <h2 id="retour-sur-l-atelier">Retour sur l&#39;atelier</h2>
 <h2 id="r-f-rences">Références</h2>
 <p><a href="https://openclassrooms.com/fr/courses/4302126-decouvrez-la-programmation-orientee-objet-avec-python/4313211-comprenez-lencapsulation">encapsulation</a></p>
@@ -121,6 +173,6 @@ active
 			});
 		</script>
 		
-		<!-- Generated by Vegetables from 'category/python/python-s2.md' with format 'default' - '2018-10-18 14:37:43' -->
+		<!-- Generated by Vegetables from 'category/python/python-s2.md' with format 'default' - '2018-11-5 15:17:17' -->
 	</body>
 </html>
