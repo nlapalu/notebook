@@ -4,4 +4,143 @@ title: POO Python suite
 
 # POO Python suite
 
-Maintenant que nous avons abordé la POO par des exemples simples, nous allons pouvoir rajouter quelques notions plus complexes qui mettent en avant l'intérêt de l'approche objet.
+## Introduction
+
+Maintenant que nous avons abordé la POO par des exemples simples, nous allons pouvoir rajouter quelques notions plus complexes qui mettent en avant l'intérêt de l'approche objet. De la même façon que pour l'atelier précédent, nous allons extraire du code de logiciel, qui nous servira de support au explication. 
+
+## Encapsulation: public, privé, protected et convention de nommage
+
+Nous allons tout d'abord aborder la notion d'encapsulation, qui repose sur le fait d'authoriser l'accès à des attributs ou des méthodes dans des situations particulières. Ainsi, un attribut de type privé ne sera accessible que par la classe qui possède l'attribut, dans le cas de protégé l'attribut sera aussi accessible par les classes filles (héritage) et dans le cas publique, il n'y a pas de restriction. En python pour différencier les 3 types on utilise les \_. Ainsi on ajoute 2 \_ pour le type privé, 1 \_ pour protégé. Il n'y a rien à faire dans le cas publique.
+Dans le cas de Python, il est important de comprendre que l'encapsulation n'est pas quelque-chose d'important par rapport à l'esprit du langage qui se veut simple. Ainsi, il n'y a pas de mécanisme fort d'encapsulation, ni de pratique commune, chacun peux implementer des fonctionnements différents.
+
+Voici un exemple d'une classe `Network` de la biopython ([ici](https://github.com/biopython/biopython/blob/master/Bio/Pathway/__init__.py)). Nous allons utiliser ce code pour visualiser différents mécanismes possibles.
+
+**Implementation initiale:**
+```python
+class System(object):
+    """Abstraction for a collection of reactions.
+    This class is used in the Bio.Pathway framework to represent an arbitrary
+    collection of reactions without explicitly defined links.
+    Attributes:
+     - None
+    """
+
+    def __init__(self, reactions=()):
+        """Initialize a new System object."""
+        self.__reactions = set(reactions)
+
+    def __repr__(self):
+        """Return a debugging string representation of self."""
+        return "System(" + ",".join(map(repr, self.__reactions)) + ")"
+
+    def __str__(self):
+        """Return a string representation of self."""
+        return "System of " + str(len(self.__reactions)) + \
+               " reactions involving " + str(len(self.species())) + \
+               " species"
+
+    def add_reaction(self, reaction):
+        """Add reaction to self."""
+        self.__reactions.add(reaction)
+
+    def remove_reaction(self, reaction):
+        """Remove reaction from self."""
+        self.__reactions.remove(reaction)
+
+    def reactions(self):
+        """Return a list of the reactions in this system.
+        Note the order is arbitrary!
+        """
+        # TODO - Define __lt__ so that Reactions can be sorted on Python?
+        return list(self.__reactions)
+```
+
+Ainsi, si vous appelez directement l'attribut privé `__reactions`, vous obtenez une erreur:
+
+```python
+from Bio.Pathway import System, Reaction
+
+reac1 = Reaction()
+reac2 = Reaction()
+syst = System((reac1, reac2))
+print(syst.__reactions)
+
+Traceback (most recent call last):
+  File "./python-s2-implementation.py", line 8, in <module>
+    print(syst.__reactions)
+AttributeError: 'System' object has no attribute '__reactions' 
+```
+
+Vous êtes obligés, d'utiliser la méthode d'accès proposée: `reactions`
+
+```python
+print(syst.reactions())
+
+[Reaction({},[],None,0)]
+```
+
+Mais il faut savoir que Python triche, il renomme simplement l'attribut de façon à le masquer. Il reste accessible avec cette petite astuce:
+
+```python
+# ref instance._Class__nameAttribute
+print(syst._System__reactions)
+
+set([Reaction({},[],None,0)])
+``` 
+
+**Implementation avec accesseurs**
+
+Nous allons faire une implementation basique avec nos propres accesseurs (=mutators)
+
+```python
+class System(object):
+
+    def __init__(self, reactions=()):
+        """Initialize a new System object."""
+        self.__reactions = set(reactions)
+
+    def get_reactions(self):
+        return self.__reactions
+
+    def set_reactions(self, reactions):
+        self.__reactions = set(reactions)
+```
+
+**Implementation avec accesseurs dunder**
+
+Nous allons remplacer nos accesseurs "maison" par des méthodes dunder 
+
+```python
+
+```
+**Implementation avec décorateurs**
+
+```python
+
+```
+
+Nous avons vu ici le mécanisme de property pour contrôler l'accès aux données. Attention, il est recommandé d'éviter ce genre d'implementation si il y a nécéssité d'accès important et récurrent aux données.
+
+Si nous résumons cette partie, il faut garder à l'esprit que la notion d'encapsulation en python n'est pas aussi restrictive que dans d'autres langages comme Java par exemple. Elle est surtout utilisée pour vous aider à structurer votre code en choisissant d'exposer plus ou moins certaines parties du code. L'encapsulation se fait par convention de nommage et il est possible d'utiliser plusieurs mécanismes pour accéder aux données ou méthodes.
+
+ 
+## Attributs et methodes de classe
+
+Attributs de Classe
+
+Méthodes de Classe
+
+
+## Polymorphisme
+
+## Héritage
+
+## Abstraction, Interfaces
+
+## Implémentation
+
+## Retour sur l'atelier
+
+## Références
+
+[encapsulation](https://openclassrooms.com/fr/courses/4302126-decouvrez-la-programmation-orientee-objet-avec-python/4313211-comprenez-lencapsulation)

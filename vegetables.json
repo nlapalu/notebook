@@ -1,10 +1,10 @@
 {
     "tags": {
-	        "globalTitle": "My Web site"
+	        "globalTitle": "Nicolas Lapalu"
     },
 	   
 	       "pageOptions": {
-  	       "index2.md": {
+  	       "index.md": {
 		                "title": "Accueil",
 	        "menu": [
 	            {
