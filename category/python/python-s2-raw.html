@@ -52,7 +52,9 @@ class System(object):
         # TODO - Define __lt__ so that Reactions can be sorted on Python?
         return list(self.__reactions)
 ```
+
 Ainsi, si vous appelez directement l'attribut privé `__reactions`, vous obtenez une erreur:
+
 ```python
 from Bio.Pathway import System, Reaction
 
@@ -66,13 +68,17 @@ Traceback (most recent call last):
     print(syst.__reactions)
 AttributeError: 'System' object has no attribute '__reactions' 
 ```
+
 Vous êtes obligés, d'utiliser la méthode d'accès proposée: `reactions`
+
 ```python
 print(syst.reactions())
 
 [Reaction({},[],None,0)]
 ```
+
 Mais il faut savoir que Python triche, il renomme simplement l'attribut de façon à le masquer. Il reste accessible avec cette petite astuce:
+
 ```python
 # ref instance._Class__nameAttribute
 print(syst._System__reactions)
@@ -83,6 +89,7 @@ set([Reaction({},[],None,0)])
 **Implementation avec accesseurs**
 
 Nous allons faire une implementation basique avec nos propres accesseurs (=mutators)
+
 ```python
 class System(object):
 
