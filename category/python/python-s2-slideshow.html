@@ -86,13 +86,13 @@ reac1 = Reaction()
 reac2 = Reaction()
 syst = System((reac1, reac2))
 print(syst.__reactions)
-test
+
 Traceback (most recent call last):
   File "./python-s2-implementation.py", line 8, in <module>
     print(syst.__reactions)
 AttributeError: 'System' object has no attribute '__reactions' 
 ```
-Vous êtes obligés, d&#39;utiliser la méthode d&#39;accès proposée: `reactions`
+Vous êtes obligés, d&#39;utiliser la méthode d&#39;accès proposée: `reactions()`
 
 ```python
 print(syst.reactions())
@@ -126,15 +126,33 @@ class System(object):
 ```
 **Implementation avec accesseurs dunder**
 
-Nous allons remplacer nos accesseurs &quot;maison&quot; par des méthodes dunder 
+Nous allons remplacer nos accesseurs &quot;maison&quot; par des méthodes dunder. Cette implementation qui n&#39;a pas vraiement d&#39;intérêt, permet de comprendre que l&#39;accès ou la modification des valeurs des attributs d&#39;objet se fait à travers des méthodes dunder. On va pouvoir modifier le comportement de ces méthodes en autorisant par exemple l&#39;accès aux attributs privés. On va ainsi garder la convention de nommage double _ pour spécifier le type privé, mais néanmoins pouvoir accéder aux données.
 
 ```python
+class System(object):
 
+    def __init__(self, reactions=()):
+        """Initialize a new System object."""
+        self.__reactions = set(reactions)
+
+    def __getattr__(self, name):
+        if name.startswith("__"):
+            # set private attribute
+            return self.__dict__["".join(["_",self.__class__.__name__,name])]
+        else:
+            return self.__dict__[name]
+
+    def __setattr__(self, name, value):
+        if name.startswith("__"):
+            # set private attribute
+            self.__dict__["".join(["_",self.__class__.__name__,name])]=value
+        else:
+            self.__dict__[name]=value
 ```
 **Implementation avec décorateurs**
 
 ```python
-
+sq
 ```
 Nous avons vu ici le mécanisme de property pour contrôler l&#39;accès aux données. Attention, il est recommandé d&#39;éviter ce genre d&#39;implementation si il y a nécéssité d&#39;accès important et récurrent aux données.
 
