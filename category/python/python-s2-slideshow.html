@@ -91,15 +91,16 @@ Traceback (most recent call last):
   File "./python-s2-implementation.py", line 8, in <module>
     print(syst.__reactions)
 AttributeError: 'System' object has no attribute '__reactions' 
-```python
-Vous êtes obligés, d'utiliser la méthode d'accès proposée: `reactions`
 ```
+Vous êtes obligés, d&#39;utiliser la méthode d&#39;accès proposée: `reactions`
+
+```python
 print(syst.reactions())
 
 [Reaction({},[],None,0)]
+```
+Mais il faut savoir que Python triche, il renomme simplement l&#39;attribut de façon à le masquer. Il reste accessible avec cette petite astuce:
 
-```python
-Mais il faut savoir que Python triche, il renomme simplement l'attribut de façon à le masquer. Il reste accessible avec cette petite astuce:
 ```python
 # ref instance._Class__nameAttribute
 print(syst._System__reactions)
@@ -107,6 +108,7 @@ print(syst._System__reactions)
 set([Reaction({},[],None,0)])
 ```
 **Implementation avec accesseurs**
+
 Nous allons faire une implementation basique avec nos propres accesseurs (=mutators)
 
 ```python
@@ -123,6 +125,7 @@ class System(object):
         self.__reactions = set(reactions)
 ```
 **Implementation avec accesseurs dunder**
+
 Nous allons remplacer nos accesseurs &quot;maison&quot; par des méthodes dunder 
 
 ```python
