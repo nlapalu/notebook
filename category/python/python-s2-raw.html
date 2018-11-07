@@ -118,7 +118,7 @@ class System(object):
 
     def __getattr__(self, name):
         if name.startswith("__"):
-            # set private attribute
+            # get private attribute
             return self.__dict__["".join(["_",self.__class__.__name__,name])]
         else:
             return self.__dict__[name]
@@ -133,8 +133,29 @@ class System(object):
 
 **Implementation avec décorateurs**
 
+Pour finir, je vous propose de voir une implémenation avec un décorateur, particularité du langage Python. Nous reviendrons dans un atelier futur sur les décorateurs, pour l'instant vous pouvez simplement retenir qu'un décorateur est une fonction qui va permettre d'executer des pré/post traitements lorsqu'il est associé à une autre fonction/méthode. Dans ce cas nous allons utiliser des décorateurs déjà fournis par le langage Python, "Property", à savoir qu'il est tout à fait possible de coder ses propores décorateurs. Pour plus d'info un très bon blog avec de très bons liens et ressources [ici](http://gillesfabio.com/blog/2010/12/16/python-et-les-decorateurs/)
+
 ```python
-sq
+class System(object):
+
+    def __init__(self, reactions=()):
+        """Initialize a new System object."""
+        self.__reactions = set(reactions)
+
+    @property
+    def reactions(self):
+        return self.__reactions
+
+    @reactions.setter
+    def reactions(self, reactions=()):
+        self.__reactions = set(reactions)
+
+reac1 = Reaction("1")
+reac2 = Reaction("1")
+syst = System((reac1, reac2))
+print syst.reactions
+syst.reactions = (reac1, Reaction("2"))
+print syst.reactions
 ```
 
 Nous avons vu ici le mécanisme de property pour contrôler l'accès aux données. Attention, il est recommandé d'éviter ce genre d'implementation si il y a nécéssité d'accès important et récurrent aux données.
@@ -162,4 +183,7 @@ Méthodes de Classe
 ## Références
 
 [encapsulation](https://openclassrooms.com/fr/courses/4302126-decouvrez-la-programmation-orientee-objet-avec-python/4313211-comprenez-lencapsulation)
+[properties-decorateurs](https://www.python-course.eu/python3_properties.php)
+[decorateurs](http://gillesfabio.com/blog/2010/12/16/python-et-les-decorateurs/)
+[decorateurs](https://wiki.python.org/moin/PythonDecoratorLibrary)
 </pre>
