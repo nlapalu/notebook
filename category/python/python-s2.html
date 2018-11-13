@@ -48,7 +48,7 @@
 <a href="#encapsulation-public-priv-protected-et-convention-de-nommage">Encapsulation: public, privé, protected et convention de nommage</a>
 </p>
 <p class="toc-2">
-<a href="#attributs-et-methodes-de-classe">Attributs et methodes de classe</a>
+<a href="#attributs-de-classe-methodes-de-classe-m-thodes-statiques">Attributs de Classe, methodes de Classe, méthodes statiques</a>
 </p>
 <p class="toc-2">
 <a href="#polymorphisme">Polymorphisme</a>
@@ -222,15 +222,126 @@ set([Reaction({},[],None,0)])
 reac1 = Reaction(&quot;1&quot;)
 reac2 = Reaction(&quot;1&quot;)
 syst = System((reac1, reac2))
-print syst.reactions
+print(syst.reactions)
 syst.reactions = (reac1, Reaction(&quot;2&quot;))
-print syst.reactions
+print(syst.reactions)
 </code></pre>
-<p>Nous avons vu ici le mécanisme de property pour contrôler l&#39;accès aux données. Attention, il est recommandé d&#39;éviter ce genre d&#39;implementation si il y a nécéssité d&#39;accès important et récurrent aux données.</p>
+<p><strong>Implementation avec property()</strong></p>
+<p>L&#39;implementation des décorateurs vu au dessus est inspiré de la primitive <code>property()</code> <code>(property(fget=None, fset=None, fdel=None, doc=None))</code>qui peut aussi permettre d&#39;implémenter un accès aux données:</p>
+<pre><code class="lang-python">class System(object):
+
+    def __init__(self, reactions=()):
+        &quot;&quot;&quot;Initialize a new System object.&quot;&quot;&quot;
+        self.__reactions = set(reactions)
+
+    def __get_reactions(self):
+        return self.__reactions
+
+    def __set_reactions(self, reactions=()):
+        self.__reactions = set(reactions)
+
+    reactions=property(__get_reactions, __set_reactions)
+
+reac1 = Reaction(&quot;1&quot;)
+reac2 = Reaction(&quot;1&quot;)
+syst = System((reac1, reac2))
+print(syst.reactions)
+syst.reactions = (reac1, Reaction(&quot;2&quot;))
+print(syst.reactions)
+</code></pre>
+<p>Nous avons vu ici le mécanisme de decorateur et de property pour contrôler l&#39;accès aux données. Attention, il est recommandé d&#39;éviter ce genre d&#39;implementation si il y a nécéssité d&#39;accès important et récurrent aux données. </p>
 <p>Si nous résumons cette partie, il faut garder à l&#39;esprit que la notion d&#39;encapsulation en python n&#39;est pas aussi restrictive que dans d&#39;autres langages comme Java par exemple. Elle est surtout utilisée pour vous aider à structurer votre code en choisissant d&#39;exposer plus ou moins certaines parties du code. L&#39;encapsulation se fait par convention de nommage et il est possible d&#39;utiliser plusieurs mécanismes pour accéder aux données ou méthodes.</p>
-<h2 id="attributs-et-methodes-de-classe">Attributs et methodes de classe</h2>
-<p>Attributs de Classe</p>
-<p>Méthodes de Classe</p>
+<h2 id="attributs-de-classe-methodes-de-classe-m-thodes-statiques">Attributs de Classe, methodes de Classe, méthodes statiques</h2>
+<p><strong>Attributs de Classe</strong></p>
+<p>Les attributs de classe sont des attributs liés au type de la classe et non à une instance de celle-ci. Reprenons notre classe <code>System</code> et rajoutons un attribut de classe qui va permettre de connaitre le nombre d&#39;instance en cours de la classe. Celui se rajoute directement sous la déclaration de la class hors de la méthode d&#39;initialisation. </p>
+<pre><code class="lang-python">class System(object):
+
+    nbSystems = 0
+
+    def __init__(self, reactions=()):
+        &quot;&quot;&quot;Initialize a new System object.&quot;&quot;&quot;
+        self.__reactions = set(reactions)
+        self.__class__.nbSystems += 1
+
+    def __del__(self):
+        self.__class__.nbSystems -= 1
+
+
+if __name__ == &quot;__main__&quot;:
+
+    reac1 = Reaction()
+    reac2 = Reaction()
+    syst = System((reac1, reac2))
+    print(System.nbSystems)
+    syst = System([reac1])
+    print(System.nbSystems)
+    syst2 = System([reac1])
+    print(System.nbSystems)
+    del(syst)
+    print(System.nbSystems)
+
+1
+1
+2
+1
+</code></pre>
+<p>A chaque fois qu&#39;un nouvel objet est initialisé, le compteur <code>nbSystems</code> est incrémenté de 1. De même si un objet est supprimé, le compteur décroit de 1. </p>
+<p><strong>Méthodes de Classe - Méthodes statiques</strong></p>
+<p>Il est possible aussi d&#39;avoir des méthodes sur des classes qui sont utilisables s&#39;en avoir instancié un objet au préalable. Il y a les méthodes de classe, dont le rôle est en général de permettre l&#39;instanciation d&#39;objet différemment que par l&#39;instanciation normale. Ces méthodes ont simplement besoin d&#39;avoir en argument le type de la classe. Il exsite aussi les méthodes statiques, qui elles n&#39;ont aucun pré-requis et peuvent directement appelées depuis le type de la classe. Elles sont souvent utilisées pour faire des classes dites utilitaires.</p>
+<p>Modifions notre classe System en créant une méthode de classe qui va nous permettre de pouvoir  </p>
+<pre><code class="lang-python">class System(object):
+
+    nbSystems = 0
+
+    def __init__(self, reactions=()):
+        &quot;&quot;&quot;Initialize a new System object.&quot;&quot;&quot;
+        self.__reactions = set(reactions)
+        self.__class__.nbSystems += 1
+
+    def __del__(self):
+        self.__class__.nbSystems -= 1
+
+    @property
+    def reactions(self):
+        return self.__reactions
+
+    @reactions.setter
+    def reactions(self, reactions=()):
+        self.__reactions = set(reactions)
+
+    @classmethod
+    def merge_systems(cls,systems=[]):
+
+        lreactions = []
+        for sys in systems:
+            lreactions.extend(sys.reactions)
+
+        return cls(set(lreactions))
+
+
+if __name__ == &quot;__main__&quot;:
+
+   syst = System((&quot;reac1&quot;, &quot;reac2&quot;))
+   print(System.nbSystems)
+   print(syst.reactions)
+   syst2 = System((&quot;reac1&quot;, &quot;reac3&quot;))
+   print(System.nbSystems)
+   print(syst2.reactions)
+   syst3 = System.merge_systems([syst,syst2])
+   print(System.nbSystems)
+   print(syst3.reactions)
+
+
+
+
+
+1
+set([&#39;reac1&#39;, &#39;reac2&#39;])
+2
+set([&#39;reac1&#39;, &#39;reac3&#39;])
+3
+set([&#39;reac1&#39;, &#39;reac2&#39;, &#39;reac3&#39;])
+</code></pre>
 <h2 id="polymorphisme">Polymorphisme</h2>
 <h2 id="h-ritage">Héritage</h2>
 <h2 id="abstraction-interfaces">Abstraction, Interfaces</h2>
@@ -240,7 +351,8 @@ print syst.reactions
 <p><a href="https://openclassrooms.com/fr/courses/4302126-decouvrez-la-programmation-orientee-objet-avec-python/4313211-comprenez-lencapsulation">encapsulation</a>
 <a href="https://www.python-course.eu/python3_properties.php">properties-decorateurs</a>
 <a href="http://gillesfabio.com/blog/2010/12/16/python-et-les-decorateurs/">decorateurs</a>
-<a href="https://wiki.python.org/moin/PythonDecoratorLibrary">decorateurs</a></p>
+<a href="https://wiki.python.org/moin/PythonDecoratorLibrary">decorateurs</a>
+<a href="https://realpython.com/primer-on-python-decorators/">decorateurs</a></p>
 
 				</article>
 			</div>
@@ -264,6 +376,6 @@ print syst.reactions
 			});
 		</script>
 		
-		<!-- Generated by Vegetables from 'category/python/python-s2.md' with format 'default' - '2018-11-7 12:18:38' -->
+		<!-- Generated by Vegetables from 'category/python/python-s2.md' with format 'default' - '2018-11-13 16:19:17' -->
 	</body>
 </html>

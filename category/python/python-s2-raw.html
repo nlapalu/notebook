@@ -153,22 +153,145 @@ class System(object):
 reac1 = Reaction("1")
 reac2 = Reaction("1")
 syst = System((reac1, reac2))
-print syst.reactions
+print(syst.reactions)
 syst.reactions = (reac1, Reaction("2"))
-print syst.reactions
+print(syst.reactions)
 ```
 
-Nous avons vu ici le mécanisme de property pour contrôler l'accès aux données. Attention, il est recommandé d'éviter ce genre d'implementation si il y a nécéssité d'accès important et récurrent aux données.
+**Implementation avec property()**
+
+L'implementation des décorateurs vu au dessus est inspiré de la primitive `property()` `(property(fget=None, fset=None, fdel=None, doc=None))`qui peut aussi permettre d'implémenter un accès aux données:
+
+```python
+class System(object):
+
+    def __init__(self, reactions=()):
+        """Initialize a new System object."""
+        self.__reactions = set(reactions)
+
+    def __get_reactions(self):
+        return self.__reactions
+
+    def __set_reactions(self, reactions=()):
+        self.__reactions = set(reactions)
+
+    reactions=property(__get_reactions, __set_reactions)
+
+reac1 = Reaction("1")
+reac2 = Reaction("1")
+syst = System((reac1, reac2))
+print(syst.reactions)
+syst.reactions = (reac1, Reaction("2"))
+print(syst.reactions)
+```
+
+Nous avons vu ici le mécanisme de decorateur et de property pour contrôler l'accès aux données. Attention, il est recommandé d'éviter ce genre d'implementation si il y a nécéssité d'accès important et récurrent aux données. 
 
 Si nous résumons cette partie, il faut garder à l'esprit que la notion d'encapsulation en python n'est pas aussi restrictive que dans d'autres langages comme Java par exemple. Elle est surtout utilisée pour vous aider à structurer votre code en choisissant d'exposer plus ou moins certaines parties du code. L'encapsulation se fait par convention de nommage et il est possible d'utiliser plusieurs mécanismes pour accéder aux données ou méthodes.
 
  
-## Attributs et methodes de classe
+## Attributs de Classe, methodes de Classe, méthodes statiques
 
-Attributs de Classe
+**Attributs de Classe**
 
-Méthodes de Classe
+Les attributs de classe sont des attributs liés au type de la classe et non à une instance de celle-ci. Reprenons notre classe `System` et rajoutons un attribut de classe qui va permettre de connaitre le nombre d'instance en cours de la classe. Celui se rajoute directement sous la déclaration de la class hors de la méthode d'initialisation. 
 
+```python
+class System(object):
+
+    nbSystems = 0
+
+    def __init__(self, reactions=()):
+        """Initialize a new System object."""
+        self.__reactions = set(reactions)
+        self.__class__.nbSystems += 1
+
+    def __del__(self):
+        self.__class__.nbSystems -= 1
+
+
+if __name__ == "__main__":
+
+    reac1 = Reaction()
+    reac2 = Reaction()
+    syst = System((reac1, reac2))
+    print(System.nbSystems)
+    syst = System([reac1])
+    print(System.nbSystems)
+    syst2 = System([reac1])
+    print(System.nbSystems)
+    del(syst)
+    print(System.nbSystems)
+
+1
+1
+2
+1
+```
+
+A chaque fois qu'un nouvel objet est initialisé, le compteur `nbSystems` est incrémenté de 1. De même si un objet est supprimé, le compteur décroit de 1. 
+
+
+**Méthodes de Classe - Méthodes statiques**
+
+Il est possible aussi d'avoir des méthodes sur des classes qui sont utilisables s'en avoir instancié un objet au préalable. Il y a les méthodes de classe, dont le rôle est en général de permettre l'instanciation d'objet différemment que par l'instanciation normale. Ces méthodes ont simplement besoin d'avoir en argument le type de la classe. Il exsite aussi les méthodes statiques, qui elles n'ont aucun pré-requis et peuvent directement appelées depuis le type de la classe. Elles sont souvent utilisées pour faire des classes dites utilitaires.
+
+Modifions notre classe System en créant une méthode de classe qui va nous permettre de pouvoir  
+
+```python
+class System(object):
+
+    nbSystems = 0
+
+    def __init__(self, reactions=()):
+        """Initialize a new System object."""
+        self.__reactions = set(reactions)
+        self.__class__.nbSystems += 1
+
+    def __del__(self):
+        self.__class__.nbSystems -= 1
+
+    @property
+    def reactions(self):
+        return self.__reactions
+
+    @reactions.setter
+    def reactions(self, reactions=()):
+        self.__reactions = set(reactions)
+
+    @classmethod
+    def merge_systems(cls,systems=[]):
+
+        lreactions = []
+        for sys in systems:
+            lreactions.extend(sys.reactions)
+
+        return cls(set(lreactions))
+
+
+if __name__ == "__main__":
+
+   syst = System(("reac1", "reac2"))
+   print(System.nbSystems)
+   print(syst.reactions)
+   syst2 = System(("reac1", "reac3"))
+   print(System.nbSystems)
+   print(syst2.reactions)
+   syst3 = System.merge_systems([syst,syst2])
+   print(System.nbSystems)
+   print(syst3.reactions)
+
+
+
+
+
+1
+set(['reac1', 'reac2'])
+2
+set(['reac1', 'reac3'])
+3
+set(['reac1', 'reac2', 'reac3'])
+```
 
 ## Polymorphisme
 
@@ -186,4 +309,5 @@ Méthodes de Classe
 [properties-decorateurs](https://www.python-course.eu/python3_properties.php)
 [decorateurs](http://gillesfabio.com/blog/2010/12/16/python-et-les-decorateurs/)
 [decorateurs](https://wiki.python.org/moin/PythonDecoratorLibrary)
+[decorateurs](https://realpython.com/primer-on-python-decorators/)
 </pre>
