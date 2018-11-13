@@ -250,7 +250,7 @@ A chaque fois qu&#39;un nouvel objet est initialisé, le compteur `nbSystems` es
 
 Il est possible aussi d&#39;avoir des méthodes sur des classes qui sont utilisables s&#39;en avoir instancié un objet au préalable. Il y a les méthodes de classe, dont le rôle est en général de permettre l&#39;instanciation d&#39;objet différemment que par l&#39;instanciation normale. Ces méthodes ont simplement besoin d&#39;avoir en argument le type de la classe. Il exsite aussi les méthodes statiques, qui elles n&#39;ont aucun pré-requis et peuvent directement appelées depuis le type de la classe. Elles sont souvent utilisées pour faire des classes dites utilitaires.
 
-Modifions notre classe System en créant une méthode de classe qui va nous permettre de pouvoir  
+Modifions notre classe System en créant une méthode de classe qui va nous permettre de générer un nouveau `System` en réunissant une liste de `System` passée en arguments. Simultanément, nous allons implémenter une méthode statique qui va nous permettre d&#39;avoir la somme des réactions présents dans une liste de `System`.  
 
 ```python
 class System(object):
@@ -282,6 +282,10 @@ class System(object):
 
         return cls(set(lreactions))
 
+    @staticmethod
+    def count_reactions(systems=[]):
+
+        return sum([len(syst.reactions) for syst in systems])
 
 if __name__ == "__main__":
 
@@ -294,9 +298,7 @@ if __name__ == "__main__":
    syst3 = System.merge_systems([syst,syst2])
    print(System.nbSystems)
    print(syst3.reactions)
-
-
-
+   print(System.count_reactions([syst,syst2,syst3]))
 
 
 1
@@ -305,6 +307,25 @@ set(['reac1', 'reac2'])
 set(['reac1', 'reac3'])
 3
 set(['reac1', 'reac2', 'reac3'])
+7
+```
+Pour info, il est possible de ne pas utiliser de decorator pour spécifier le type &quot;classmethod&quot; ou &quot;staticmethod&quot; en utilisant des primitives:
+
+```python
+    def merge_systems(cls,systems=[]):
+
+        lreactions = []
+        for sys in systems:
+            lreactions.extend(sys.reactions)
+
+        return cls(set(lreactions))
+    merge_systems = classmethod(merge_systems)
+
+    def count_reactions(systems=[]):
+
+        return sum([len(syst.reactions) for syst in systems])
+    count_reactions = staticmethod(count_reactions)
+
 ```
 #HSLIDE
 
