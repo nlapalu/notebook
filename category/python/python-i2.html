@@ -1,0 +1,187 @@
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Python - Nicolas Lapalu</title>
+		<link rel="stylesheet" href="../../assets/css/highlight.min.css">
+		<link rel="stylesheet" href="../../assets/css/bootstrap.min.css">
+		<link rel="stylesheet" href="../../assets/css/tipuesearch.css">
+		<link rel="stylesheet" href="../../assets/css/main.css">
+	</head>
+	<body>
+		<header class="navbar navbar-default navbar-fixed-top">
+			<div class="container-fluid">
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse-1">
+						<span class="sr-only">Toggle navigation</span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+					<a class="navbar-brand" href="../../">Nicolas Lapalu</a> <p class="navbar-text hidden-xs">Python</p>
+				</div>
+
+				<div class="collapse navbar-collapse" id="navbar-collapse-1">
+					<form action="../../search.html" class="navbar-form navbar-right" role="search">
+						<div class="form-group">
+							<input type="text" name="q" id="tipue_search_input" autocomplete="off" required class="form-control" placeholder="Search">
+						</div>
+					</form>
+					<ul class="nav navbar-nav navbar-right">
+						<li><a href="../../category/python/python-i2-slideshow.html" target="_blank">View as slideshow</a></li>
+						<!--li><a href="../../category/python/python-i2-raw.html">View Markdown</a></li-->
+					</ul>
+				</div>
+			</div>
+		</header>
+
+		<!--
+<div class="toc">
+<p class="lead">Table of contents:</p>
+<p class="toc-1">
+<a href="#suite-poo-python">Suite POO Python</a>
+</p>
+<p class="toc-2">
+<a href="#implementation-solution">Implementation - solution</a>
+</p>
+</div>
+-->
+
+		<div class="container">
+			<div class="row">
+				<nav id="sidebar" class="col-lg-2 col-sm-3">
+					<ul class="nav nav-pills nav-stacked">
+						<li role="presentation" class=""><a href="../../category/python/python-s1.html">Initiation POO Python</a></li>
+						<li role="presentation" class=""><a href="../../category/python/python-s2.html">POO Python suite</a></li>
+					</ul>
+					<!--
+Available versions:<br>
+raw<br>
+->category/python/python-i2-raw.html<br>
+slideshow<br>
+->category/python/python-i2-slideshow.html<br>
+default<br>
+->category/python/python-i2.html<br>
+<br>
+Document informations:<br>
+category/python/python-i2.md<br><br>
+active
+-->
+				</nav>
+				<header>
+					<div class="entry-meta text-right">
+
+					</div>
+				</header>
+				<article id="content" class="col-lg-10 col-sm-9">
+					<h1 id="suite-poo-python">Suite POO Python</h1>
+<h2 id="implementation-solution">Implementation - solution</h2>
+<p>Voici une proposition d&#39;implementation:</p>
+<pre><code class="lang-python">#!/usr/bin/env python3.7
+
+class AbstractFeature(object):
+
+    def __init__(self, seqid, start, end, id):
+
+        if self.__class__.__name__ == &quot;AbstractFeature&quot;:
+            raise Exception(&quot;Cannot instanciate AbstractFeature class, need to be sub-classed&quot;)
+        else:
+            self.seqid=seqid
+            self.start=start
+            self.end=end
+            self.id=id
+
+    def __str__(self):
+
+        return f&quot;{self.__class__.__name__}: {self.seqid}-{self.start}-{self.end}-{self.id}&quot;
+
+    def __len__(self):
+
+        return self.end-self.start+1
+
+    def __add__(self, other):
+
+        # prevent against Gene and Transcript add
+        if self.__class__ != other.__class__:
+            raise Exception(&quot;Cannot sum different AbstractFeature sub-classes&quot;)
+
+        return len(self) + len(other)
+
+    def __radd__(self, other):
+
+        return len(self)  + other
+
+
+class Gene(AbstractFeature):
+
+    def __init__(self, seqid, start, end, id):
+
+        self.transcripts = []
+        AbstractFeature.__init__(self,seqid, start, end, id)
+
+    def add_transcript(self, mRNA):
+
+        self.transcript.append(mRNA)
+
+
+class Transcript(AbstractFeature):
+
+     def __init__(self, seqid, start, end, id, gene_id):
+
+        self.gene_id = gene_id
+        AbstractFeature.__init__(self,seqid, start, end, id)
+
+
+class Stats(object):
+
+    @staticmethod
+    def mean(l):
+
+        return sum(l)/len(l)
+
+
+if __name__ == &quot;__main__&quot;:
+
+    gene1 = Gene(&quot;chr1&quot;, 1000, 2000, &quot;gene1&quot;)
+    mRNA1 = Transcript(&quot;chr1&quot;, 1000, 2000, &quot;mRNA1&quot;, &quot;gene1&quot;)
+    gene2 = Gene(&quot;chr1&quot;, 10000, 12000, &quot;gene2&quot;)
+    mRNA2 = Transcript(&quot;chr1&quot;, 10000, 12000, &quot;mRNA2&quot;, &quot;gene2&quot;)
+    mRNA3 = Transcript(&quot;chr1&quot;, 10000, 11400, &quot;mRNA3&quot;, &quot;gene2&quot;)
+
+    print(gene1+gene2)
+    print(sum((gene1,gene2)))
+    print(f&quot;Gene mean length: {Stats.mean([gene1,gene2])}&quot;)
+    print(f&quot;Transcript mean length: {Stats.mean([mRNA1,mRNA2,mRNA3])}&quot;)
+</code></pre>
+<p>Quelques explications:</p>
+<ul>
+<li>l&#39;implementation de <code>__add__</code> est suffisante quand nous sommons 2 objets du même type. Dans le cas de la fonction <code>sum()</code>, le premier type a sommé est un <code>int</code>, car la première addition est 0 + . Il faut donc implementer &quot;<strong>radd</strong>&quot;, pour pouvoir résoudre cette première addition.</li>
+<li>dans la méthode <code>__init__()</code> de la classe abstraite, nous implémentons un contôle de type de classe pour éviter l&#39;instanciation de la classe. Cette façon de faire est un peu manuelle, mais nous verrons plus tard qu&#39;il existe des modules dans Python à qui déléguer cette tâche.</li>
+<li>dans la méthode <code>__add__</code>, nous implémentons aussi un contrôle de class pour éviter de pouvoir additionner des sous-classes de type différents. </li>
+</ul>
+
+				</article>
+			</div>
+		</div>
+
+		<footer><a href="../../site-index.html">Pages index</a>
+</footer>
+
+		<script src="../../assets/js/jquery.js"></script>
+		<script src="../../assets/js/bootstrap.min.js"></script>
+		<script src="../../assets/js/highlight.min.js"></script>
+		<script src="../../assets/js/tipuesearch_set.js"></script>
+		<script src="../../assets/js/tipuesearch.min.js"></script>
+		<script>
+			$(function() {
+				hljs.initHighlightingOnLoad();
+				$('#tipue_search_input').tipuesearch({
+					mode: 'json',
+					contentLocation: '../../index.json'
+				});
+			});
+		</script>
+		
+		<!-- Generated by Vegetables from 'category/python/python-i2.md' with format 'default' - '2018-11-21 16:06:22' -->
+	</body>
+</html>

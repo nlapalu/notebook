@@ -51,10 +51,7 @@
 <a href="#attributs-de-classe-methodes-de-classe-m-thodes-statiques">Attributs de Classe, methodes de Classe, méthodes statiques</a>
 </p>
 <p class="toc-2">
-<a href="#polymorphisme">Polymorphisme</a>
-</p>
-<p class="toc-2">
-<a href="#h-ritage">Héritage</a>
+<a href="#h-ritage-polymorphisme-surchage-d-39-op-rateurs">Héritage, Polymorphisme, Surchage d&amp;#39;opérateurs</a>
 </p>
 <p class="toc-2">
 <a href="#abstraction-interfaces">Abstraction, Interfaces</a>
@@ -361,17 +358,184 @@ set([&#39;reac1&#39;, &#39;reac2&#39;, &#39;reac3&#39;])
     count_reactions = staticmethod(count_reactions)
 
 </code></pre>
-<h2 id="polymorphisme">Polymorphisme</h2>
-<h2 id="h-ritage">Héritage</h2>
+<h2 id="h-ritage-polymorphisme-surchage-d-op-rateurs">Héritage, Polymorphisme, Surchage d&#39;opérateurs</h2>
+<p>L&#39;héritage consiste à dériver des classes en sous-classes. Une sous-classe (classe fille) hérite alors de toutes les caractéristiques (attributs, méthodes) de la classe (classe mère). La classe fille peut en plus ajouter ses propres méthodes/attributs, ou même modifier des méthodes existantes, dans ce cas on parle de surcharge d&#39;opérateurs. La classe fille est une spécilisation de la classe mère.
+Pour exemple, prenons une partie du code de l&#39;outil web Galaxy et notamment l&#39;implémentation des types d&#39;exceptions:</p>
+<pre><code class="lang-Python">class MessageException(Exception):
+    &quot;&quot;&quot;Most generic Galaxy exception - indicates merely that some exceptional condition happened.&quot;&quot;&quot;
+    # status code to be set when used with API.
+    status_code = 400
+    # Error code information embedded into API json responses.
+    err_code = &quot;UNKNOWN&quot;
+
+    def __init__(self, err_msg=None, type=&quot;info&quot;, **extra_error_info):
+        self.err_msg = err_msg or self.err_code
+        self.type = type
+        self.extra_error_info = extra_error_info
+
+    def __str__(self):
+        return self.err_msg
+
+class DuplicatedSlugException(MessageException):
+    status_code = 400
+    err_code = &quot;USER_SLUG_DUPLICATE&quot;
+
+class DuplicatedIdentifierException(MessageException):
+    status_code = 400
+    err_code = &quot;USER_IDENTIFIER_DUPLICATE&quot;
+
+
+if __name__ == &quot;__main__&quot;:
+
+    print(MessageException())
+    print(MessageException(&quot;unknown&quot;))
+    print(DuplicatedSlugException())
+    print(DuplicatedSlugException(&quot;duplicate&quot;))
+</code></pre>
+<p>résultats:</p>
+<pre><code>UNKNOWN
+unknown
+USER_SLUG_DUPLICATE
+duplicate
+</code></pre><p>Dans le cas où un message est passé à l&#39;exception demandée, c&#39;est le message en argument qui est affiché. Sans message explicite, c&#39;est l&#39;<code>err_code</code> qui est retourné selon la classe. L&#39;affichage est réalisé grâce à l&#39;implémentation de la méthode <code>__str__</code> dans la classe mère <code>MessageException</code>.
+Nous allons maintenant réaliser une surcharge de la méthode <code>__str__</code> dans la classe <code>DuplicatedIdentifierException</code> afin de spécialiser son affichage.</p>
+<pre><code class="lang-Python">class MessageException(Exception):
+    &quot;&quot;&quot;Most generic Galaxy exception - indicates merely that some exceptional condition happened.&quot;&quot;&quot;
+    # status code to be set when used with API.
+    status_code = 400
+    # Error code information embedded into API json responses.
+    err_code = &quot;UNKNOWN&quot;
+
+    def __init__(self, err_msg=None, type=&quot;info&quot;, **extra_error_info):
+        self.err_msg = err_msg or self.err_code
+        self.type = type
+        self.extra_error_info = extra_error_info
+
+    def __str__(self):
+        return self.err_msg
+
+class DuplicatedSlugException(MessageException):
+    status_code = 400
+    err_code = &quot;USER_SLUG_DUPLICATE&quot;
+
+class DuplicatedIdentifierException(MessageException):
+    status_code = 400
+    err_code = &quot;USER_IDENTIFIER_DUPLICATE&quot;
+
+    def __str__(self):
+        return f&quot;my specialized method:{self.err_msg}&quot;
+
+
+if __name__ == &quot;__main__&quot;:
+
+    print(MessageException())
+    print(MessageException(&quot;unknown&quot;))
+    print(DuplicatedSlugException())
+    print(DuplicatedSlugException(&quot;duplicate&quot;))
+    print(DuplicatedIdentifierException(&quot;&quot;))
+    print(DuplicatedIdentifierException(&quot;duplicate&quot;))
+</code></pre>
+<p>résulats:</p>
+<pre><code class="lang-`">UNKNOWN
+unknown
+USER_SLUG_DUPLICATE
+duplicate
+my specialized method:USER_IDENTIFIER_DUPLICATE
+my specialized method:duplicate
+</code></pre>
+<p>En surchargeant notre methode, nous avons introduit un polymorphisme d&#39;héritage. La méthode <code>__str__</code> est devenue polymorphique, car elle propose une implémentation différente selon la classe de l&#39;objet.</p>
 <h2 id="abstraction-interfaces">Abstraction, Interfaces</h2>
+<p>Nous allons maintenant nous intéresser très brièvement au concept de classe abstraite et d&#39;interface. Pour cet atelier, ce paragraphe sera relativement court pour ne pas tout de suite introduire trop d&#39;élèment complexe du langage Python. En effet cette partie sera grandement plus couverte dans un prochain atelier avec des approches plus &quot;pythonesques&quot; via le module <code>abc</code>, les Abstract Base Class du module <code>collections</code> et les <code>metaclass</code>. Pour l&#39;instant concentrons nous sur une approche généraliste.
+De façon simple, une classe abstraite est une classe qui ne peut pas être instanciée, mais dont il faut absolument hériter pour en utiliser les méthodes. Par ailleurs, ses méthodes peuvent être implémenter ou non. Dans ce dernier cas, il est alors nécessaire de les surcharger dans les classes filles.</p>
+<p>Afin d&#39;illustrer ce concept, nous allons nous intéresser à la classe abstraite <code>AbstractCommandline</code> de la Biopython. Cette classe sert de base pour appeler un programme et l&#39;executer. Elle contient tout un ensemble de méthodes pour construire la ligne de commande à lancer, ainsi que lancer le programme demandé. Grâce à ce mécanisme, la création d&#39;un nouveau &quot;wrapper&quot; d&#39;outil est très simplifié. Dans ce cas précis, la seule contrainte demandé au classe filles est de définir la liste des paramètres nécéssaires à la construction de la ligne de commande. Voyons ça en détails:</p>
+<pre><code class="lang-python">class AbstractCommandline(object):
+    r&quot;&quot;&quot;Generic interface for constructing command line strings.
+
+    This class shouldn&#39;t be called directly; it should be subclassed to
+    provide an implementation for a specific application.
+...
+    parameters = None  # will be a list defined in subclasses
+
+    def __init__(self, cmd, **kwargs):
+        &quot;&quot;&quot;Create a new instance of a command line wrapper object.&quot;&quot;&quot;
+        # Init method - should be subclassed!
+        #
+        # The subclass methods should look like this:
+        #
+        # def __init__(self, cmd=&quot;muscle&quot;, **kwargs):
+        #     self.parameters = [...]
+        #     AbstractCommandline.__init__(self, cmd, **kwargs)
+        #
+
+        self.program_name = cmd
+        try:
+            parameters = self.parameters
+        except AttributeError:
+            raise AttributeError(&quot;Subclass should have defined self.parameters&quot;)
+        # Create properties for each parameter at run time
+        aliases = set()
+...
+</code></pre>
+<p>Utilisation de la classe abstraite pour générer une commande <code>samtools view</code>:</p>
+<pre><code class="lang-Python">class SamtoolsViewCommandline(AbstractCommandline):
+    &quot;&quot;&quot;Command line wrapper for samtools view.
+
+...
+    def __init__(self, cmd=&quot;samtools&quot;, **kwargs):
+        &quot;&quot;&quot;Initialize the class.&quot;&quot;&quot;
+        self.program_name = cmd
+        self.parameters = [
+            _StaticArgument(&quot;view&quot;),
+            _Switch([&quot;-b&quot;, &quot;b&quot;], &quot;Output in the BAM format&quot;),
+...
+            _Argument([&quot;region&quot;], &quot;Region&quot;, is_required=False),
+        ]
+        AbstractCommandline.__init__(self, cmd, **kwargs)
+</code></pre>
+<p>Modifions la classe abstraite de façon à ce qu&#39;elle impose aux classes filles l&#39;implementation d&#39;une méthode <code>dry_run</code>:</p>
+<pre><code class="lang-Python">class AbstractCommandline(object):
+    ...
+
+        def dry_run(self):
+            raise NotImplementedError(&#39;need to be implemented&#39;)
+</code></pre>
+<p>Ainsi, dans le cas où une classe fille souhaiterait appeler la méthode <code>dry_run</code>, si cette dernière n&#39;implemente pas sa propre méthode, une exception sera levée. </p>
 <h2 id="impl-mentation">Implémentation</h2>
+<p>L&#39;exercice consiste à se placer dans la situation de lecture d&#39;un fichier d&#39;annotation sur lequel on souhaite faire quelques statistiques basiques. Pour cela nous allons implémenter une classe Abstraite <code>AbstractFeature</code> qui servira de base à la création de 2 classes filles <code>Gene</code> et <code>Transcript</code>. Ces 2 sous-classes ont aussi une relation de composition, puisqu&#39;un gène peut avoir 1 ou plusieurs transcripts. En 
+parallèle, nous allons implémenter une classe &quot;utilitaire&quot; <code>Stats</code>, qui nous permettra de réaliser des statistiques simples sur nos Features. Pour vous aider voici la modélisation de UML de l&#39;implémentation attendue:</p>
+<p><img src="../../images/poo-suite.png" alt="Abstract"></p>
+<p>Implementez les 4 classes dans le même fichier et rajoutez le code suivant, à la suite des 4 classes.</p>
+<pre><code class="lang-python">if __name__ == &quot;__main__&quot;:
+
+    gene1 = Gene(&quot;chr1&quot;, 1000, 2000, &quot;gene1&quot;)
+    mRNA1 = Transcript(&quot;chr1&quot;, 1000, 2000, &quot;mRNA1&quot;, &quot;gene1&quot;)
+    gene2 = Gene(&quot;chr1&quot;, 10000, 12000, &quot;gene2&quot;)
+    mRNA2 = Transcript(&quot;chr1&quot;, 10000, 12000, &quot;mRNA2&quot;, &quot;gene2&quot;)
+    mRNA3 = Transcript(&quot;chr1&quot;, 10000, 11400, &quot;mRNA3&quot;, &quot;gene2&quot;)
+
+    print(gene1+gene2)
+    print(sum((gene1,gene2)))
+    print(f&quot;Gene mean length: {Stats.mean([gene1,gene2])}&quot;)
+    print(f&quot;Transcript mean length: {Stats.mean([mRNA1,mRNA2,mRNA3])}&quot;)
+</code></pre>
+<p>Executez le script, voici le résultat que vous devez obtenir:</p>
+<pre><code>3002
+3002
+Gene mean length: 1501.0
+Transcript mean length: 1467.6666666666667
+</code></pre><p>La solution est <a href="python-i2.html">ici</a></p>
 <h2 id="retour-sur-l-atelier">Retour sur l&#39;atelier</h2>
+<p>Nous avons rajouter de nouveaux éléments dans l&#39;utilisation de la POO en Python. </p>
+<p>Pour rappel, Python est un langage assez permissif et ne propose pas de typage fort. L&#39;implementation de certains concepts objets peut se faire à l&#39;encontre de la philosophie du langage, mais peut néanmoins être intéressant pour structurer son code et son programme. Dans un futur atelier nous aborderons des concepts très &quot;pythonesques&quot; que sont le duck-typing, les metaclasse et le module ABC.</p>
 <h2 id="r-f-rences">Références</h2>
-<p><a href="https://openclassrooms.com/fr/courses/4302126-decouvrez-la-programmation-orientee-objet-avec-python/4313211-comprenez-lencapsulation">encapsulation</a>
-<a href="https://www.python-course.eu/python3_properties.php">properties-decorateurs</a>
-<a href="http://gillesfabio.com/blog/2010/12/16/python-et-les-decorateurs/">decorateurs</a>
-<a href="https://wiki.python.org/moin/PythonDecoratorLibrary">decorateurs</a>
-<a href="https://realpython.com/primer-on-python-decorators/">decorateurs</a></p>
+<p>Quelques liens intéressants qui ont servi à faire cet atelier:</p>
+<ul>
+<li><a href="https://openclassrooms.com/fr/courses/4302126-decouvrez-la-programmation-orientee-objet-avec-python/4313211-comprenez-lencapsulation">encapsulation</a></li>
+<li><a href="https://www.python-course.eu/python3_properties.php">properties-decorateurs</a></li>
+<li><a href="http://gillesfabio.com/blog/2010/12/16/python-et-les-decorateurs/">decorateurs</a></li>
+<li><a href="https://wiki.python.org/moin/PythonDecoratorLibrary">decorateurs</a></li>
+<li><a href="https://realpython.com/primer-on-python-decorators/">decorateurs</a></li>
+</ul>
 
 				</article>
 			</div>
@@ -395,6 +559,6 @@ set([&#39;reac1&#39;, &#39;reac2&#39;, &#39;reac3&#39;])
 			});
 		</script>
 		
-		<!-- Generated by Vegetables from 'category/python/python-s2.md' with format 'default' - '2018-11-13 16:48:44' -->
+		<!-- Generated by Vegetables from 'category/python/python-s2.md' with format 'default' - '2018-11-21 16:06:22' -->
 	</body>
 </html>
