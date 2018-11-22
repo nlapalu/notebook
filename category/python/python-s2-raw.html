@@ -319,7 +319,7 @@ Pour info, il est possible de ne pas utiliser de decorator pour spécifier le ty
 L'héritage consiste à dériver des classes en sous-classes. Une sous-classe (classe fille) hérite alors de toutes les caractéristiques (attributs, méthodes) de la classe (classe mère). La classe fille peut en plus ajouter ses propres méthodes/attributs, ou même modifier des méthodes existantes, dans ce cas on parle de surcharge d'opérateurs. La classe fille est une spécilisation de la classe mère.
 Pour exemple, prenons une partie du code de l'outil web Galaxy et notamment l'implémentation des types d'exceptions:
 
-```Python
+```python
 class MessageException(Exception):
     """Most generic Galaxy exception - indicates merely that some exceptional condition happened."""
     # status code to be set when used with API.
@@ -423,6 +423,7 @@ class AbstractCommandline(object):
     This class shouldn't be called directly; it should be subclassed to
     provide an implementation for a specific application.
 ...
+    """
     parameters = None  # will be a list defined in subclasses
 
     def __init__(self, cmd, **kwargs):
@@ -465,7 +466,7 @@ class SamtoolsViewCommandline(AbstractCommandline):
 ```
 
 Modifions la classe abstraite de façon à ce qu'elle impose aux classes filles l'implementation d'une méthode `dry_run`:
-```Python
+```python
 class AbstractCommandline(object):
     ...
 
