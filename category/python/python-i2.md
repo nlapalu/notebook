@@ -84,6 +84,6 @@ if __name__ == "__main__":
 
 Quelques explications:
 
-* l'implementation de `__add__` est suffisante quand nous sommons 2 objets du même type. Dans le cas de la fonction `sum()`, le premier type a sommé est un `int`, car la première addition est 0 + . Il faut donc implementer "__radd__", pour pouvoir résoudre cette première addition.
+* l'implementation de `__add__` est suffisante quand nous sommons 2 objets du même type. Dans le cas de la fonction `sum()`, le premier type à sommer est un `int`, car la première addition est 0 + . Il faut donc implementer "__radd__", pour pouvoir résoudre cette première addition.
 * dans la méthode `__init__()` de la classe abstraite, nous implémentons un contôle de type de classe pour éviter l'instanciation de la classe. Cette façon de faire est un peu manuelle, mais nous verrons plus tard qu'il existe des modules dans Python à qui déléguer cette tâche.
 * dans la méthode `__add__`, nous implémentons aussi un contrôle de class pour éviter de pouvoir additionner des sous-classes de type différents. 
