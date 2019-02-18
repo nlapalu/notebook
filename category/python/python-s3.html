@@ -45,6 +45,9 @@
 <a href="#introduction">Introduction</a>
 </p>
 <p class="toc-2">
+<a href="#les-tests-qu-39-est-ce-que-c-39-est-">Les tests, qu&amp;#39;est ce que c&amp;#39;est ?</a>
+</p>
+<p class="toc-2">
 <a href="#les-diff-rents-modules-de-tests">Les différents modules de tests</a>
 </p>
 <p class="toc-2">
@@ -96,8 +99,204 @@ active
 					<h1 id="python-tester-son-code-pour-le-rendre-plus-fiable">Python tester son code pour le rendre plus fiable</h1>
 <h2 id="introduction">Introduction</h2>
 <p>Afin de rendre son code plus robuste et plus fiable, il est impératif de mettre en place un ensemble de tests permettant de valider le fonctionnement du code. Les tests sont les garant du résultat. Par ailleurs, pour qu&#39;un code soit facilement testable, il faut qu&#39;il soit modulable et atomique. Un code sera d&#39;autant plus facilement testable que l&#39;on pourra isoler de petites parties et controller spécifiquement l&#39;execution. Il y a énormément de choses à dire autour du test du codexi. Cet atelier permet d&#39;aborder les bases et de pouvoir mettre en place un jeu de test autour d&#39;un module. Pour aller plus loin, vous pouvez vous intéresser au TDD (Test Driven Development), dont la mentalité est le test avant tout. </p>
-<p>## </p>
-<h2 id="les-diff-rents-modules-de-tests">Les différents modules de tests</h2>
+<h2 id="les-tests-qu-est-ce-que-c-est-">Les tests, qu&#39;est ce que c&#39;est ?</h2>
+<p>Pour appréhender ce qu&#39;est un test, le plus simple est d&#39;aller faire un peu de revue de code sur notre package bioinfo préféré: la biopython. Si vous récupérez le code de la biopython ou que vous naviguez sur sa documentation (ici: <a href="https://github.com/biopython/biopython)">https://github.com/biopython/biopython)</a>, vous remarquerez qu&#39;il y a un dossier Tests. Ce dossier contient l&#39;ensemble des tests immplémentés pour les modules de la Biopython et comme nous le verrons plus loin en plus d&#39;aider au développement ils pourront être jouer lors de l&#39;installation du package. Les tests ont donc un intérêt lors du développement mais aussi pendant le déploiement du code.</p>
+<p>Regardons de plus près le fichier de test: <code>test_File.py</code></p>
+<pre><code class="lang-python">from __future__ import print_function
+
+import os.path
+import shutil
+import sys
+import tempfile
+import unittest
+
+from Bio import bgzf
+from Bio import File
+from Bio._py3k import StringIO
+
+data = &quot;&quot;&quot;This
+is
+a multi-line
+file&quot;&quot;&quot;
+
+
+class UndoHandleTests(unittest.TestCase):
+
+    def test_one(self):
+        h = File.UndoHandle(StringIO(data))
+        self.assertEqual(h.readline(), &quot;This\n&quot;)
+        self.assertEqual(h.peekline(), &quot;is\n&quot;)
+        self.assertEqual(h.readline(), &quot;is\n&quot;)
+        # TODO - Meaning of saveline lacking \n?
+        h.saveline(&quot;saved\n&quot;)
+        self.assertEqual(h.peekline(), &quot;saved\n&quot;)
+        h.saveline(&quot;another\n&quot;)
+        self.assertEqual(h.readline(), &quot;another\n&quot;)
+        self.assertEqual(h.readline(), &quot;saved\n&quot;)
+        # Test readlines after saveline
+        h.saveline(&quot;saved again\n&quot;)
+        lines = h.readlines()
+        self.assertEqual(len(lines), 3)
+        self.assertEqual(lines[0], &quot;saved again\n&quot;)
+        self.assertEqual(lines[1], &quot;a multi-line\n&quot;)
+        self.assertEqual(lines[2], &quot;file&quot;)  # no trailing \n
+        # should be empty now
+        self.assertEqual(h.readline(), &quot;&quot;)
+        h.saveline(&quot;save after empty\n&quot;)
+        self.assertEqual(h.readline(), &quot;save after empty\n&quot;)
+        self.assertEqual(h.readline(), &quot;&quot;)
+
+    def test_read(self):
+        &quot;&quot;&quot;Test read method&quot;&quot;&quot;
+        h = File.UndoHandle(StringIO(&quot;some text&quot;))
+        h.saveline(&quot;more text&quot;)
+        self.assertEqual(h.read(), &#39;more textsome text&#39;)
+
+    def test_undohandle_read_block(self):
+        for block in [1, 2, 10]:
+            s = StringIO(data)
+            h = File.UndoHandle(s)
+            h.peekline()
+            new = &quot;&quot;
+            while True:
+                tmp = h.read(block)
+                if not tmp:
+                    break
+                new += tmp
+            self.assertEqual(data, new)
+            h.close()
+
+
+class RandomAccess(unittest.TestCase):
+
+    def test_plain(self):
+        with File._open_for_random_access(&quot;Quality/example.fastq&quot;) as handle:
+            self.assertTrue(&quot;r&quot; in handle.mode)
+            self.assertTrue(&quot;b&quot; in handle.mode)
+
+    def test_bgzf(self):
+        with File._open_for_random_access(&quot;Quality/example.fastq.bgz&quot;) as handle:
+            self.assertIsInstance(handle, bgzf.BgzfReader)
+
+    def test_gzip(self):
+        self.assertRaises(ValueError,
+                          File._open_for_random_access,
+                          &quot;Quality/example.fastq.gz&quot;)
+
+
+class AsHandleTestCase(unittest.TestCase):
+
+    def setUp(self):
+        # Create a directory to work in
+        self.temp_dir = tempfile.mkdtemp(prefix=&#39;biopython-test&#39;)
+
+    def tearDown(self):
+        shutil.rmtree(self.temp_dir)
+
+    def _path(self, *args):
+        return os.path.join(self.temp_dir, *args)
+
+    def test_handle(self):
+        &quot;Test as_handle with a file-like object argument&quot;
+        p = self._path(&#39;test_file.fasta&#39;)
+        with open(p, &#39;wb&#39;) as fp:
+            with File.as_handle(fp) as handle:
+                self.assertEqual(fp, handle, &quot;as_handle should &quot;
+                                 &quot;return argument when given a &quot;
+                                 &quot;file-like object&quot;)
+                self.assertFalse(handle.closed)
+
+            self.assertFalse(handle.closed,
+                             &quot;Exiting as_handle given a file-like object &quot;
+                             &quot;should not close the file&quot;)
+
+    def test_string_path(self):
+        &quot;Test as_handle with a string path argument&quot;
+        p = self._path(&#39;test_file.fasta&#39;)
+        mode = &#39;wb&#39;
+        with File.as_handle(p, mode=mode) as handle:
+            self.assertEqual(p, handle.name)
+            self.assertEqual(mode, handle.mode)
+            self.assertFalse(handle.closed)
+        self.assertTrue(handle.closed)
+
+    @unittest.skipIf(
+        sys.version_info &lt; (3, 6),
+        &#39;Passing Path objects to File.as_handle requires Python &gt;= 3.6&#39;,
+    )
+    def test_path_object(self):
+        &quot;Test as_handle with a pathlib.Path object&quot;
+        from pathlib import Path
+        p = Path(self._path(&#39;test_file.fasta&#39;))
+        mode = &#39;wb&#39;
+        with File.as_handle(p, mode=mode) as handle:
+            self.assertEqual(str(p.absolute()), handle.name)
+            self.assertEqual(mode, handle.mode)
+            self.assertFalse(handle.closed)
+        self.assertTrue(handle.closed)
+
+    @unittest.skipIf(
+        sys.version_info &lt; (3, 6),
+        &#39;Passing path-like objects to File.as_handle requires Python &gt;= 3.6&#39;,
+    )
+    def test_custom_path_like_object(self):
+        &quot;Test as_handle with a custom path-like object&quot;
+        class CustomPathLike:
+            def __init__(self, path):
+                self.path = path
+
+            def __fspath__(self):
+                return self.path
+
+        p = CustomPathLike(self._path(&#39;test_file.fasta&#39;))
+        mode = &#39;wb&#39;
+        with File.as_handle(p, mode=mode) as handle:
+            self.assertEqual(p.path, handle.name)
+            self.assertEqual(mode, handle.mode)
+            self.assertFalse(handle.closed)
+        self.assertTrue(handle.closed)
+
+    def test_stringio(self):
+        s = StringIO()
+        with File.as_handle(s) as handle:
+            self.assertIs(s, handle)
+
+
+if __name__ == &quot;__main__&quot;:
+    runner = unittest.TextTestRunner(verbosity=2)
+    unittest.main(testRunner=runner)
+</code></pre>
+<p><code>python test_File.py</code></p>
+<pre><code>test_custom_path_like_object (__main__.AsHandleTestCase)
+Test as_handle with a custom path-like object ... skipped &#39;Passing path-like objects to File.as_handle requires Python &gt;= 3.6&#39;
+test_handle (__main__.AsHandleTestCase)
+Test as_handle with a file-like object argument ... ok
+test_path_object (__main__.AsHandleTestCase)
+Test as_handle with a pathlib.Path object ... skipped &#39;Passing Path objects to File.as_handle requires Python &gt;= 3.6&#39;
+test_string_path (__main__.AsHandleTestCase)
+Test as_handle with a string path argument ... ok
+test_stringio (__main__.AsHandleTestCase) ... ok
+test_bgzf (__main__.RandomAccess) ... ok
+test_gzip (__main__.RandomAccess) ... FAIL
+test_plain (__main__.RandomAccess) ... ok
+test_one (__main__.UndoHandleTests) ... ok
+test_read (__main__.UndoHandleTests)
+Test read method ... ok
+test_undohandle_read_block (__main__.UndoHandleTests) ... ok
+
+======================================================================
+FAIL: test_gzip (__main__.RandomAccess)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File &quot;test_File.py&quot;, line 85, in test_gzip
+    &quot;Quality/example.fastq.gz&quot;)
+AssertionError: ValueError not raised
+
+----------------------------------------------------------------------
+Ran 11 tests in 0.002s
+
+FAILED (failures=1, skipped=2)
+</code></pre><h2 id="les-diff-rents-modules-de-tests">Les différents modules de tests</h2>
 <h2 id="int-gration-dans-le-packaging-de-module">Intégration dans le packaging de module</h2>
 <h2 id="doctest-le-m-lange-de-la-documentation-et-du-test">Doctest: le mélange de la documentation et du test</h2>
 <h2 id="impl-mentation">Implémentation</h2>
@@ -129,6 +328,6 @@ active
 			});
 		</script>
 		
-		<!-- Generated by Vegetables from 'category/python/python-s3.md' with format 'default' - '2019-2-18 14:22:47' -->
+		<!-- Generated by Vegetables from 'category/python/python-s3.md' with format 'default' - '2019-2-18 16:01:55' -->
 	</body>
 </html>
