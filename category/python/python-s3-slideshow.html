@@ -73,7 +73,7 @@ class RandomAccess(unittest.TestCase):
                           File._open_for_random_access,
                           "Quality/example.fastq.gz")
 ```
-Le fichier de tests comporte plusieurs classes qui héritent toute de `unittest.TestCase`, classe `TestCase` du module de test `unittest`. Chaque classe implémente plusieurs méthodes commençant par *test_*, qui correspond plus ou moins à un test. Néanmoins chaque test peut comporté plusieurs valeurs testées. En héritant de `TestCase`, les classes créées vont bénéficier d&#39;un grand ensemble de méthodes de test. Par exemple, la première méthode `test_plain()` va éssayer 2 assertions. **Est ce que quand j&#39;ouvre le fichier fastq (de test) &quot;Quality/example.fastq&quot; via la méthode `_open_for_random_access()`, le fihier est en mode &#39;r&#39; et &#39;b&#39; ?** 
+Le fichier de tests comporte plusieurs classes qui héritent toute de `unittest.TestCase`, classe `TestCase` du module de test `unittest`. Chaque classe implémente plusieurs méthodes commençant par ***test***_, qui correspond plus ou moins à un test. Néanmoins chaque test peut comporté plusieurs valeurs testées. En héritant de `TestCase`, les classes créées vont bénéficier d&#39;un grand ensemble de méthodes de test. Par exemple, la première méthode `test_plain()` va éssayer 2 assertions. _**Quand j&#39;ouvre le fichier fastq (de test) &quot;Quality/example.fastq&quot; via la méthode `_open_for_random_access()`, est ce que le fihier est en mode &#39;r&#39; et &#39;b&#39; ?**_
 
 ```
 
