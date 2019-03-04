@@ -2,7 +2,7 @@
 	<head>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<title>Python, tester son code - Nicolas Lapalu</title>
+		<title>Python - Nicolas Lapalu</title>
 		<link rel="stylesheet" href="../../assets/css/highlight.min.css">
 		<link rel="stylesheet" href="../../assets/css/bootstrap.min.css">
 		<link rel="stylesheet" href="../../assets/css/tipuesearch.css">
@@ -18,7 +18,7 @@
 						<span class="icon-bar"></span>
 						<span class="icon-bar"></span>
 					</button>
-					<a class="navbar-brand" href="../../">Nicolas Lapalu</a> <p class="navbar-text hidden-xs">Python, tester son code</p>
+					<a class="navbar-brand" href="../../">Nicolas Lapalu</a> <p class="navbar-text hidden-xs">Python</p>
 				</div>
 
 				<div class="collapse navbar-collapse" id="navbar-collapse-1">
@@ -38,6 +38,9 @@
 		<!--
 <div class="toc">
 <p class="lead">Table of contents:</p>
+<p class="toc-2">
+<a href="#title-python-tester-son-code-">title: Python, tester son code </a>
+</p>
 <p class="toc-1">
 <a href="#python-tester-son-code-pour-le-rendre-plus-fiable">Python tester son code pour le rendre plus fiable</a>
 </p>
@@ -96,7 +99,9 @@ active
 					</div>
 				</header>
 				<article id="content" class="col-lg-10 col-sm-9">
-					<h1 id="python-tester-son-code-pour-le-rendre-plus-fiable">Python tester son code pour le rendre plus fiable</h1>
+					<p>--</p>
+<h2 id="title-python-tester-son-code-">title: Python, tester son code </h2>
+<h1 id="python-tester-son-code-pour-le-rendre-plus-fiable">Python tester son code pour le rendre plus fiable</h1>
 <h2 id="introduction">Introduction</h2>
 <p>Afin de rendre son code plus robuste et plus fiable, il est impératif de mettre en place un ensemble de tests permettant de valider le fonctionnement du code. Les tests sont les garant du résultat. Par ailleurs, pour qu&#39;un code soit facilement testable, il faut qu&#39;il soit modulable et atomique. Un code sera d&#39;autant plus facilement testable que l&#39;on pourra isoler de petites parties et controller spécifiquement l&#39;execution. Il y a énormément de choses à dire autour du test du codexi. Cet atelier permet d&#39;aborder les bases et de pouvoir mettre en place un jeu de test autour d&#39;un module. Pour aller plus loin, vous pouvez vous intéresser au TDD (Test Driven Development), dont la mentalité est le test avant tout. </p>
 <h2 id="les-tests-qu-est-ce-que-c-est-">Les tests, qu&#39;est ce que c&#39;est ?</h2>
@@ -255,12 +260,128 @@ FAILED (failures=1, skipped=2)
 </code></pre><h2 id="les-diff-rents-modules-de-tests">Les différents modules de tests</h2>
 <h2 id="int-gration-dans-le-packaging-de-module">Intégration dans le packaging de module</h2>
 <h2 id="doctest-le-m-lange-de-la-documentation-et-du-test">Doctest: le mélange de la documentation et du test</h2>
+<p>Une autre façon de faire des tests est l&#39;utilisation du module doctest de python. Le but principal de doctest est de pouvoir trsè facilement intégrer des cas de tests du code au plus près de l&#39;implémentation. Cela limite le nombre de fichier crée en revanche cela peut aussi alourdir le code et rendre moins lisible la partie &#39;vrai code&#39; de votre fichier. L&#39;utilisation de doctest n&#39;est pas incompatible avec d&#39;autre type de module, c&#39;est simplement une philosphie différente. 
+Le fonctionnement de cas de test imbriqué au milieu du code, se fait par la recherche de <code>&gt;&gt;&gt;</code> au milieu de comentaires. Les tests peuvent ensuite être joués de différentes manières.
+Comme toujours, une revue de code est bien plus efficace que de longue explications. Intéressons nous donc au module Bio.SeqRecord de la biopython.</p>
+<pre><code>python3.7 -m Bio.Seq
+Running doctests...
+/home/nlapalu/Workspace/Github/biopython/Bio/Seq.py:441: BiopythonDeprecationWarning: This method is obsolete; please use str(my_seq) instead of my_seq.tostring().
+  BiopythonDeprecationWarning)
+/home/nlapalu/Workspace/Github/biopython/Bio/Seq.py:2626: BiopythonWarning: This table contains 2 codon(s) which code(s) for both STOP and an amino acid (e.g. &#39;TGA&#39; -&gt; &#39;W&#39; or STOP). Such codons will be translated as amino acid.
+  BiopythonWarning)
+Done
+</code></pre><p>Pour avoir plus d&#39;info, il faut demander le mode verbose</p>
+<pre><code>python3.7 -m Bio.Seq -v 
+/home/nlapalu/Workspace/Github/biopython/Bio/Seq.py:441: BiopythonDeprecationWarning: This method is obsolete; please use str(my_seq) instead of my_seq.tostring().
+  BiopythonDeprecationWarning)
+Running doctests...
+Trying:
+    from Bio.Seq import MutableSeq
+Expecting nothing
+ok
+Trying:
+    from Bio.Alphabet import generic_dna
+Expecting nothing
+ok
+Trying:
+    my_seq = MutableSeq(&quot;ACTCGTCGTCG&quot;, generic_dna)
+Expecting nothing
+ok
+Trying:
+    my_seq
+Expecting:
+    MutableSeq(&#39;ACTCGTCGTCG&#39;, DNAAlphabet())
+ok
+
+...
+
+   6 tests in __main__.UnknownSeq.transcribe
+  10 tests in __main__.UnknownSeq.translate
+  10 tests in __main__.UnknownSeq.ungap
+   7 tests in __main__.UnknownSeq.upper
+  10 tests in __main__._translate_str
+   1 tests in __main__.back_transcribe
+   1 tests in __main__.complement
+   1 tests in __main__.reverse_complement
+   1 tests in __main__.transcribe
+  15 tests in __main__.translate
+449 tests in 103 items.
+449 passed and 0 failed.
+Test passed.
+Done
+</code></pre><p>Un des problème de doctest est sa sensibilité au retour du test. En effet, ce qui est vraiement testé est une chaine de caractères. Il suffit donc d&#39;un léger écart dans la chaîne de retour pour que le test soit faux. Si vous souhiatez donc utiliser <code>doctest</code> il faut essayer de faire des tests qui limiteront ces possibles problèmes.</p>
 <h2 id="impl-mentation">Implémentation</h2>
-<p>Nous allons utiliser l&#39;implémentation réalisée dans l&#39;atelier X en </p>
+<p>Nous allons utiliser l&#39;implémentation de la class <code>System</code> réalisée dans l&#39;atelier <a href="/category/python/python-s2.html">POO Python suite</a> pour mettre en place une série de tests. Afin de couvrir les notions vues dans l&#39;atelier, nous allons à la fois implémenter des tests unitaires avec Unittest et doctest. Pour rappel, voici l&#39;implémentation de la class <code>System</code>: </p>
+<pre><code class="lang-python">class System(object):
+
+    nbSystems = 0
+
+    def __init__(self, reactions=()):
+        &quot;&quot;&quot;Initialize a new System object.&quot;&quot;&quot;
+        self.__reactions = set(reactions)
+        self.__class__.nbSystems += 1
+
+    def __del__(self):
+        self.__class__.nbSystems -= 1
+
+    @property
+    def reactions(self):
+        return self.__reactions
+
+    @reactions.setter
+    def reactions(self, reactions=()):
+        self.__reactions = set(reactions)
+
+    @classmethod
+    def merge_systems(cls,systems=[]):
+
+        lreactions = []
+        for sys in systems:
+            lreactions.extend(sys.reactions)
+
+        return cls(set(lreactions))
+
+    @staticmethod
+    def count_reactions(systems=[]):
+
+        return sum([len(syst.reactions) for syst in systems])
+
+if __name__ == &quot;__main__&quot;:
+
+   syst = System((&quot;reac1&quot;, &quot;reac2&quot;))
+   print(System.nbSystems)
+   print(syst.reactions)
+   syst2 = System((&quot;reac1&quot;, &quot;reac3&quot;))
+   print(System.nbSystems)
+   print(syst2.reactions)
+   syst3 = System.merge_systems([syst,syst2])
+   print(System.nbSystems)
+   print(syst3.reactions)
+   print(System.count_reactions([syst,syst2,syst3]))
+
+
+1
+set([&#39;reac1&#39;, &#39;reac2&#39;])
+2
+set([&#39;reac1&#39;, &#39;reac3&#39;])
+3
+set([&#39;reac1&#39;, &#39;reac2&#39;, &#39;reac3&#39;])
+7
+</code></pre>
+<p>Tout d&#39;abord, vous allez implementer une classe de test <code>TestSystem</code> qui héritera de <code>unittest.TestCase</code>. Cette classe implémentera 2 méthodes qui vous permettront de tester <code>merge_systems()</code> et <code>count_reactions()</code> de la classe <code>System</code>. Point important, il vous sera nécessaire de modifier l&#39;implémentation de la classe <code>System</code> pour pouvoir tester l&#39;égalité de 2 instances de <code>System</code>. Pour cela souvenez vous (<a href="">atelier 1: POO</a>) des méthodes dunder qui permettent de comparer des objets et des instances d&#39;objets. </p>
+<p>La solution est <a href="python-i3.html">ici</a></p>
 <h2 id="retour-sur-l-atelier">Retour sur l&#39;atelier</h2>
 <p>Nous avons aborder </p>
 <p>Pour compléter cet atelier sur les tests, nous aurions pu aussi aborder la notion de couverture de code. Cette métrique suplémentaire permet de vérifier que l&#39;ensemble du code écrit est utilisé dans au moins un cas et que chacun de ces cas est vérifé par un ou des tests.</p>
 <h2 id="r-f-rences">Références</h2>
+<ul>
+<li><a href="https://docs.python.org/3.7/library/doctest.html">doc officielle - doctest</a></li>
+<li><a href="http://sametmax.com/un-gros-guide-bien-gras-sur-les-tests-unitaires-en-python-partie-4/">test-unitaires</a></li>
+<li><p><a href="https://www.python-course.eu/python3_tests.php">test tous les aspects</a></p>
+</li>
+<li><p><a href="https://openclassrooms.com/fr/courses/235344-apprenez-a-programmer-en-python/2235416-creez-des-tests-unitaires-avec-unittest">test</a></p>
+</li>
+</ul>
 
 				</article>
 			</div>
@@ -284,6 +405,6 @@ FAILED (failures=1, skipped=2)
 			});
 		</script>
 		
-		<!-- Generated by Vegetables from 'category/python/python-s3.md' with format 'default' - '2019-2-18 16:41:22' -->
+		<!-- Generated by Vegetables from 'category/python/python-s3.md' with format 'default' - '2019-3-4 17:05:45' -->
 	</body>
 </html>

@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-	<title>Python, tester son code</title>
+	<title>Python</title>
 	<link rel="stylesheet" href="../../assets/css/reveal/reveal.css">
 	<link rel="stylesheet" href="../../assets/css/reveal/theme/white.css">
 	<link rel="stylesheet" href="../../assets/css/highlight-hybrid.css">
@@ -21,7 +21,12 @@
 			data-separator-notes="^Presentation note:"
 			data-charset="utf-8">
 			<script type="text/template">
-				#HSLIDE
+				--
+
+#HSLIDE
+
+## title: Python, tester son code 
+#HSLIDE
 
 # Python tester son code pour le rendre plus fiable
 #HSLIDE
@@ -203,10 +208,128 @@ FAILED (failures=1, skipped=2)
 #HSLIDE
 
 ## Doctest: le mélange de la documentation et du test
+Une autre façon de faire des tests est l&#39;utilisation du module doctest de python. Le but principal de doctest est de pouvoir trsè facilement intégrer des cas de tests du code au plus près de l&#39;implémentation. Cela limite le nombre de fichier crée en revanche cela peut aussi alourdir le code et rendre moins lisible la partie &#39;vrai code&#39; de votre fichier. L&#39;utilisation de doctest n&#39;est pas incompatible avec d&#39;autre type de module, c&#39;est simplement une philosphie différente. 
+Le fonctionnement de cas de test imbriqué au milieu du code, se fait par la recherche de `&gt;&gt;&gt;` au milieu de comentaires. Les tests peuvent ensuite être joués de différentes manières.
+Comme toujours, une revue de code est bien plus efficace que de longue explications. Intéressons nous donc au module Bio.SeqRecord de la biopython.
+
+```
+python3.7 -m Bio.Seq
+Running doctests...
+/home/nlapalu/Workspace/Github/biopython/Bio/Seq.py:441: BiopythonDeprecationWarning: This method is obsolete; please use str(my_seq) instead of my_seq.tostring().
+  BiopythonDeprecationWarning)
+/home/nlapalu/Workspace/Github/biopython/Bio/Seq.py:2626: BiopythonWarning: This table contains 2 codon(s) which code(s) for both STOP and an amino acid (e.g. 'TGA' -> 'W' or STOP). Such codons will be translated as amino acid.
+  BiopythonWarning)
+Done
+```
+Pour avoir plus d&#39;info, il faut demander le mode verbose
+
+```
+python3.7 -m Bio.Seq -v 
+/home/nlapalu/Workspace/Github/biopython/Bio/Seq.py:441: BiopythonDeprecationWarning: This method is obsolete; please use str(my_seq) instead of my_seq.tostring().
+  BiopythonDeprecationWarning)
+Running doctests...
+Trying:
+    from Bio.Seq import MutableSeq
+Expecting nothing
+ok
+Trying:
+    from Bio.Alphabet import generic_dna
+Expecting nothing
+ok
+Trying:
+    my_seq = MutableSeq("ACTCGTCGTCG", generic_dna)
+Expecting nothing
+ok
+Trying:
+    my_seq
+Expecting:
+    MutableSeq('ACTCGTCGTCG', DNAAlphabet())
+ok
+
+...
+
+   6 tests in __main__.UnknownSeq.transcribe
+  10 tests in __main__.UnknownSeq.translate
+  10 tests in __main__.UnknownSeq.ungap
+   7 tests in __main__.UnknownSeq.upper
+  10 tests in __main__._translate_str
+   1 tests in __main__.back_transcribe
+   1 tests in __main__.complement
+   1 tests in __main__.reverse_complement
+   1 tests in __main__.transcribe
+  15 tests in __main__.translate
+449 tests in 103 items.
+449 passed and 0 failed.
+Test passed.
+Done
+```
+Un des problème de doctest est sa sensibilité au retour du test. En effet, ce qui est vraiement testé est une chaine de caractères. Il suffit donc d&#39;un léger écart dans la chaîne de retour pour que le test soit faux. Si vous souhiatez donc utiliser `doctest` il faut essayer de faire des tests qui limiteront ces possibles problèmes.
+
 #HSLIDE
 
 ## Implémentation
-Nous allons utiliser l&#39;implémentation réalisée dans l&#39;atelier X en 
+Nous allons utiliser l&#39;implémentation de la class `System` réalisée dans l&#39;atelier [POO Python suite](/category/python/python-s2.html) pour mettre en place une série de tests. Afin de couvrir les notions vues dans l&#39;atelier, nous allons à la fois implémenter des tests unitaires avec Unittest et doctest. Pour rappel, voici l&#39;implémentation de la class `System`: 
+
+```python
+class System(object):
+
+    nbSystems = 0
+
+    def __init__(self, reactions=()):
+        """Initialize a new System object."""
+        self.__reactions = set(reactions)
+        self.__class__.nbSystems += 1
+
+    def __del__(self):
+        self.__class__.nbSystems -= 1
+
+    @property
+    def reactions(self):
+        return self.__reactions
+
+    @reactions.setter
+    def reactions(self, reactions=()):
+        self.__reactions = set(reactions)
+
+    @classmethod
+    def merge_systems(cls,systems=[]):
+
+        lreactions = []
+        for sys in systems:
+            lreactions.extend(sys.reactions)
+
+        return cls(set(lreactions))
+
+    @staticmethod
+    def count_reactions(systems=[]):
+
+        return sum([len(syst.reactions) for syst in systems])
+
+if __name__ == "__main__":
+
+   syst = System(("reac1", "reac2"))
+   print(System.nbSystems)
+   print(syst.reactions)
+   syst2 = System(("reac1", "reac3"))
+   print(System.nbSystems)
+   print(syst2.reactions)
+   syst3 = System.merge_systems([syst,syst2])
+   print(System.nbSystems)
+   print(syst3.reactions)
+   print(System.count_reactions([syst,syst2,syst3]))
+
+
+1
+set(['reac1', 'reac2'])
+2
+set(['reac1', 'reac3'])
+3
+set(['reac1', 'reac2', 'reac3'])
+7
+```
+Tout d&#39;abord, vous allez implementer une classe de test `TestSystem` qui héritera de `unittest.TestCase`. Cette classe implémentera 2 méthodes qui vous permettront de tester `merge_systems()` et `count_reactions()` de la classe `System`. Point important, il vous sera nécessaire de modifier l&#39;implémentation de la classe `System` pour pouvoir tester l&#39;égalité de 2 instances de `System`. Pour cela souvenez vous ([atelier 1: POO]()) des méthodes dunder qui permettent de comparer des objets et des instances d&#39;objets. 
+
+La solution est [ici](python-i3.html)
 
 #HSLIDE
 
@@ -218,6 +341,12 @@ Pour compléter cet atelier sur les tests, nous aurions pu aussi aborder la noti
 #HSLIDE
 
 ## Références
+
+- [doc officielle - doctest](https://docs.python.org/3.7/library/doctest.html)
+- [test-unitaires](http://sametmax.com/un-gros-guide-bien-gras-sur-les-tests-unitaires-en-python-partie-4/)
+- [test tous les aspects](https://www.python-course.eu/python3_tests.php)
+- [test](https://openclassrooms.com/fr/courses/235344-apprenez-a-programmer-en-python/2235416-creez-des-tests-unitaires-avec-unittest)
+
 
 			</script>
 		</section>

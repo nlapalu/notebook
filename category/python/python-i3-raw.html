@@ -1,0 +1,66 @@
+<pre># Python tester son code pour le rendre plus fiable
+
+## Implementation - solution
+
+Voici une proposition d'implémentation
+
+
+```python
+#!/usr/bin/env python3.7
+
+```
+
+Implementation du test `unittest` dans le script `test_System.py`:
+
+```python
+#!/usr/bin/env python3
+
+import unittest
+
+from Sys import System
+
+class TestSystem(unittest.TestCase):
+
+    def setUp(self):
+
+#        print("Initializing data for tests")
+        self.sys1 =  System(("reac1","reac2"))
+        self.sys2 =  System(("reac1","reac3"))
+
+    def tearDown(self):
+
+#        print("tests finished")
+        pass
+
+    def test_merge_systems(self):
+
+        expected_sys_merged = System(("reac1","reac2","reac3"))
+        get_sys_merged = System.merge_systems([self.sys1, self.sys2])
+        self.assertEqual(expected_sys_merged,get_sys_merged)
+
+    def test_count_reactions(self):
+
+        self.assertEqual(2,System.count_reactions([self.sys1]))
+        self.assertEqual(4,System.count_reactions([self.sys1, self.sys2]))
+
+
+if __name__ == "__main__":
+    suite = unittest.TestLoader().loadTestsFromTestCase(TestSystem)
+    unittest.TextTestRunner(verbosity=2).run(suite)
+```
+
+Il suffit de lancer l'execution du script de test:
+
+```
+./test_System.py
+
+test_count_reactions (__main__.TestSystem) ... ok
+test_merge_systems (__main__.TestSystem) ... ok
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.000s
+
+OK
+
+```
+</pre>
