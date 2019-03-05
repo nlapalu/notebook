@@ -52,11 +52,12 @@ class RandomAccess(unittest.TestCase):
                           "Quality/example.fastq.gz")
 ```
 
-Le fichier de tests comporte plusieurs classes qui héritent toute de `unittest.TestCase`, classe `TestCase` du module de test `unittest`. Chaque classe implémente plusieurs méthodes commençant par *test_*, qui correspond plus ou moins à un test. Néanmoins chaque test peut comporté plusieurs valeurs testées. En héritant de `TestCase`, les classes créées vont bénéficier d'un grand ensemble de méthodes de test. Par exemple, la première méthode `test_plain()` va éssayer 2 assertions. **Est ce que quand j'ouvre le fichier fastq (de test) "Quality/example.fastq" via la méthode `_open_for_random_access()`, le fihier est en mode 'r' et 'b' ?** 
+Le fichier de tests comporte plusieurs classes qui héritent toute de `unittest.TestCase`, classe `TestCase` du module de test `unittest`. Chaque classe implémente plusieurs méthodes commençant par **_test_**, qui correspond plus ou moins à un test. Néanmoins chaque test peut comporter plusieurs valeurs testées. En héritant de `TestCase`, les classes créées vont bénéficier d'un grand ensemble de méthodes de test. Par exemple, la première méthode `test_plain()` va éssayer 2 assertions. **_Quand j'ouvre le fichier fastq (de test) "Quality/example.fastq" via la méthode `_open_for_random_access()`, est ce que le fichier est en mode 'r' et 'b' ?_**
 
 
-```
+Regardons maintenant la classe de test suivante. 
 
+```python
 class AsHandleTestCase(unittest.TestCase):
 
     def setUp(self):
@@ -140,7 +141,11 @@ if __name__ == "__main__":
     unittest.main(testRunner=runner)
 ```
 
+Plusieurs choses intéressantes sont à noter. L'héritage de `TestCase` vous donne la possibilité de surcharger les méthodes `setUp()` et `tearDown()` qui seront utilisées respectivement avant les tests et après les tests. Vous pouvez donc via ces méthodes, configurer plus facilement votre environnement de test en spécifiant des atributs partagés. 
 
+Nous pouvons voir aussi que certaines méthodes comportent des décorateurs (`@unittest.skipIf`). Plusieurs décorateurs existent permettant pas exemple de ne pas executer le test, ce qui est utile en phase de développement ou de résolution de bugs, ou encore de spéficier des contraintes pour son execution (module necessaire, version de Python, ...).
+
+Il existe donc un grand nombre de méthodes d'assertion ou de control d'execution des tests. Afin de ne pas reprendre l'ensemble des possibilités ici, le plus simple est d'explorer la documentation de [unittest](https://docs.python.org/3/library/unittest.html). 
 
 Exécutons maintenant les tests. Grâce au `__main__` implémenté dans le fichier nous pouvons lancer la suite de tests:
 
@@ -178,15 +183,185 @@ Ran 11 tests in 0.002s
 FAILED (failures=1, skipped=2)
 ```
 
+Nous pouvons voir que les tests se sont executés les uns après les autres dans l'orde alphabétique. Un test a échoué, le détail apparaît alors en fin de la suite de test. 
+
+## Doctest: le mélange de la documentation et du test
+
+Une autre façon de faire des tests est l'utilisation du module `doctest` de python. Le but principal de `doctest` est de pouvoir très facilement intégrer des cas de tests du code au plus près de l'implémentation. Cela limite le nombre de fichier crée en revanche cela peut aussi alourdir le code et rendre moins lisible la partie 'vrai code' de votre fichier. L'utilisation de doctest n'est pas incompatible avec d'autre type de module, c'est simplement une philosphie différente. 
+Le fonctionnement de cas de test imbriqué au milieu du code, se fait par la recherche de `>>>` au milieu de commentaires. Les tests peuvent ensuite être joués de différentes manières. Pour bien comprendre le lancement des tests via `doctest`, il faut s'imaginer l'ouverture d'un shell Python dans lequel vous lancez des commandes. Chaque retour de vos commandes peut être ensuite testé.
+Comme toujours, une revue de code est bien plus efficace que de longues explications. Intéressons nous donc au module [Bio.Seq](https://github.com/biopython/biopython/blob/master/Bio/Seq.py) de la biopython. Voici un extrait de sa méthode `__init()__`:
+
+```python
+def __init__(self, data, alphabet=Alphabet.generic_alphabet):
+    """Create a Seq object.
+    Arguments:
+    - seq - Sequence, required (string)
+    - alphabet - Optional argument, an Alphabet object from
+    Bio.Alphabet
+    You will typically use Bio.SeqIO to read in sequences from files as
+    SeqRecord objects, whose sequence will be exposed as a Seq object via
+    the seq property.
+    However, will often want to create your own Seq objects directly:
+    >>> from Bio.Seq import Seq
+    >>> from Bio.Alphabet import IUPAC
+    >>> my_seq = Seq("MKQHKAMIVALIVICITAVVAALVTRKDLCEVHIRTGQTEVAVF",
+    ...              IUPAC.protein)
+    >>> my_seq
+    Seq('MKQHKAMIVALIVICITAVVAALVTRKDLCEVHIRTGQTEVAVF', IUPACProtein())
+    >>> print(my_seq)
+    MKQHKAMIVALIVICITAVVAALVTRKDLCEVHIRTGQTEVAVF
+    >>> my_seq.alphabet
+    IUPACProtein()
+    """
+    # Enforce string storage
+    if not isinstance(data, basestring):
+        raise TypeError("The sequence data given to a Seq object should "
+                        "be a string (not another Seq object etc)")
+    self._data = data
+    self.alphabet = alphabet # Seq API requirement
+```
+On peut voir que 3 tests ont été implémentés. Le premier qui test le retour de `my_seq`, le second de `print(my_seq)` et enfin `my_seq.alphabet`. Maintenant, si nous regardons la fin du fichier, le `__main__` de l'objet a été implémenté avec:
+
+```python 
+def _test():
+    """Run the Bio.Seq module's doctests (PRIVATE)."""
+    print("Running doctests...")
+    import doctest
+    doctest.testmod(optionflags=doctest.IGNORE_EXCEPTION_DETAIL)
+    print("Done")
+
+if __name__ == "__main__":
+_test()
+
+``` 
+Ainsi, l'objet (module) peut-être directement utilisé comme un script si il est appelé directement (via `__main__`). Dans ce cas, il y aura execution des tests `doctest` via la méthode `doctest.testmod()`. C'est ce que nous faisons si dessous:
+
+
+```
+python3.7 -m Bio.Seq
+Running doctests...
+/home/nlapalu/Workspace/Github/biopython/Bio/Seq.py:441: BiopythonDeprecationWarning: This method is obsolete; please use str(my_seq) instead of my_seq.tostring().
+  BiopythonDeprecationWarning)
+/home/nlapalu/Workspace/Github/biopython/Bio/Seq.py:2626: BiopythonWarning: This table contains 2 codon(s) which code(s) for both STOP and an amino acid (e.g. 'TGA' -> 'W' or STOP). Such codons will be translated as amino acid.
+  BiopythonWarning)
+Done
+```
+Pour avoir plus d'info, il faut demander le mode verbose
+
+```
+python3.7 -m Bio.Seq -v 
+/home/nlapalu/Workspace/Github/biopython/Bio/Seq.py:441: BiopythonDeprecationWarning: This method is obsolete; please use str(my_seq) instead of my_seq.tostring().
+  BiopythonDeprecationWarning)
+Running doctests...
+Trying:
+    from Bio.Seq import MutableSeq
+Expecting nothing
+ok
+Trying:
+    from Bio.Alphabet import generic_dna
+Expecting nothing
+ok
+Trying:
+    my_seq = MutableSeq("ACTCGTCGTCG", generic_dna)
+Expecting nothing
+ok
+Trying:
+    my_seq
+Expecting:
+    MutableSeq('ACTCGTCGTCG', DNAAlphabet())
+ok
+
+...
+
+   6 tests in __main__.UnknownSeq.transcribe
+  10 tests in __main__.UnknownSeq.translate
+  10 tests in __main__.UnknownSeq.ungap
+   7 tests in __main__.UnknownSeq.upper
+  10 tests in __main__._translate_str
+   1 tests in __main__.back_transcribe
+   1 tests in __main__.complement
+   1 tests in __main__.reverse_complement
+   1 tests in __main__.transcribe
+  15 tests in __main__.translate
+449 tests in 103 items.
+449 passed and 0 failed.
+Test passed.
+Done
+```
+
+Un des problème de doctest est sa sensibilité au retour du test. En effet, ce qui est vraiement testé est une chaine de caractères. Il suffit donc d'un léger écart dans la chaîne de retour pour que le test soit faux. Si vous souhiatez donc utiliser `doctest` il faut essayer de faire des tests qui limiteront ces possibles problèmes.
+
 ## Les différents modules de tests
 
 ## Intégration dans le packaging de module
 
-## Doctest: le mélange de la documentation et du test
+
 
 ## Implémentation
 
-Nous allons utiliser l'implémentation réalisée dans l'atelier X en 
+Nous allons utiliser l'implémentation de la class `System` réalisée dans l'atelier [POO Python suite](/category/python/python-s2.html) pour mettre en place une série de tests. Afin de couvrir les notions vues dans l'atelier, nous allons à la fois implémenter des tests unitaires avec Unittest et doctest. Pour rappel, voici l'implémentation de la class `System`: 
+
+```python
+class System(object):
+
+    nbSystems = 0
+
+    def __init__(self, reactions=()):
+        """Initialize a new System object."""
+        self.__reactions = set(reactions)
+        self.__class__.nbSystems += 1
+
+    def __del__(self):
+        self.__class__.nbSystems -= 1
+
+    @property
+    def reactions(self):
+        return self.__reactions
+
+    @reactions.setter
+    def reactions(self, reactions=()):
+        self.__reactions = set(reactions)
+
+    @classmethod
+    def merge_systems(cls,systems=[]):
+
+        lreactions = []
+        for sys in systems:
+            lreactions.extend(sys.reactions)
+
+        return cls(set(lreactions))
+
+    @staticmethod
+    def count_reactions(systems=[]):
+
+        return sum([len(syst.reactions) for syst in systems])
+
+if __name__ == "__main__":
+
+   syst = System(("reac1", "reac2"))
+   print(System.nbSystems)
+   print(syst.reactions)
+   syst2 = System(("reac1", "reac3"))
+   print(System.nbSystems)
+   print(syst2.reactions)
+   syst3 = System.merge_systems([syst,syst2])
+   print(System.nbSystems)
+   print(syst3.reactions)
+   print(System.count_reactions([syst,syst2,syst3]))
+
+
+1
+set(['reac1', 'reac2'])
+2
+set(['reac1', 'reac3'])
+3
+set(['reac1', 'reac2', 'reac3'])
+7
+```
+
+Tout d'abord, vous allez implementer une classe de test `TestSystem` qui héritera de `unittest.TestCase`. Cette classe implémentera 2 méthodes qui vous permettront de tester `merge_systems()` et `count_reactions()` de la classe `System`. Point important, il vous sera nécessaire de modifier l'implémentation de la classe `System` pour pouvoir tester l'égalité de 2 instances de `System`. Pour cela souvenez vous ([atelier 1: POO]()) des méthodes dunder qui permettent de comparer des objets et des instances d'objets. 
+
+La solution est [ici](python-i3.html)
 
 ## Retour sur l'atelier
 
@@ -196,4 +371,8 @@ Pour compléter cet atelier sur les tests, nous aurions pu aussi aborder la noti
 
 ## Références
 
+* [doc officielle - doctest](https://docs.python.org/3.7/library/doctest.html)
+* [test-unitaires](http://sametmax.com/un-gros-guide-bien-gras-sur-les-tests-unitaires-en-python-partie-4/)
+* [test tous les aspects](https://www.python-course.eu/python3_tests.php)
 
+* [test](https://openclassrooms.com/fr/courses/235344-apprenez-a-programmer-en-python/2235416-creez-des-tests-unitaires-avec-unittest)

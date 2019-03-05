@@ -28,6 +28,10 @@
 					{
 						"uri": "category/python/python-s2.html",
 						"label":"POO Python suite"
+					},
+					{
+						"uri": "category/python/python-s3.html",
+						"label":"Python, tester son code"
 					}
 				]
 					        }
