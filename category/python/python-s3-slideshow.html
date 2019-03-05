@@ -331,6 +331,94 @@ Plus d&#39;info [ici](https://python-guide-pt-br.readthedocs.io/fr/latest/writin
 #HSLIDE
 
 ## Intégration dans le packaging de module
+Le dernier point que nous aborderons est lié au packaging de vos modules. Nous ferons un atelier spécifique sur cet aspect, mais sachez que tous les tests que vous avez implémentés peuvent vous servir de pré-requis nécessaire à l&#39;installation de votre package. En effet, il est tres courant d&#39;avoir une tache (commande) `test` lors de l&#39;installation de votre package. Elle est la plupart du temps accessoire et il faut la forcer en faisant: `python setup.py test`. Si nous regardons le fichier de packaging `setup.py` de la biopython, cette tache est bien présente:
+
+```python
+setup(name='biopython',
+      version=__version__,
+      author='The Biopython Contributors',
+      author_email='biopython@biopython.org',
+      url='https://biopython.org/',
+      description='Freely available tools for computational molecular biology.',
+      long_description=readme_rst,
+      classifiers=[
+          'Development Status :: 5 - Production/Stable',
+          'Intended Audience :: Developers',
+          'Intended Audience :: Science/Research',
+          'License :: Freely Distributable',
+          # Technically the "Biopython License Agreement" is not OSI approved,
+          # but is almost https://opensource.org/licenses/HPND so might put:
+          # 'License :: OSI Approved',
+          # To resolve this we are moving to dual-licensing with 3-clause BSD:
+          # 'License :: OSI Approved :: BSD License',
+          'Operating System :: OS Independent',
+          'Programming Language :: Python',
+          'Programming Language :: Python :: 2',
+          'Programming Language :: Python :: 2.7',
+          'Programming Language :: Python :: 3',
+          'Programming Language :: Python :: 3.4',
+          'Programming Language :: Python :: 3.5',
+          'Programming Language :: Python :: 3.6',
+          'Topic :: Scientific/Engineering',
+          'Topic :: Scientific/Engineering :: Bio-Informatics',
+          'Topic :: Software Development :: Libraries :: Python Modules',
+      ],
+      cmdclass={
+          "install": install_biopython,
+          "build_py": build_py_biopython,
+          "build_ext": build_ext_biopython,
+          "test": test_biopython,
+      },
+      packages=PACKAGES,
+      ext_modules=EXTENSIONS,
+      package_data={
+          'Bio.Entrez': ['DTDs/*.dtd',
+                         'DTDs/*.ent',
+                         'DTDs/*.mod',
+                         'XSDs/*.xsd'],
+      },
+      install_requires=REQUIRES,
+      ) 
+```
+La tache appelle la classe `test_biopython` qui hérite de `Command`, dont la méthode `run()` permettra l&#39;execution de l&#39;ensemble des fichiers de tests:
+
+```python
+class test_biopython(Command):
+    """Run all of the tests for the package.
+
+    This is a automatic test run class to make distutils kind of act like
+    perl. With this you can do:
+
+    python setup.py build
+    python setup.py install
+    python setup.py test
+
+    """
+
+    description = "Automatically run the test suite for Biopython."
+    user_options = []
+
+    def initialize_options(self):
+        """No-op, initialise options."""
+        pass
+
+    def finalize_options(self):
+        """No-op, finalise options."""
+        pass
+
+    def run(self):
+        """Run the tests."""
+        this_dir = os.getcwd()
+
+        # change to the test dir and run the tests
+        os.chdir("Tests")
+        sys.path.insert(0, '')
+        import run_tests
+        run_tests.main([])
+
+        # change back to the current directory
+        os.chdir(this_dir)
+```
 #HSLIDE
 
 ## Implémentation

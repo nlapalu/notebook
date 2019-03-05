@@ -366,6 +366,90 @@ Done
 </ul>
 <p>Plus d&#39;info <a href="https://python-guide-pt-br.readthedocs.io/fr/latest/writing/tests.html">ici</a></p>
 <h2 id="int-gration-dans-le-packaging-de-module">Intégration dans le packaging de module</h2>
+<p>Le dernier point que nous aborderons est lié au packaging de vos modules. Nous ferons un atelier spécifique sur cet aspect, mais sachez que tous les tests que vous avez implémentés peuvent vous servir de pré-requis nécessaire à l&#39;installation de votre package. En effet, il est tres courant d&#39;avoir une tache (commande) <code>test</code> lors de l&#39;installation de votre package. Elle est la plupart du temps accessoire et il faut la forcer en faisant: <code>python setup.py test</code>. Si nous regardons le fichier de packaging <code>setup.py</code> de la biopython, cette tache est bien présente:</p>
+<pre><code class="lang-python">setup(name=&#39;biopython&#39;,
+      version=__version__,
+      author=&#39;The Biopython Contributors&#39;,
+      author_email=&#39;biopython@biopython.org&#39;,
+      url=&#39;https://biopython.org/&#39;,
+      description=&#39;Freely available tools for computational molecular biology.&#39;,
+      long_description=readme_rst,
+      classifiers=[
+          &#39;Development Status :: 5 - Production/Stable&#39;,
+          &#39;Intended Audience :: Developers&#39;,
+          &#39;Intended Audience :: Science/Research&#39;,
+          &#39;License :: Freely Distributable&#39;,
+          # Technically the &quot;Biopython License Agreement&quot; is not OSI approved,
+          # but is almost https://opensource.org/licenses/HPND so might put:
+          # &#39;License :: OSI Approved&#39;,
+          # To resolve this we are moving to dual-licensing with 3-clause BSD:
+          # &#39;License :: OSI Approved :: BSD License&#39;,
+          &#39;Operating System :: OS Independent&#39;,
+          &#39;Programming Language :: Python&#39;,
+          &#39;Programming Language :: Python :: 2&#39;,
+          &#39;Programming Language :: Python :: 2.7&#39;,
+          &#39;Programming Language :: Python :: 3&#39;,
+          &#39;Programming Language :: Python :: 3.4&#39;,
+          &#39;Programming Language :: Python :: 3.5&#39;,
+          &#39;Programming Language :: Python :: 3.6&#39;,
+          &#39;Topic :: Scientific/Engineering&#39;,
+          &#39;Topic :: Scientific/Engineering :: Bio-Informatics&#39;,
+          &#39;Topic :: Software Development :: Libraries :: Python Modules&#39;,
+      ],
+      cmdclass={
+          &quot;install&quot;: install_biopython,
+          &quot;build_py&quot;: build_py_biopython,
+          &quot;build_ext&quot;: build_ext_biopython,
+          &quot;test&quot;: test_biopython,
+      },
+      packages=PACKAGES,
+      ext_modules=EXTENSIONS,
+      package_data={
+          &#39;Bio.Entrez&#39;: [&#39;DTDs/*.dtd&#39;,
+                         &#39;DTDs/*.ent&#39;,
+                         &#39;DTDs/*.mod&#39;,
+                         &#39;XSDs/*.xsd&#39;],
+      },
+      install_requires=REQUIRES,
+      ) 
+</code></pre>
+<p>La tache appelle la classe <code>test_biopython</code> qui hérite de <code>Command</code>, dont la méthode <code>run()</code> permettra l&#39;execution de l&#39;ensemble des fichiers de tests:</p>
+<pre><code class="lang-python">class test_biopython(Command):
+    &quot;&quot;&quot;Run all of the tests for the package.
+
+    This is a automatic test run class to make distutils kind of act like
+    perl. With this you can do:
+
+    python setup.py build
+    python setup.py install
+    python setup.py test
+
+    &quot;&quot;&quot;
+
+    description = &quot;Automatically run the test suite for Biopython.&quot;
+    user_options = []
+
+    def initialize_options(self):
+        &quot;&quot;&quot;No-op, initialise options.&quot;&quot;&quot;
+        pass
+
+    def finalize_options(self):
+        &quot;&quot;&quot;No-op, finalise options.&quot;&quot;&quot;
+        pass
+
+    def run(self):
+        &quot;&quot;&quot;Run the tests.&quot;&quot;&quot;
+        this_dir = os.getcwd()
+
+        # change to the test dir and run the tests
+        os.chdir(&quot;Tests&quot;)
+        sys.path.insert(0, &#39;&#39;)
+        import run_tests
+        run_tests.main([])
+
+        # change back to the current directory
+        os.chdir(this_dir)
+</code></pre>
 <h2 id="impl-mentation">Implémentation</h2>
 <p>Nous allons utiliser l&#39;implémentation de la class <code>System</code> réalisée dans l&#39;atelier <a href="/category/python/python-s2.html">POO Python suite</a> pour mettre en place une série de tests. Afin de couvrir les notions vues dans l&#39;atelier, nous allons à la fois implémenter des tests unitaires avec Unittest et doctest. Pour rappel, voici l&#39;implémentation de la class <code>System</code>: </p>
 <pre><code class="lang-python">class System(object):
@@ -461,6 +545,6 @@ set([&#39;reac1&#39;, &#39;reac2&#39;, &#39;reac3&#39;])
 			});
 		</script>
 		
-		<!-- Generated by Vegetables from 'category/python/python-s3.md' with format 'default' - '2019-3-5 16:11:36' -->
+		<!-- Generated by Vegetables from 'category/python/python-s3.md' with format 'default' - '2019-3-5 16:34:28' -->
 	</body>
 </html>
