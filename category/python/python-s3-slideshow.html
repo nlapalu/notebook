@@ -73,7 +73,7 @@ class RandomAccess(unittest.TestCase):
                           File._open_for_random_access,
                           "Quality/example.fastq.gz")
 ```
-Le fichier de tests comporte plusieurs classes qui héritent toute de `unittest.TestCase`, classe `TestCase` du module de test `unittest`. Chaque classe implémente plusieurs méthodes commençant par ***test***, qui correspond plus ou moins à un test. Néanmoins chaque test peut comporter plusieurs valeurs testées. En héritant de `TestCase`, les classes créées vont bénéficier d&#39;un grand ensemble de méthodes de test. Par exemple, la première méthode `test_plain()` va éssayer 2 assertions. **_Quand j&#39;ouvre le fichier fastq (de test) &quot;Quality/example.fastq&quot; via la méthode `_open_for_random_access()`, est ce que le fichier est en mode &#39;r&#39; et &#39;b&#39; ?_**
+Le fichier de tests comporte plusieurs classes qui héritent toute de `unittest.TestCase`, classe `TestCase` du module de test `unittest`. Chaque classe implémente plusieurs méthodes commençant par ***test***, qui correspond plus ou moins à un test. Néanmoins chaque test peut comporter plusieurs valeurs testées. En héritant de `TestCase`, les classes créées vont bénéficier d&#39;un grand ensemble de méthodes de test. Par exemple, la première méthode `test_plain()` va éssayer 2 assertions. **_Quand j&#39;ouvre le fichier fastq (de test) &quot;Quality/example.fastq&quot; via la méthode `\_open\_for\_random\_access()`, est ce que le fichier est en mode &#39;r&#39; et &#39;b&#39; ?_**
 
 Regardons maintenant la classe de test suivante. 
 
@@ -257,6 +257,7 @@ Ainsi, l&#39;objet (module) peut-être directement utilisé comme un script si i
 
 ```
 python3.7 -m Bio.Seq
+
 Running doctests...
 /home/nlapalu/Workspace/Github/biopython/Bio/Seq.py:441: BiopythonDeprecationWarning: This method is obsolete; please use str(my_seq) instead of my_seq.tostring().
   BiopythonDeprecationWarning)
@@ -268,6 +269,7 @@ Pour avoir plus d&#39;info, il faut demander le mode verbose
 
 ```
 python3.7 -m Bio.Seq -v 
+
 /home/nlapalu/Workspace/Github/biopython/Bio/Seq.py:441: BiopythonDeprecationWarning: This method is obsolete; please use str(my_seq) instead of my_seq.tostring().
   BiopythonDeprecationWarning)
 Running doctests...
@@ -306,11 +308,26 @@ ok
 Test passed.
 Done
 ```
-Un des problème de doctest est sa sensibilité au retour du test. En effet, ce qui est vraiement testé est une chaine de caractères. Il suffit donc d&#39;un léger écart dans la chaîne de retour pour que le test soit faux. Si vous souhiatez donc utiliser `doctest` il faut essayer de faire des tests qui limiteront ces possibles problèmes.
+Un des problème de doctest est sa sensibilité au retour du test. En effet, ce qui est vraiment testé est une chaine de caractères qui correspond à l&#39;affichage interactif de votre commande. Il suffit donc d&#39;un léger écart dans la chaîne de retour pour que le test soit faux (exemple un espace vide à la fin de votre test). Si vous souhiatez donc utiliser `doctest` il faut essayer de faire des tests qui limiteront ces possibles problèmes. De même si vous souhaitez connaître toutes les subtilités du module, la documentation officielle est ici: [`doctest`](https://docs.python.org/3.7/library/doctest.html)
+
+#HSLIDE
+
+## Cohabitation unittest et doctest
+Nous venons de voir 2 façons de faire des tests via `unittest` ou `doctest`. Les 2 ont des pour et des contres. On veut vouloir par exemple plutôt faire du `doctest` sur des objets de type entité et plutôt de l&#39;`unittest` sur du traitement. Bref, le mélange des 2 apparaît une bonne solution. Il est tout à fait possible de pouvoir appelé par exemple les tests générés via `doctest` dans une classe `TestCase` cela grâce à une méthode spéciale  [`load_tests()`](https://docs.python.org/3/library/unittest.html#load-tests-protocol). Nous ne détaillerons pas plus ici cette possibilité, mais nous essayerons de nous en servir dans l&#39;implémentation à réaliser. 
 
 #HSLIDE
 
 ## Les différents modules de tests
+Clairement il y a de gandes chances qu&#39;il ne vous soit pas nécessaires d&#39;utiliser d&#39;autres modules de tests que `unittest` et `doctest`. Neanmoins sachez qu&#39;il existe d&#39;autres modules:
+
+
+- py.test
+- Nose
+- tox
+- unittest2
+
+Plus d&#39;info [ici](https://python-guide-pt-br.readthedocs.io/fr/latest/writing/tests.html)
+
 #HSLIDE
 
 ## Intégration dans le packaging de module

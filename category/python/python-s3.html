@@ -51,6 +51,9 @@
 <a href="#doctest-le-m-lange-de-la-documentation-et-du-test">Doctest: le mélange de la documentation et du test</a>
 </p>
 <p class="toc-2">
+<a href="#cohabitation-unittest-et-doctest-">Cohabitation &#x60;unittest&#x60; et &#x60;doctest&#x60;</a>
+</p>
+<p class="toc-2">
 <a href="#les-diff-rents-modules-de-tests">Les différents modules de tests</a>
 </p>
 <p class="toc-2">
@@ -138,7 +141,7 @@ class RandomAccess(unittest.TestCase):
                           File._open_for_random_access,
                           &quot;Quality/example.fastq.gz&quot;)
 </code></pre>
-<p>Le fichier de tests comporte plusieurs classes qui héritent toute de <code>unittest.TestCase</code>, classe <code>TestCase</code> du module de test <code>unittest</code>. Chaque classe implémente plusieurs méthodes commençant par <strong><em>test</em></strong>, qui correspond plus ou moins à un test. Néanmoins chaque test peut comporter plusieurs valeurs testées. En héritant de <code>TestCase</code>, les classes créées vont bénéficier d&#39;un grand ensemble de méthodes de test. Par exemple, la première méthode <code>test_plain()</code> va éssayer 2 assertions. <strong>_Quand j&#39;ouvre le fichier fastq (de test) &quot;Quality/example.fastq&quot; via la méthode <code>_open_for_random_access()</code>, est ce que le fichier est en mode &#39;r&#39; et &#39;b&#39; ?_</strong></p>
+<p>Le fichier de tests comporte plusieurs classes qui héritent toute de <code>unittest.TestCase</code>, classe <code>TestCase</code> du module de test <code>unittest</code>. Chaque classe implémente plusieurs méthodes commençant par <strong><em>test</em></strong>, qui correspond plus ou moins à un test. Néanmoins chaque test peut comporter plusieurs valeurs testées. En héritant de <code>TestCase</code>, les classes créées vont bénéficier d&#39;un grand ensemble de méthodes de test. Par exemple, la première méthode <code>test_plain()</code> va éssayer 2 assertions. <strong>_Quand j&#39;ouvre le fichier fastq (de test) &quot;Quality/example.fastq&quot; via la méthode <code>\_open\_for\_random\_access()</code>, est ce que le fichier est en mode &#39;r&#39; et &#39;b&#39; ?_</strong></p>
 <p>Regardons maintenant la classe de test suivante. </p>
 <pre><code class="lang-python">class AsHandleTestCase(unittest.TestCase):
 
@@ -303,6 +306,7 @@ _test()
 </code></pre>
 <p>Ainsi, l&#39;objet (module) peut-être directement utilisé comme un script si il est appelé directement (via <code>__main__</code>). Dans ce cas, il y aura execution des tests <code>doctest</code> via la méthode <code>doctest.testmod()</code>. C&#39;est ce que nous faisons si dessous:</p>
 <pre><code>python3.7 -m Bio.Seq
+
 Running doctests...
 /home/nlapalu/Workspace/Github/biopython/Bio/Seq.py:441: BiopythonDeprecationWarning: This method is obsolete; please use str(my_seq) instead of my_seq.tostring().
   BiopythonDeprecationWarning)
@@ -311,6 +315,7 @@ Running doctests...
 Done
 </code></pre><p>Pour avoir plus d&#39;info, il faut demander le mode verbose</p>
 <pre><code>python3.7 -m Bio.Seq -v 
+
 /home/nlapalu/Workspace/Github/biopython/Bio/Seq.py:441: BiopythonDeprecationWarning: This method is obsolete; please use str(my_seq) instead of my_seq.tostring().
   BiopythonDeprecationWarning)
 Running doctests...
@@ -348,8 +353,18 @@ ok
 449 passed and 0 failed.
 Test passed.
 Done
-</code></pre><p>Un des problème de doctest est sa sensibilité au retour du test. En effet, ce qui est vraiement testé est une chaine de caractères. Il suffit donc d&#39;un léger écart dans la chaîne de retour pour que le test soit faux. Si vous souhiatez donc utiliser <code>doctest</code> il faut essayer de faire des tests qui limiteront ces possibles problèmes.</p>
+</code></pre><p>Un des problème de doctest est sa sensibilité au retour du test. En effet, ce qui est vraiment testé est une chaine de caractères qui correspond à l&#39;affichage interactif de votre commande. Il suffit donc d&#39;un léger écart dans la chaîne de retour pour que le test soit faux (exemple un espace vide à la fin de votre test). Si vous souhiatez donc utiliser <code>doctest</code> il faut essayer de faire des tests qui limiteront ces possibles problèmes. De même si vous souhaitez connaître toutes les subtilités du module, la documentation officielle est ici: <a href="https://docs.python.org/3.7/library/doctest.html"><code>doctest</code></a></p>
+<h2 id="cohabitation-unittest-et-doctest">Cohabitation <code>unittest</code> et <code>doctest</code></h2>
+<p>Nous venons de voir 2 façons de faire des tests via <code>unittest</code> ou <code>doctest</code>. Les 2 ont des pour et des contres. On veut vouloir par exemple plutôt faire du <code>doctest</code> sur des objets de type entité et plutôt de l&#39;<code>unittest</code> sur du traitement. Bref, le mélange des 2 apparaît une bonne solution. Il est tout à fait possible de pouvoir appelé par exemple les tests générés via <code>doctest</code> dans une classe <code>TestCase</code> cela grâce à une méthode spéciale  <a href="https://docs.python.org/3/library/unittest.html#load-tests-protocol"><code>load_tests()</code></a>. Nous ne détaillerons pas plus ici cette possibilité, mais nous essayerons de nous en servir dans l&#39;implémentation à réaliser. </p>
 <h2 id="les-diff-rents-modules-de-tests">Les différents modules de tests</h2>
+<p>Clairement il y a de gandes chances qu&#39;il ne vous soit pas nécessaires d&#39;utiliser d&#39;autres modules de tests que <code>unittest</code> et <code>doctest</code>. Neanmoins sachez qu&#39;il existe d&#39;autres modules:</p>
+<ul>
+<li>py.test</li>
+<li>Nose</li>
+<li>tox</li>
+<li>unittest2</li>
+</ul>
+<p>Plus d&#39;info <a href="https://python-guide-pt-br.readthedocs.io/fr/latest/writing/tests.html">ici</a></p>
 <h2 id="int-gration-dans-le-packaging-de-module">Intégration dans le packaging de module</h2>
 <h2 id="impl-mentation">Implémentation</h2>
 <p>Nous allons utiliser l&#39;implémentation de la class <code>System</code> réalisée dans l&#39;atelier <a href="/category/python/python-s2.html">POO Python suite</a> pour mettre en place une série de tests. Afin de couvrir les notions vues dans l&#39;atelier, nous allons à la fois implémenter des tests unitaires avec Unittest et doctest. Pour rappel, voici l&#39;implémentation de la class <code>System</code>: </p>
@@ -446,6 +461,6 @@ set([&#39;reac1&#39;, &#39;reac2&#39;, &#39;reac3&#39;])
 			});
 		</script>
 		
-		<!-- Generated by Vegetables from 'category/python/python-s3.md' with format 'default' - '2019-3-5 14:08:47' -->
+		<!-- Generated by Vegetables from 'category/python/python-s3.md' with format 'default' - '2019-3-5 16:11:36' -->
 	</body>
 </html>
