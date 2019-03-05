@@ -127,14 +127,12 @@ class System(object):
 if __name__ == "__main__":
 
    doctest.testmod()
- 
 ```
 
 Pour tester les doctest:
 
 ```
 python3.7 -m doctest System.py -v ou python3.7 System.py -v
-
 ```
 
 Pour tester les tests `unittest` et la `doctest`:

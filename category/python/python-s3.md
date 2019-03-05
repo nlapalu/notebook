@@ -6,13 +6,13 @@ title: Python, tester son code
 
 ## Introduction
 
-Afin de rendre son code plus robuste et plus fiable, il est impératif de mettre en place un ensemble de tests permettant de valider le fonctionnement du code. Les tests sont les garant du résultat. Par ailleurs, pour qu'un code soit facilement testable, il faut qu'il soit modulable et atomique. Un code sera d'autant plus facilement testable que l'on pourra isoler de petites parties et controller spécifiquement l'execution. Il y a énormément de choses à dire autour du test du codexi. Cet atelier permet d'aborder les bases et de pouvoir mettre en place un jeu de test autour d'un module. Pour aller plus loin, vous pouvez vous intéresser au TDD (Test Driven Development), dont la mentalité est le test avant tout. 
+Afin de rendre son code plus robuste et plus fiable, il est impératif de mettre en place un ensemble de tests permettant de valider le fonctionnement du code. Les tests sont les garants du résultat. Par ailleurs, pour qu'un code soit facilement testable, il faut qu'il soit modulable et atomique. Un code sera d'autant plus facilement testable que l'on pourra isoler de petites parties et controller spécifiquement l'execution. Il y a énormément de choses à dire autour des tests de code. Cet atelier permet d'aborder les bases et de pouvoir mettre en place un jeu de tests autour d'un module. Pour aller plus loin, vous pouvez vous intéresser au TDD (Test Driven Development), dont la mentalité est le test avant tout. 
 
 ## Les tests, qu'est ce que c'est ?
 
-Pour appréhender ce qu'est un test, le plus simple est d'aller faire un peu de revue de code sur notre package bioinfo préféré: la biopython. Si vous récupérez le code de la biopython ou que vous naviguez sur sa documentation (ici: https://github.com/biopython/biopython), vous remarquerez qu'il y a un dossier `Tests`. Ce dossier contient l'ensemble des tests immplémentés pour les modules de la Biopython et comme nous le verrons plus loin en plus d'aider au développement ils pourront être jouer lors de l'installation du package. Les tests ont donc un intérêt lors du développement mais aussi pendant le déploiement du code.
+Pour appréhender ce qu'est un test, le plus simple est d'aller faire un peu de revue de code sur notre package bioinfo préféré: la biopython. Si vous récupérez le code de la biopython ou que vous naviguez sur sa documentation [ici](https://github.com/biopython/biopython), vous remarquerez qu'il y a un dossier `Tests`. Ce dossier contient l'ensemble des tests immplémentés pour les modules de la Biopython. Comme nous le verrons plus loin en plus d'aider au développement ils pourront être joués lors de l'installation du package. Les tests ont donc un intérêt lors du développement mais aussi pendant le déploiement du code.
 
-Regardons de plus près le fichier de test: `test_File.py` (https://github.com/biopython/biopython/blob/master/Tests/test_File.py)
+Regardons de plus près le fichier de test: [`test_File.py`](https://github.com/biopython/biopython/blob/master/Tests/test_File.py)
 
 ```python
 from __future__ import print_function
@@ -52,7 +52,7 @@ class RandomAccess(unittest.TestCase):
                           "Quality/example.fastq.gz")
 ```
 
-Le fichier de tests comporte plusieurs classes qui héritent toute de `unittest.TestCase`, classe `TestCase` du module de test `unittest`. Chaque classe implémente plusieurs méthodes commençant par **_test_**, qui correspond plus ou moins à un test. Néanmoins chaque test peut comporter plusieurs valeurs testées. En héritant de `TestCase`, les classes créées vont bénéficier d'un grand ensemble de méthodes de test. Par exemple, la première méthode `test_plain()` va éssayer 2 assertions. **_Quand j'ouvre le fichier fastq (de test) "Quality/example.fastq" via la méthode `\_open\_for\_random\_access()`, est ce que le fichier est en mode 'r' et 'b' ?_**
+Le fichier de tests comporte plusieurs classes qui héritent toute de `unittest.TestCase`, classe `TestCase` du module de test `unittest`. Chaque classe implémente plusieurs méthodes commençant par **_test_**, qui correspond plus ou moins à un test. Néanmoins chaque test peut comporter plusieurs valeurs testées. En héritant de `TestCase`, les classes créées vont bénéficier d'un grand ensemble de méthodes de test. Par exemple, la première méthode `test_plain()` va éssayer 2 assertions. **_Quand j'ouvre le fichier fastq (de test) "Quality/example.fastq" via la méthode_** `_open_for_random_access()`**_, est ce que le fichier est en mode 'r' et 'b' ?_**
 
 
 Regardons maintenant la classe de test suivante. 
@@ -141,9 +141,9 @@ if __name__ == "__main__":
     unittest.main(testRunner=runner)
 ```
 
-Plusieurs choses intéressantes sont à noter. L'héritage de `TestCase` vous donne la possibilité de surcharger les méthodes `setUp()` et `tearDown()` qui seront utilisées respectivement avant les tests et après les tests. Vous pouvez donc via ces méthodes, configurer plus facilement votre environnement de test en spécifiant des atributs partagés. 
+Plusieurs choses intéressantes sont à noter. L'héritage de `TestCase` vous donne la possibilité de surcharger les méthodes `setUp()` et `tearDown()` qui seront utilisées respectivement avant les tests et après les tests. Vous pouvez donc via ces méthodes, configurer plus facilement votre environnement de test en spécifiant des attributs partagés. 
 
-Nous pouvons voir aussi que certaines méthodes comportent des décorateurs (`@unittest.skipIf`). Plusieurs décorateurs existent permettant pas exemple de ne pas executer le test, ce qui est utile en phase de développement ou de résolution de bugs, ou encore de spéficier des contraintes pour son execution (module necessaire, version de Python, ...).
+Nous pouvons voir aussi que certaines méthodes comportent des décorateurs (`@unittest.skipIf`). Plusieurs décorateurs existent permettant par exemple de ne pas executer le test, ce qui est utile en phase de développement ou de résolution de bugs, ou encore de spéficier des contraintes pour son execution (module necessaire, version de Python, ...).
 
 Il existe donc un grand nombre de méthodes d'assertion ou de control d'execution des tests. Afin de ne pas reprendre l'ensemble des possibilités ici, le plus simple est d'explorer la documentation de [unittest](https://docs.python.org/3/library/unittest.html). 
 
@@ -187,8 +187,9 @@ Nous pouvons voir que les tests se sont executés les uns après les autres dans
 
 ## Doctest: le mélange de la documentation et du test
 
-Une autre façon de faire des tests est l'utilisation du module `doctest` de python. Le but principal de `doctest` est de pouvoir très facilement intégrer des cas de tests du code au plus près de l'implémentation. Cela limite le nombre de fichier crée en revanche cela peut aussi alourdir le code et rendre moins lisible la partie 'vrai code' de votre fichier. L'utilisation de doctest n'est pas incompatible avec d'autre type de module, c'est simplement une philosphie différente. 
-Le fonctionnement de cas de test imbriqué au milieu du code, se fait par la recherche de `>>>` au milieu de commentaires. Les tests peuvent ensuite être joués de différentes manières. Pour bien comprendre le lancement des tests via `doctest`, il faut s'imaginer l'ouverture d'un shell Python dans lequel vous lancez des commandes. Chaque retour de vos commandes peut être ensuite testé.
+Une autre façon de faire des tests est l'utilisation du module `doctest` de python. Le but principal de `doctest` est de pouvoir très facilement intégrer des cas de tests du code au plus près de l'implémentation. Cela limite le nombre de fichier crée en revanche cela peut aussi alourdir le code et rendre moins lisible la partie 'vrai code' de votre fichier. L'utilisation de `doctest` n'est pas incompatible avec d'autre type de module, c'est simplement une philosphie différente. 
+
+Le fonctionnement de cas de tests imbriqués au milieu du code, se fait par la recherche de `>>>` au milieu de commentaires. Les tests peuvent ensuite être joués de différentes manières. Pour bien comprendre le lancement des tests via `doctest`, il faut s'imaginer l'ouverture d'un shell Python dans lequel vous lancez des commandes. Chaque retour de vos commandes peut être ensuite testé.
 Comme toujours, une revue de code est bien plus efficace que de longues explications. Intéressons nous donc au module [Bio.Seq](https://github.com/biopython/biopython/blob/master/Bio/Seq.py) de la biopython. Voici un extrait de sa méthode `__init()__`:
 
 ```python
@@ -295,11 +296,11 @@ Un des problème de doctest est sa sensibilité au retour du test. En effet, ce 
 
 ## Cohabitation `unittest` et `doctest`
 
-Nous venons de voir 2 façons de faire des tests via `unittest` ou `doctest`. Les 2 ont des pour et des contres. On veut vouloir par exemple plutôt faire du `doctest` sur des objets de type entité et plutôt de l'`unittest` sur du traitement. Bref, le mélange des 2 apparaît une bonne solution. Il est tout à fait possible de pouvoir appelé par exemple les tests générés via `doctest` dans une classe `TestCase` cela grâce à une méthode spéciale  [`load_tests()`](https://docs.python.org/3/library/unittest.html#load-tests-protocol). Nous ne détaillerons pas plus ici cette possibilité, mais nous essayerons de nous en servir dans l'implémentation à réaliser. 
+Nous venons de voir 2 façons de faire des tests via `unittest` ou `doctest`. Les 2 ont des pours et des contres. On veut vouloir par exemple plutôt faire du `doctest` sur des objets de type entité et plutôt de l'`unittest` sur du traitement. Bref, le mélange des 2 apparaît une bonne solution. Il est tout à fait possible de pouvoir appeler par exemple les tests générés via `doctest` dans une classe `TestCase` cela grâce à une méthode spéciale  [`load_tests()`](https://docs.python.org/3/library/unittest.html#load-tests-protocol). Nous ne détaillerons pas plus ici cette possibilité, mais nous essayerons de nous en servir dans l'implémentation à réaliser. 
 
 ## Les différents modules de tests
 
-Clairement il y a de gandes chances qu'il ne vous soit pas nécessaires d'utiliser d'autres modules de tests que `unittest` et `doctest`. Neanmoins sachez qu'il existe d'autres modules:
+Clairement il y a de gandes chances qu'il ne vous soit pas nécessaire d'utiliser d'autres modules de tests que `unittest` et `doctest`. Neanmoins sachez qu'il existe d'autres modules:
 
 * py.test
 * Nose
@@ -311,11 +312,99 @@ Plus d'info [ici](https://python-guide-pt-br.readthedocs.io/fr/latest/writing/te
 
 ## Intégration dans le packaging de module
 
+Le dernier point que nous aborderons est lié au packaging de vos modules. Nous ferons un atelier spécifique sur cet aspect, mais sachez que tous les tests que vous avez implémentés peuvent vous servir de pré-requis à l'installation de votre package. En effet, il est tres courant d'avoir une tache (commande) `test` lors de l'installation de votre package. Elle est la plupart du temps accessoire et il faut la forcer en faisant: `python setup.py test`. Si nous regardons le fichier de packaging `setup.py` de la biopython, cette tache est bien présente:
 
+```python
+setup(name='biopython',
+      version=__version__,
+      author='The Biopython Contributors',
+      author_email='biopython@biopython.org',
+      url='https://biopython.org/',
+      description='Freely available tools for computational molecular biology.',
+      long_description=readme_rst,
+      classifiers=[
+          'Development Status :: 5 - Production/Stable',
+          'Intended Audience :: Developers',
+          'Intended Audience :: Science/Research',
+          'License :: Freely Distributable',
+          # Technically the "Biopython License Agreement" is not OSI approved,
+          # but is almost https://opensource.org/licenses/HPND so might put:
+          # 'License :: OSI Approved',
+          # To resolve this we are moving to dual-licensing with 3-clause BSD:
+          # 'License :: OSI Approved :: BSD License',
+          'Operating System :: OS Independent',
+          'Programming Language :: Python',
+          'Programming Language :: Python :: 2',
+          'Programming Language :: Python :: 2.7',
+          'Programming Language :: Python :: 3',
+          'Programming Language :: Python :: 3.4',
+          'Programming Language :: Python :: 3.5',
+          'Programming Language :: Python :: 3.6',
+          'Topic :: Scientific/Engineering',
+          'Topic :: Scientific/Engineering :: Bio-Informatics',
+          'Topic :: Software Development :: Libraries :: Python Modules',
+      ],
+      cmdclass={
+          "install": install_biopython,
+          "build_py": build_py_biopython,
+          "build_ext": build_ext_biopython,
+          "test": test_biopython,
+      },
+      packages=PACKAGES,
+      ext_modules=EXTENSIONS,
+      package_data={
+          'Bio.Entrez': ['DTDs/*.dtd',
+                         'DTDs/*.ent',
+                         'DTDs/*.mod',
+                         'XSDs/*.xsd'],
+      },
+      install_requires=REQUIRES,
+      ) 
+```  
+
+La tache appelle la classe `test_biopython` qui hérite de `Command`, dont la méthode `run()` permettra l'execution de l'ensemble des fichiers de tests:
+
+```python
+class test_biopython(Command):
+    """Run all of the tests for the package.
+
+    This is a automatic test run class to make distutils kind of act like
+    perl. With this you can do:
+
+    python setup.py build
+    python setup.py install
+    python setup.py test
+
+    """
+
+    description = "Automatically run the test suite for Biopython."
+    user_options = []
+
+    def initialize_options(self):
+        """No-op, initialise options."""
+        pass
+
+    def finalize_options(self):
+        """No-op, finalise options."""
+        pass
+
+    def run(self):
+        """Run the tests."""
+        this_dir = os.getcwd()
+
+        # change to the test dir and run the tests
+        os.chdir("Tests")
+        sys.path.insert(0, '')
+        import run_tests
+        run_tests.main([])
+
+        # change back to the current directory
+        os.chdir(this_dir)
+```
 
 ## Implémentation
 
-Nous allons utiliser l'implémentation de la class `System` réalisée dans l'atelier [POO Python suite](/category/python/python-s2.html) pour mettre en place une série de tests. Afin de couvrir les notions vues dans l'atelier, nous allons à la fois implémenter des tests unitaires avec Unittest et doctest. Pour rappel, voici l'implémentation de la class `System`: 
+Nous allons utiliser l'implémentation de la class `System` réalisée dans l'atelier [POO Python suite](/category/python/python-s2.html) pour mettre en place une série de tests. Afin de couvrir les notions vues dans l'atelier, nous allons à la fois implémenter des tests unitaires avec `unittest` et `doctest`. Pour rappel, voici l'implémentation de la class `System`: 
 
 ```python
 class System(object):
@@ -377,18 +466,29 @@ set(['reac1', 'reac2', 'reac3'])
 
 Tout d'abord, vous allez implementer une classe de test `TestSystem` qui héritera de `unittest.TestCase`. Cette classe implémentera 2 méthodes qui vous permettront de tester `merge_systems()` et `count_reactions()` de la classe `System`. Point important, il vous sera nécessaire de modifier l'implémentation de la classe `System` pour pouvoir tester l'égalité de 2 instances de `System`. Pour cela souvenez vous ([atelier 1: POO]()) des méthodes dunder qui permettent de comparer des objets et des instances d'objets. 
 
+Par la suite, vous éliminez le code situé dans le `__main__` de `System` pour le placer sous forme de `doctest` dans l'`__init__` de System.
+
+Nous verrons ensuite ensemble comment appeler les `doctest` depuis votre fichier de tests, grâce à la méthode `load_tests()`.
+
 La solution est [ici](python-i3.html)
 
 ## Retour sur l'atelier
 
-Nous avons aborder 
+Vous êtes maintenant capable d'implémenter des tests sur votre code. Retenez bien que l'intérêt des tests est multiple:
 
-Pour compléter cet atelier sur les tests, nous aurions pu aussi aborder la notion de couverture de code. Cette métrique suplémentaire permet de vérifier que l'ensemble du code écrit est utilisé dans au moins un cas et que chacun de ces cas est vérifé par un ou des tests.
+* contrôle des bugs et de la régression du code
+* maintenabilité du code
+* aide au développement
+* facilite l'intégration dans des environnements divers
+
+Il faut néanmoins faire attention à ne pas sur-tester votre code. Maintenir et écrire des tests à un coût, il faut que cela soit justifié.
+
+Pour compléter cet atelier sur les tests, nous aurions pu aussi aborder la notion de couverture de code. Cette métrique suplémentaire permet de vérifier que l'ensemble du code écrit est utilisé dans au moins un cas et que chacun de ces cas est vérifé par un ou des tests (à voir pour un prochain atelier).
 
 ## Références
 
 * [doc officielle - doctest](https://docs.python.org/3.7/library/doctest.html)
+* [doc officielle - unittest](https://docs.python.org/3.7/library/unittest.html)
 * [test-unitaires](http://sametmax.com/un-gros-guide-bien-gras-sur-les-tests-unitaires-en-python-partie-4/)
 * [test tous les aspects](https://www.python-course.eu/python3_tests.php)
-
 * [test](https://openclassrooms.com/fr/courses/235344-apprenez-a-programmer-en-python/2235416-creez-des-tests-unitaires-avec-unittest)
