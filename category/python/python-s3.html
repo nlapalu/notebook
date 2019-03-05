@@ -2,7 +2,7 @@
 	<head>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<title>Python - Nicolas Lapalu</title>
+		<title>Python, tester son code - Nicolas Lapalu</title>
 		<link rel="stylesheet" href="../../assets/css/highlight.min.css">
 		<link rel="stylesheet" href="../../assets/css/bootstrap.min.css">
 		<link rel="stylesheet" href="../../assets/css/tipuesearch.css">
@@ -18,7 +18,7 @@
 						<span class="icon-bar"></span>
 						<span class="icon-bar"></span>
 					</button>
-					<a class="navbar-brand" href="../../">Nicolas Lapalu</a> <p class="navbar-text hidden-xs">Python</p>
+					<a class="navbar-brand" href="../../">Nicolas Lapalu</a> <p class="navbar-text hidden-xs">Python, tester son code</p>
 				</div>
 
 				<div class="collapse navbar-collapse" id="navbar-collapse-1">
@@ -38,9 +38,6 @@
 		<!--
 <div class="toc">
 <p class="lead">Table of contents:</p>
-<p class="toc-2">
-<a href="#title-python-tester-son-code-">title: Python, tester son code </a>
-</p>
 <p class="toc-1">
 <a href="#python-tester-son-code-pour-le-rendre-plus-fiable">Python tester son code pour le rendre plus fiable</a>
 </p>
@@ -51,13 +48,13 @@
 <a href="#les-tests-qu-39-est-ce-que-c-39-est-">Les tests, qu&amp;#39;est ce que c&amp;#39;est ?</a>
 </p>
 <p class="toc-2">
+<a href="#doctest-le-m-lange-de-la-documentation-et-du-test">Doctest: le mélange de la documentation et du test</a>
+</p>
+<p class="toc-2">
 <a href="#les-diff-rents-modules-de-tests">Les différents modules de tests</a>
 </p>
 <p class="toc-2">
 <a href="#int-gration-dans-le-packaging-de-module">Intégration dans le packaging de module</a>
-</p>
-<p class="toc-2">
-<a href="#doctest-le-m-lange-de-la-documentation-et-du-test">Doctest: le mélange de la documentation et du test</a>
 </p>
 <p class="toc-2">
 <a href="#impl-mentation">Implémentation</a>
@@ -99,9 +96,7 @@ active
 					</div>
 				</header>
 				<article id="content" class="col-lg-10 col-sm-9">
-					<p>--</p>
-<h2 id="title-python-tester-son-code-">title: Python, tester son code </h2>
-<h1 id="python-tester-son-code-pour-le-rendre-plus-fiable">Python tester son code pour le rendre plus fiable</h1>
+					<h1 id="python-tester-son-code-pour-le-rendre-plus-fiable">Python tester son code pour le rendre plus fiable</h1>
 <h2 id="introduction">Introduction</h2>
 <p>Afin de rendre son code plus robuste et plus fiable, il est impératif de mettre en place un ensemble de tests permettant de valider le fonctionnement du code. Les tests sont les garant du résultat. Par ailleurs, pour qu&#39;un code soit facilement testable, il faut qu&#39;il soit modulable et atomique. Un code sera d&#39;autant plus facilement testable que l&#39;on pourra isoler de petites parties et controller spécifiquement l&#39;execution. Il y a énormément de choses à dire autour du test du codexi. Cet atelier permet d&#39;aborder les bases et de pouvoir mettre en place un jeu de test autour d&#39;un module. Pour aller plus loin, vous pouvez vous intéresser au TDD (Test Driven Development), dont la mentalité est le test avant tout. </p>
 <h2 id="les-tests-qu-est-ce-que-c-est-">Les tests, qu&#39;est ce que c&#39;est ?</h2>
@@ -143,9 +138,9 @@ class RandomAccess(unittest.TestCase):
                           File._open_for_random_access,
                           &quot;Quality/example.fastq.gz&quot;)
 </code></pre>
-<p>Le fichier de tests comporte plusieurs classes qui héritent toute de <code>unittest.TestCase</code>, classe <code>TestCase</code> du module de test <code>unittest</code>. Chaque classe implémente plusieurs méthodes commençant par <strong><em>test</em></strong>_, qui correspond plus ou moins à un test. Néanmoins chaque test peut comporté plusieurs valeurs testées. En héritant de <code>TestCase</code>, les classes créées vont bénéficier d&#39;un grand ensemble de méthodes de test. Par exemple, la première méthode <code>test_plain()</code> va éssayer 2 assertions. _<strong>Quand j&#39;ouvre le fichier fastq (de test) &quot;Quality/example.fastq&quot; via la méthode <code>_open_for_random_access()</code>, est ce que le fihier est en mode &#39;r&#39; et &#39;b&#39; ?</strong>_</p>
-<pre><code>
-class AsHandleTestCase(unittest.TestCase):
+<p>Le fichier de tests comporte plusieurs classes qui héritent toute de <code>unittest.TestCase</code>, classe <code>TestCase</code> du module de test <code>unittest</code>. Chaque classe implémente plusieurs méthodes commençant par <strong><em>test</em></strong>, qui correspond plus ou moins à un test. Néanmoins chaque test peut comporter plusieurs valeurs testées. En héritant de <code>TestCase</code>, les classes créées vont bénéficier d&#39;un grand ensemble de méthodes de test. Par exemple, la première méthode <code>test_plain()</code> va éssayer 2 assertions. <strong>_Quand j&#39;ouvre le fichier fastq (de test) &quot;Quality/example.fastq&quot; via la méthode <code>_open_for_random_access()</code>, est ce que le fichier est en mode &#39;r&#39; et &#39;b&#39; ?_</strong></p>
+<p>Regardons maintenant la classe de test suivante. </p>
+<pre><code class="lang-python">class AsHandleTestCase(unittest.TestCase):
 
     def setUp(self):
         # Create a directory to work in
@@ -226,7 +221,11 @@ class AsHandleTestCase(unittest.TestCase):
 if __name__ == &quot;__main__&quot;:
     runner = unittest.TextTestRunner(verbosity=2)
     unittest.main(testRunner=runner)
-</code></pre><p>Exécutons maintenant les tests. Grâce au <code>__main__</code> implémenté dans le fichier nous pouvons lancer la suite de tests:</p>
+</code></pre>
+<p>Plusieurs choses intéressantes sont à noter. L&#39;héritage de <code>TestCase</code> vous donne la possibilité de surcharger les méthodes <code>setUp()</code> et <code>tearDown()</code> qui seront utilisées respectivement avant les tests et après les tests. Vous pouvez donc via ces méthodes, configurer plus facilement votre environnement de test en spécifiant des atributs partagés. </p>
+<p>Nous pouvons voir aussi que certaines méthodes comportent des décorateurs (<a href="mailto:`@unittest.skipIf">`@unittest.skipIf</a>`). Plusieurs décorateurs existent permettant pas exemple de ne pas executer le test, ce qui est utile en phase de développement ou de résolution de bugs, ou encore de spéficier des contraintes pour son execution (module necessaire, version de Python, ...).</p>
+<p>Il existe donc un grand nombre de méthodes d&#39;assertion ou de control d&#39;execution des tests. Afin de ne pas reprendre l&#39;ensemble des possibilités ici, le plus simple est d&#39;explorer la documentation de <a href="https://docs.python.org/3/library/unittest.html">unittest</a>. </p>
+<p>Exécutons maintenant les tests. Grâce au <code>__main__</code> implémenté dans le fichier nous pouvons lancer la suite de tests:</p>
 <p><code>python test_File.py</code></p>
 <pre><code>test_custom_path_like_object (__main__.AsHandleTestCase)
 Test as_handle with a custom path-like object ... skipped &#39;Passing path-like objects to File.as_handle requires Python &gt;= 3.6&#39;
@@ -257,12 +256,52 @@ AssertionError: ValueError not raised
 Ran 11 tests in 0.002s
 
 FAILED (failures=1, skipped=2)
-</code></pre><h2 id="les-diff-rents-modules-de-tests">Les différents modules de tests</h2>
-<h2 id="int-gration-dans-le-packaging-de-module">Intégration dans le packaging de module</h2>
+</code></pre><p>Nous pouvons voir que les tests se sont executés les uns après les autres dans l&#39;orde alphabétique. Un test a échoué, le détail apparaît alors en fin de la suite de test. </p>
 <h2 id="doctest-le-m-lange-de-la-documentation-et-du-test">Doctest: le mélange de la documentation et du test</h2>
-<p>Une autre façon de faire des tests est l&#39;utilisation du module doctest de python. Le but principal de doctest est de pouvoir trsè facilement intégrer des cas de tests du code au plus près de l&#39;implémentation. Cela limite le nombre de fichier crée en revanche cela peut aussi alourdir le code et rendre moins lisible la partie &#39;vrai code&#39; de votre fichier. L&#39;utilisation de doctest n&#39;est pas incompatible avec d&#39;autre type de module, c&#39;est simplement une philosphie différente. 
-Le fonctionnement de cas de test imbriqué au milieu du code, se fait par la recherche de <code>&gt;&gt;&gt;</code> au milieu de comentaires. Les tests peuvent ensuite être joués de différentes manières.
-Comme toujours, une revue de code est bien plus efficace que de longue explications. Intéressons nous donc au module Bio.SeqRecord de la biopython.</p>
+<p>Une autre façon de faire des tests est l&#39;utilisation du module <code>doctest</code> de python. Le but principal de <code>doctest</code> est de pouvoir très facilement intégrer des cas de tests du code au plus près de l&#39;implémentation. Cela limite le nombre de fichier crée en revanche cela peut aussi alourdir le code et rendre moins lisible la partie &#39;vrai code&#39; de votre fichier. L&#39;utilisation de doctest n&#39;est pas incompatible avec d&#39;autre type de module, c&#39;est simplement une philosphie différente. 
+Le fonctionnement de cas de test imbriqué au milieu du code, se fait par la recherche de <code>&gt;&gt;&gt;</code> au milieu de commentaires. Les tests peuvent ensuite être joués de différentes manières. Pour bien comprendre le lancement des tests via <code>doctest</code>, il faut s&#39;imaginer l&#39;ouverture d&#39;un shell Python dans lequel vous lancez des commandes. Chaque retour de vos commandes peut être ensuite testé.
+Comme toujours, une revue de code est bien plus efficace que de longues explications. Intéressons nous donc au module <a href="https://github.com/biopython/biopython/blob/master/Bio/Seq.py">Bio.Seq</a> de la biopython. Voici un extrait de sa méthode <code>__init()__</code>:</p>
+<pre><code class="lang-python">def __init__(self, data, alphabet=Alphabet.generic_alphabet):
+    &quot;&quot;&quot;Create a Seq object.
+    Arguments:
+    - seq - Sequence, required (string)
+    - alphabet - Optional argument, an Alphabet object from
+    Bio.Alphabet
+    You will typically use Bio.SeqIO to read in sequences from files as
+    SeqRecord objects, whose sequence will be exposed as a Seq object via
+    the seq property.
+    However, will often want to create your own Seq objects directly:
+    &gt;&gt;&gt; from Bio.Seq import Seq
+    &gt;&gt;&gt; from Bio.Alphabet import IUPAC
+    &gt;&gt;&gt; my_seq = Seq(&quot;MKQHKAMIVALIVICITAVVAALVTRKDLCEVHIRTGQTEVAVF&quot;,
+    ...              IUPAC.protein)
+    &gt;&gt;&gt; my_seq
+    Seq(&#39;MKQHKAMIVALIVICITAVVAALVTRKDLCEVHIRTGQTEVAVF&#39;, IUPACProtein())
+    &gt;&gt;&gt; print(my_seq)
+    MKQHKAMIVALIVICITAVVAALVTRKDLCEVHIRTGQTEVAVF
+    &gt;&gt;&gt; my_seq.alphabet
+    IUPACProtein()
+    &quot;&quot;&quot;
+    # Enforce string storage
+    if not isinstance(data, basestring):
+        raise TypeError(&quot;The sequence data given to a Seq object should &quot;
+                        &quot;be a string (not another Seq object etc)&quot;)
+    self._data = data
+    self.alphabet = alphabet # Seq API requirement
+</code></pre>
+<p>On peut voir que 3 tests ont été implémentés. Le premier qui test le retour de <code>my_seq</code>, le second de <code>print(my_seq)</code> et enfin <code>my_seq.alphabet</code>. Maintenant, si nous regardons la fin du fichier, le <code>__main__</code> de l&#39;objet a été implémenté avec:</p>
+<pre><code class="lang-python">def _test():
+    &quot;&quot;&quot;Run the Bio.Seq module&#39;s doctests (PRIVATE).&quot;&quot;&quot;
+    print(&quot;Running doctests...&quot;)
+    import doctest
+    doctest.testmod(optionflags=doctest.IGNORE_EXCEPTION_DETAIL)
+    print(&quot;Done&quot;)
+
+if __name__ == &quot;__main__&quot;:
+_test()
+
+</code></pre>
+<p>Ainsi, l&#39;objet (module) peut-être directement utilisé comme un script si il est appelé directement (via <code>__main__</code>). Dans ce cas, il y aura execution des tests <code>doctest</code> via la méthode <code>doctest.testmod()</code>. C&#39;est ce que nous faisons si dessous:</p>
 <pre><code>python3.7 -m Bio.Seq
 Running doctests...
 /home/nlapalu/Workspace/Github/biopython/Bio/Seq.py:441: BiopythonDeprecationWarning: This method is obsolete; please use str(my_seq) instead of my_seq.tostring().
@@ -310,6 +349,8 @@ ok
 Test passed.
 Done
 </code></pre><p>Un des problème de doctest est sa sensibilité au retour du test. En effet, ce qui est vraiement testé est une chaine de caractères. Il suffit donc d&#39;un léger écart dans la chaîne de retour pour que le test soit faux. Si vous souhiatez donc utiliser <code>doctest</code> il faut essayer de faire des tests qui limiteront ces possibles problèmes.</p>
+<h2 id="les-diff-rents-modules-de-tests">Les différents modules de tests</h2>
+<h2 id="int-gration-dans-le-packaging-de-module">Intégration dans le packaging de module</h2>
 <h2 id="impl-mentation">Implémentation</h2>
 <p>Nous allons utiliser l&#39;implémentation de la class <code>System</code> réalisée dans l&#39;atelier <a href="/category/python/python-s2.html">POO Python suite</a> pour mettre en place une série de tests. Afin de couvrir les notions vues dans l&#39;atelier, nous allons à la fois implémenter des tests unitaires avec Unittest et doctest. Pour rappel, voici l&#39;implémentation de la class <code>System</code>: </p>
 <pre><code class="lang-python">class System(object):
@@ -405,6 +446,6 @@ set([&#39;reac1&#39;, &#39;reac2&#39;, &#39;reac3&#39;])
 			});
 		</script>
 		
-		<!-- Generated by Vegetables from 'category/python/python-s3.md' with format 'default' - '2019-3-4 17:05:45' -->
+		<!-- Generated by Vegetables from 'category/python/python-s3.md' with format 'default' - '2019-3-5 12:24:15' -->
 	</body>
 </html>
