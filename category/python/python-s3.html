@@ -225,8 +225,8 @@ if __name__ == &quot;__main__&quot;:
     runner = unittest.TextTestRunner(verbosity=2)
     unittest.main(testRunner=runner)
 </code></pre>
-<p>Plusieurs choses intéressantes sont à noter. L&#39;héritage de <code>TestCase</code> vous donne la possibilité de surcharger les méthodes <code>setUp()</code> et <code>tearDown()</code> qui seront utilisées respectivement avant les tests et après les tests. Vous pouvez donc via ces méthodes, configurer plus facilement votre environnement de test en spécifiant des atributs partagés. </p>
-<p>Nous pouvons voir aussi que certaines méthodes comportent des décorateurs (<a href="mailto:`@unittest.skipIf">`@unittest.skipIf</a>`). Plusieurs décorateurs existent permettant pas exemple de ne pas executer le test, ce qui est utile en phase de développement ou de résolution de bugs, ou encore de spéficier des contraintes pour son execution (module necessaire, version de Python, ...).</p>
+<p>Plusieurs choses intéressantes sont à noter. L&#39;héritage de <code>TestCase</code> vous donne la possibilité de surcharger les méthodes <code>setUp()</code> et <code>tearDown()</code> qui seront utilisées respectivement avant les tests et après les tests. Vous pouvez donc via ces méthodes, configurer plus facilement votre environnement de test en spécifiant des attributs partagés. </p>
+<p>Nous pouvons voir aussi que certaines méthodes comportent des décorateurs (<a href="mailto:`@unittest.skipIf">`@unittest.skipIf</a>`). Plusieurs décorateurs existent permettant par exemple de ne pas executer le test, ce qui est utile en phase de développement ou de résolution de bugs, ou encore de spéficier des contraintes pour son execution (module necessaire, version de Python, ...).</p>
 <p>Il existe donc un grand nombre de méthodes d&#39;assertion ou de control d&#39;execution des tests. Afin de ne pas reprendre l&#39;ensemble des possibilités ici, le plus simple est d&#39;explorer la documentation de <a href="https://docs.python.org/3/library/unittest.html">unittest</a>. </p>
 <p>Exécutons maintenant les tests. Grâce au <code>__main__</code> implémenté dans le fichier nous pouvons lancer la suite de tests:</p>
 <p><code>python test_File.py</code></p>
@@ -261,8 +261,8 @@ Ran 11 tests in 0.002s
 FAILED (failures=1, skipped=2)
 </code></pre><p>Nous pouvons voir que les tests se sont executés les uns après les autres dans l&#39;orde alphabétique. Un test a échoué, le détail apparaît alors en fin de la suite de test. </p>
 <h2 id="doctest-le-m-lange-de-la-documentation-et-du-test">Doctest: le mélange de la documentation et du test</h2>
-<p>Une autre façon de faire des tests est l&#39;utilisation du module <code>doctest</code> de python. Le but principal de <code>doctest</code> est de pouvoir très facilement intégrer des cas de tests du code au plus près de l&#39;implémentation. Cela limite le nombre de fichier crée en revanche cela peut aussi alourdir le code et rendre moins lisible la partie &#39;vrai code&#39; de votre fichier. L&#39;utilisation de doctest n&#39;est pas incompatible avec d&#39;autre type de module, c&#39;est simplement une philosphie différente. 
-Le fonctionnement de cas de test imbriqué au milieu du code, se fait par la recherche de <code>&gt;&gt;&gt;</code> au milieu de commentaires. Les tests peuvent ensuite être joués de différentes manières. Pour bien comprendre le lancement des tests via <code>doctest</code>, il faut s&#39;imaginer l&#39;ouverture d&#39;un shell Python dans lequel vous lancez des commandes. Chaque retour de vos commandes peut être ensuite testé.
+<p>Une autre façon de faire des tests est l&#39;utilisation du module <code>doctest</code> de python. Le but principal de <code>doctest</code> est de pouvoir très facilement intégrer des cas de tests du code au plus près de l&#39;implémentation. Cela limite le nombre de fichier crée en revanche cela peut aussi alourdir le code et rendre moins lisible la partie &#39;vrai code&#39; de votre fichier. L&#39;utilisation de <code>doctest</code> n&#39;est pas incompatible avec d&#39;autre type de module, c&#39;est simplement une philosphie différente. </p>
+<p>Le fonctionnement de cas de tests imbriqués au milieu du code, se fait par la recherche de <code>&gt;&gt;&gt;</code> au milieu de commentaires. Les tests peuvent ensuite être joués de différentes manières. Pour bien comprendre le lancement des tests via <code>doctest</code>, il faut s&#39;imaginer l&#39;ouverture d&#39;un shell Python dans lequel vous lancez des commandes. Chaque retour de vos commandes peut être ensuite testé.
 Comme toujours, une revue de code est bien plus efficace que de longues explications. Intéressons nous donc au module <a href="https://github.com/biopython/biopython/blob/master/Bio/Seq.py">Bio.Seq</a> de la biopython. Voici un extrait de sa méthode <code>__init()__</code>:</p>
 <pre><code class="lang-python">def __init__(self, data, alphabet=Alphabet.generic_alphabet):
     &quot;&quot;&quot;Create a Seq object.
@@ -355,9 +355,9 @@ Test passed.
 Done
 </code></pre><p>Un des problème de doctest est sa sensibilité au retour du test. En effet, ce qui est vraiment testé est une chaine de caractères qui correspond à l&#39;affichage interactif de votre commande. Il suffit donc d&#39;un léger écart dans la chaîne de retour pour que le test soit faux (exemple un espace vide à la fin de votre test). Si vous souhiatez donc utiliser <code>doctest</code> il faut essayer de faire des tests qui limiteront ces possibles problèmes. De même si vous souhaitez connaître toutes les subtilités du module, la documentation officielle est ici: <a href="https://docs.python.org/3.7/library/doctest.html"><code>doctest</code></a></p>
 <h2 id="cohabitation-unittest-et-doctest">Cohabitation <code>unittest</code> et <code>doctest</code></h2>
-<p>Nous venons de voir 2 façons de faire des tests via <code>unittest</code> ou <code>doctest</code>. Les 2 ont des pour et des contres. On veut vouloir par exemple plutôt faire du <code>doctest</code> sur des objets de type entité et plutôt de l&#39;<code>unittest</code> sur du traitement. Bref, le mélange des 2 apparaît une bonne solution. Il est tout à fait possible de pouvoir appelé par exemple les tests générés via <code>doctest</code> dans une classe <code>TestCase</code> cela grâce à une méthode spéciale  <a href="https://docs.python.org/3/library/unittest.html#load-tests-protocol"><code>load_tests()</code></a>. Nous ne détaillerons pas plus ici cette possibilité, mais nous essayerons de nous en servir dans l&#39;implémentation à réaliser. </p>
+<p>Nous venons de voir 2 façons de faire des tests via <code>unittest</code> ou <code>doctest</code>. Les 2 ont des pours et des contres. On veut vouloir par exemple plutôt faire du <code>doctest</code> sur des objets de type entité et plutôt de l&#39;<code>unittest</code> sur du traitement. Bref, le mélange des 2 apparaît une bonne solution. Il est tout à fait possible de pouvoir appeler par exemple les tests générés via <code>doctest</code> dans une classe <code>TestCase</code> cela grâce à une méthode spéciale  <a href="https://docs.python.org/3/library/unittest.html#load-tests-protocol"><code>load_tests()</code></a>. Nous ne détaillerons pas plus ici cette possibilité, mais nous essayerons de nous en servir dans l&#39;implémentation à réaliser. </p>
 <h2 id="les-diff-rents-modules-de-tests">Les différents modules de tests</h2>
-<p>Clairement il y a de gandes chances qu&#39;il ne vous soit pas nécessaires d&#39;utiliser d&#39;autres modules de tests que <code>unittest</code> et <code>doctest</code>. Neanmoins sachez qu&#39;il existe d&#39;autres modules:</p>
+<p>Clairement il y a de gandes chances qu&#39;il ne vous soit pas nécessaire d&#39;utiliser d&#39;autres modules de tests que <code>unittest</code> et <code>doctest</code>. Neanmoins sachez qu&#39;il existe d&#39;autres modules:</p>
 <ul>
 <li>py.test</li>
 <li>Nose</li>
@@ -366,7 +366,7 @@ Done
 </ul>
 <p>Plus d&#39;info <a href="https://python-guide-pt-br.readthedocs.io/fr/latest/writing/tests.html">ici</a></p>
 <h2 id="int-gration-dans-le-packaging-de-module">Intégration dans le packaging de module</h2>
-<p>Le dernier point que nous aborderons est lié au packaging de vos modules. Nous ferons un atelier spécifique sur cet aspect, mais sachez que tous les tests que vous avez implémentés peuvent vous servir de pré-requis nécessaire à l&#39;installation de votre package. En effet, il est tres courant d&#39;avoir une tache (commande) <code>test</code> lors de l&#39;installation de votre package. Elle est la plupart du temps accessoire et il faut la forcer en faisant: <code>python setup.py test</code>. Si nous regardons le fichier de packaging <code>setup.py</code> de la biopython, cette tache est bien présente:</p>
+<p>Le dernier point que nous aborderons est lié au packaging de vos modules. Nous ferons un atelier spécifique sur cet aspect, mais sachez que tous les tests que vous avez implémentés peuvent vous servir de pré-requis à l&#39;installation de votre package. En effet, il est tres courant d&#39;avoir une tache (commande) <code>test</code> lors de l&#39;installation de votre package. Elle est la plupart du temps accessoire et il faut la forcer en faisant: <code>python setup.py test</code>. Si nous regardons le fichier de packaging <code>setup.py</code> de la biopython, cette tache est bien présente:</p>
 <pre><code class="lang-python">setup(name=&#39;biopython&#39;,
       version=__version__,
       author=&#39;The Biopython Contributors&#39;,
@@ -451,7 +451,7 @@ Done
         os.chdir(this_dir)
 </code></pre>
 <h2 id="impl-mentation">Implémentation</h2>
-<p>Nous allons utiliser l&#39;implémentation de la class <code>System</code> réalisée dans l&#39;atelier <a href="/category/python/python-s2.html">POO Python suite</a> pour mettre en place une série de tests. Afin de couvrir les notions vues dans l&#39;atelier, nous allons à la fois implémenter des tests unitaires avec Unittest et doctest. Pour rappel, voici l&#39;implémentation de la class <code>System</code>: </p>
+<p>Nous allons utiliser l&#39;implémentation de la class <code>System</code> réalisée dans l&#39;atelier <a href="/category/python/python-s2.html">POO Python suite</a> pour mettre en place une série de tests. Afin de couvrir les notions vues dans l&#39;atelier, nous allons à la fois implémenter des tests unitaires avec <code>unittest</code> et <code>doctest</code>. Pour rappel, voici l&#39;implémentation de la class <code>System</code>: </p>
 <pre><code class="lang-python">class System(object):
 
     nbSystems = 0
@@ -509,10 +509,19 @@ set([&#39;reac1&#39;, &#39;reac2&#39;, &#39;reac3&#39;])
 7
 </code></pre>
 <p>Tout d&#39;abord, vous allez implementer une classe de test <code>TestSystem</code> qui héritera de <code>unittest.TestCase</code>. Cette classe implémentera 2 méthodes qui vous permettront de tester <code>merge_systems()</code> et <code>count_reactions()</code> de la classe <code>System</code>. Point important, il vous sera nécessaire de modifier l&#39;implémentation de la classe <code>System</code> pour pouvoir tester l&#39;égalité de 2 instances de <code>System</code>. Pour cela souvenez vous (<a href="">atelier 1: POO</a>) des méthodes dunder qui permettent de comparer des objets et des instances d&#39;objets. </p>
+<p>Par la suite, vous éliminez le code situé dans le <code>__main__</code> de <code>System</code> pour le placer sous forme de <code>doctest</code> dans l&#39;<code>__init__</code> de System.</p>
+<p>Nous verrons ensuite ensemble comment appeler les <code>doctest</code> depuis votre fichier de tests, grâce à la méthode <code>load_tests()</code>.</p>
 <p>La solution est <a href="python-i3.html">ici</a></p>
 <h2 id="retour-sur-l-atelier">Retour sur l&#39;atelier</h2>
-<p>Nous avons aborder </p>
-<p>Pour compléter cet atelier sur les tests, nous aurions pu aussi aborder la notion de couverture de code. Cette métrique suplémentaire permet de vérifier que l&#39;ensemble du code écrit est utilisé dans au moins un cas et que chacun de ces cas est vérifé par un ou des tests.</p>
+<p>Vous êtes maintenant capable d&#39;implémenter des tests sur votre code. Retenez bien que l&#39;intérêt des tests est multiple:</p>
+<ul>
+<li>contrôle des bugs et de la régression du code</li>
+<li>maintenabilité du code</li>
+<li>aide au développement</li>
+<li>facilite l&#39;intégration dans des environnements divers</li>
+</ul>
+<p>Il faut néanmoins faire attention à ne pas sur-tester votre code. Maintenir et écrire des tests à un coût, il faut que cela soit justifié.</p>
+<p>Pour compléter cet atelier sur les tests, nous aurions pu aussi aborder la notion de couverture de code. Cette métrique suplémentaire permet de vérifier que l&#39;ensemble du code écrit est utilisé dans au moins un cas et que chacun de ces cas est vérifé par un ou des tests (à voir pour un prochain atelier).</p>
 <h2 id="r-f-rences">Références</h2>
 <ul>
 <li><a href="https://docs.python.org/3.7/library/doctest.html">doc officielle - doctest</a></li>
@@ -544,6 +553,6 @@ set([&#39;reac1&#39;, &#39;reac2&#39;, &#39;reac3&#39;])
 			});
 		</script>
 		
-		<!-- Generated by Vegetables from 'category/python/python-s3.md' with format 'default' - '2019-3-5 16:44:37' -->
+		<!-- Generated by Vegetables from 'category/python/python-s3.md' with format 'default' - '2019-3-5 17:01:31' -->
 	</body>
 </html>
