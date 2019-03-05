@@ -101,10 +101,10 @@ active
 				<article id="content" class="col-lg-10 col-sm-9">
 					<h1 id="python-tester-son-code-pour-le-rendre-plus-fiable">Python tester son code pour le rendre plus fiable</h1>
 <h2 id="introduction">Introduction</h2>
-<p>Afin de rendre son code plus robuste et plus fiable, il est impératif de mettre en place un ensemble de tests permettant de valider le fonctionnement du code. Les tests sont les garant du résultat. Par ailleurs, pour qu&#39;un code soit facilement testable, il faut qu&#39;il soit modulable et atomique. Un code sera d&#39;autant plus facilement testable que l&#39;on pourra isoler de petites parties et controller spécifiquement l&#39;execution. Il y a énormément de choses à dire autour du test du codexi. Cet atelier permet d&#39;aborder les bases et de pouvoir mettre en place un jeu de test autour d&#39;un module. Pour aller plus loin, vous pouvez vous intéresser au TDD (Test Driven Development), dont la mentalité est le test avant tout. </p>
+<p>Afin de rendre son code plus robuste et plus fiable, il est impératif de mettre en place un ensemble de tests permettant de valider le fonctionnement du code. Les tests sont les garants du résultat. Par ailleurs, pour qu&#39;un code soit facilement testable, il faut qu&#39;il soit modulable et atomique. Un code sera d&#39;autant plus facilement testable que l&#39;on pourra isoler de petites parties et controller spécifiquement l&#39;execution. Il y a énormément de choses à dire autour des tests de code. Cet atelier permet d&#39;aborder les bases et de pouvoir mettre en place un jeu de tests autour d&#39;un module. Pour aller plus loin, vous pouvez vous intéresser au TDD (Test Driven Development), dont la mentalité est le test avant tout. </p>
 <h2 id="les-tests-qu-est-ce-que-c-est-">Les tests, qu&#39;est ce que c&#39;est ?</h2>
-<p>Pour appréhender ce qu&#39;est un test, le plus simple est d&#39;aller faire un peu de revue de code sur notre package bioinfo préféré: la biopython. Si vous récupérez le code de la biopython ou que vous naviguez sur sa documentation (ici: <a href="https://github.com/biopython/biopython)">https://github.com/biopython/biopython)</a>, vous remarquerez qu&#39;il y a un dossier <code>Tests</code>. Ce dossier contient l&#39;ensemble des tests immplémentés pour les modules de la Biopython et comme nous le verrons plus loin en plus d&#39;aider au développement ils pourront être jouer lors de l&#39;installation du package. Les tests ont donc un intérêt lors du développement mais aussi pendant le déploiement du code.</p>
-<p>Regardons de plus près le fichier de test: <code>test_File.py</code> (<a href="https://github.com/biopython/biopython/blob/master/Tests/test_File.py">https://github.com/biopython/biopython/blob/master/Tests/test_File.py</a>)</p>
+<p>Pour appréhender ce qu&#39;est un test, le plus simple est d&#39;aller faire un peu de revue de code sur notre package bioinfo préféré: la biopython. Si vous récupérez le code de la biopython ou que vous naviguez sur sa documentation <a href="https://github.com/biopython/biopython">ici</a>, vous remarquerez qu&#39;il y a un dossier <code>Tests</code>. Ce dossier contient l&#39;ensemble des tests immplémentés pour les modules de la Biopython. Comme nous le verrons plus loin en plus d&#39;aider au développement ils pourront être joués lors de l&#39;installation du package. Les tests ont donc un intérêt lors du développement mais aussi pendant le déploiement du code.</p>
+<p>Regardons de plus près le fichier de test: <a href="https://github.com/biopython/biopython/blob/master/Tests/test_File.py"><code>test_File.py</code></a></p>
 <pre><code class="lang-python">from __future__ import print_function
 
 import os.path
@@ -141,7 +141,7 @@ class RandomAccess(unittest.TestCase):
                           File._open_for_random_access,
                           &quot;Quality/example.fastq.gz&quot;)
 </code></pre>
-<p>Le fichier de tests comporte plusieurs classes qui héritent toute de <code>unittest.TestCase</code>, classe <code>TestCase</code> du module de test <code>unittest</code>. Chaque classe implémente plusieurs méthodes commençant par <strong><em>test</em></strong>, qui correspond plus ou moins à un test. Néanmoins chaque test peut comporter plusieurs valeurs testées. En héritant de <code>TestCase</code>, les classes créées vont bénéficier d&#39;un grand ensemble de méthodes de test. Par exemple, la première méthode <code>test_plain()</code> va éssayer 2 assertions. <strong>_Quand j&#39;ouvre le fichier fastq (de test) &quot;Quality/example.fastq&quot; via la méthode <code>\_open\_for\_random\_access()</code>, est ce que le fichier est en mode &#39;r&#39; et &#39;b&#39; ?_</strong></p>
+<p>Le fichier de tests comporte plusieurs classes qui héritent toute de <code>unittest.TestCase</code>, classe <code>TestCase</code> du module de test <code>unittest</code>. Chaque classe implémente plusieurs méthodes commençant par <strong><em>test</em></strong>, qui correspond plus ou moins à un test. Néanmoins chaque test peut comporter plusieurs valeurs testées. En héritant de <code>TestCase</code>, les classes créées vont bénéficier d&#39;un grand ensemble de méthodes de test. Par exemple, la première méthode <code>test_plain()</code> va éssayer 2 assertions. <strong><em>Quand j&#39;ouvre le fichier fastq (de test) &quot;Quality/example.fastq&quot; via la méthode</em></strong> <code>_open_for_random_access()</code><strong><em>, est ce que le fichier est en mode &#39;r&#39; et &#39;b&#39; ?</em></strong></p>
 <p>Regardons maintenant la classe de test suivante. </p>
 <pre><code class="lang-python">class AsHandleTestCase(unittest.TestCase):
 
@@ -516,11 +516,10 @@ set([&#39;reac1&#39;, &#39;reac2&#39;, &#39;reac3&#39;])
 <h2 id="r-f-rences">Références</h2>
 <ul>
 <li><a href="https://docs.python.org/3.7/library/doctest.html">doc officielle - doctest</a></li>
+<li><a href="https://docs.python.org/3.7/library/unittest.html">doc officielle - unittest</a></li>
 <li><a href="http://sametmax.com/un-gros-guide-bien-gras-sur-les-tests-unitaires-en-python-partie-4/">test-unitaires</a></li>
-<li><p><a href="https://www.python-course.eu/python3_tests.php">test tous les aspects</a></p>
-</li>
-<li><p><a href="https://openclassrooms.com/fr/courses/235344-apprenez-a-programmer-en-python/2235416-creez-des-tests-unitaires-avec-unittest">test</a></p>
-</li>
+<li><a href="https://www.python-course.eu/python3_tests.php">test tous les aspects</a></li>
+<li><a href="https://openclassrooms.com/fr/courses/235344-apprenez-a-programmer-en-python/2235416-creez-des-tests-unitaires-avec-unittest">test</a></li>
 </ul>
 
 				</article>
@@ -545,6 +544,6 @@ set([&#39;reac1&#39;, &#39;reac2&#39;, &#39;reac3&#39;])
 			});
 		</script>
 		
-		<!-- Generated by Vegetables from 'category/python/python-s3.md' with format 'default' - '2019-3-5 16:34:28' -->
+		<!-- Generated by Vegetables from 'category/python/python-s3.md' with format 'default' - '2019-3-5 16:44:37' -->
 	</body>
 </html>

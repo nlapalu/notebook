@@ -4,13 +4,13 @@
 
 ## Introduction
 
-Afin de rendre son code plus robuste et plus fiable, il est impératif de mettre en place un ensemble de tests permettant de valider le fonctionnement du code. Les tests sont les garant du résultat. Par ailleurs, pour qu'un code soit facilement testable, il faut qu'il soit modulable et atomique. Un code sera d'autant plus facilement testable que l'on pourra isoler de petites parties et controller spécifiquement l'execution. Il y a énormément de choses à dire autour du test du codexi. Cet atelier permet d'aborder les bases et de pouvoir mettre en place un jeu de test autour d'un module. Pour aller plus loin, vous pouvez vous intéresser au TDD (Test Driven Development), dont la mentalité est le test avant tout. 
+Afin de rendre son code plus robuste et plus fiable, il est impératif de mettre en place un ensemble de tests permettant de valider le fonctionnement du code. Les tests sont les garants du résultat. Par ailleurs, pour qu'un code soit facilement testable, il faut qu'il soit modulable et atomique. Un code sera d'autant plus facilement testable que l'on pourra isoler de petites parties et controller spécifiquement l'execution. Il y a énormément de choses à dire autour des tests de code. Cet atelier permet d'aborder les bases et de pouvoir mettre en place un jeu de tests autour d'un module. Pour aller plus loin, vous pouvez vous intéresser au TDD (Test Driven Development), dont la mentalité est le test avant tout. 
 
 ## Les tests, qu'est ce que c'est ?
 
-Pour appréhender ce qu'est un test, le plus simple est d'aller faire un peu de revue de code sur notre package bioinfo préféré: la biopython. Si vous récupérez le code de la biopython ou que vous naviguez sur sa documentation (ici: https://github.com/biopython/biopython), vous remarquerez qu'il y a un dossier `Tests`. Ce dossier contient l'ensemble des tests immplémentés pour les modules de la Biopython et comme nous le verrons plus loin en plus d'aider au développement ils pourront être jouer lors de l'installation du package. Les tests ont donc un intérêt lors du développement mais aussi pendant le déploiement du code.
+Pour appréhender ce qu'est un test, le plus simple est d'aller faire un peu de revue de code sur notre package bioinfo préféré: la biopython. Si vous récupérez le code de la biopython ou que vous naviguez sur sa documentation [ici](https://github.com/biopython/biopython), vous remarquerez qu'il y a un dossier `Tests`. Ce dossier contient l'ensemble des tests immplémentés pour les modules de la Biopython. Comme nous le verrons plus loin en plus d'aider au développement ils pourront être joués lors de l'installation du package. Les tests ont donc un intérêt lors du développement mais aussi pendant le déploiement du code.
 
-Regardons de plus près le fichier de test: `test_File.py` (https://github.com/biopython/biopython/blob/master/Tests/test_File.py)
+Regardons de plus près le fichier de test: [`test_File.py`](https://github.com/biopython/biopython/blob/master/Tests/test_File.py)
 
 ```python
 from __future__ import print_function
@@ -50,7 +50,7 @@ class RandomAccess(unittest.TestCase):
                           "Quality/example.fastq.gz")
 ```
 
-Le fichier de tests comporte plusieurs classes qui héritent toute de `unittest.TestCase`, classe `TestCase` du module de test `unittest`. Chaque classe implémente plusieurs méthodes commençant par **_test_**, qui correspond plus ou moins à un test. Néanmoins chaque test peut comporter plusieurs valeurs testées. En héritant de `TestCase`, les classes créées vont bénéficier d'un grand ensemble de méthodes de test. Par exemple, la première méthode `test_plain()` va éssayer 2 assertions. **_Quand j'ouvre le fichier fastq (de test) "Quality/example.fastq" via la méthode `\_open\_for\_random\_access()`, est ce que le fichier est en mode 'r' et 'b' ?_**
+Le fichier de tests comporte plusieurs classes qui héritent toute de `unittest.TestCase`, classe `TestCase` du module de test `unittest`. Chaque classe implémente plusieurs méthodes commençant par **_test_**, qui correspond plus ou moins à un test. Néanmoins chaque test peut comporter plusieurs valeurs testées. En héritant de `TestCase`, les classes créées vont bénéficier d'un grand ensemble de méthodes de test. Par exemple, la première méthode `test_plain()` va éssayer 2 assertions. **_Quand j'ouvre le fichier fastq (de test) "Quality/example.fastq" via la méthode_** `_open_for_random_access()`**_, est ce que le fichier est en mode 'r' et 'b' ?_**
 
 
 Regardons maintenant la classe de test suivante. 
@@ -474,8 +474,8 @@ Pour compléter cet atelier sur les tests, nous aurions pu aussi aborder la noti
 ## Références
 
 * [doc officielle - doctest](https://docs.python.org/3.7/library/doctest.html)
+* [doc officielle - unittest](https://docs.python.org/3.7/library/unittest.html)
 * [test-unitaires](http://sametmax.com/un-gros-guide-bien-gras-sur-les-tests-unitaires-en-python-partie-4/)
 * [test tous les aspects](https://www.python-course.eu/python3_tests.php)
-
 * [test](https://openclassrooms.com/fr/courses/235344-apprenez-a-programmer-en-python/2235416-creez-des-tests-unitaires-avec-unittest)
 </pre>
