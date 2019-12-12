@@ -2,7 +2,7 @@
 	<head>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<title>Web site</title>
+		<title>Nicolas Lapalu</title>
 		<link rel="stylesheet" href="./assets/css/highlight.min.css">
 		<link rel="stylesheet" href="./assets/css/bootstrap.min.css">
 		<link rel="stylesheet" href="./assets/css/tipuesearch.css">
@@ -18,7 +18,7 @@
 						<span class="icon-bar"></span>
 						<span class="icon-bar"></span>
 					</button>
-					<a class="navbar-brand" href="./">Web site</a> <p class="navbar-text hidden-xs">
+					<a class="navbar-brand" href="./">Nicolas Lapalu</a> <p class="navbar-text hidden-xs">
 					Pages index
 					</p>
 				</div>
@@ -38,11 +38,11 @@
 				<section id="content" class="col-sm-12">
 					<h1>
 						Pages index
-						<small>3 pages</small>
+						<small>11 pages</small>
 					</h1>
 					<div class="list-group list-pages">
-						<a href="./bioinfo-college.html" class="list-group-item">
-							<h2 class="list-group-item-heading">Découverte de la bioinformatique</h2>
+						<a href="./category/other/bioinfo-college.html" class="list-group-item">
+							<h2 class="list-group-item-heading">Other</h2>
 							<p class="list-group-item-text">
 								Découverte de la bioinformatique
 (stage de collège)
@@ -56,7 +56,7 @@ Conclusion
 ...
 							</p>
 						</a>
-						<a href="./index.html" class="list-group-item">
+						<a href="./category/other/index.html" class="list-group-item">
 							<h2 class="list-group-item-heading">Other</h2>
 							<p class="list-group-item-text">
 								Other
@@ -64,12 +64,82 @@ divers
 ...
 							</p>
 						</a>
-						<a href="./python-s1.html" class="list-group-item">
-							<h2 class="list-group-item-heading">Initiation POO Python</h2>
+						<a href="./category/other/python-s1.html" class="list-group-item">
+							<h2 class="list-group-item-heading">Other</h2>
 							<p class="list-group-item-text">
 								Initiation POO Python
 Introduction
 Pour cette première approche de la programmation objet en Python, nous allons principalement faire de la revue de code et une implémentation naive d&amp;#39;un petit use case. Le but principal de cette première session est de s&amp;#39;inspirer de code existant dans le but de comprendre la logique de...
+							</p>
+						</a>
+						<a href="./category/python/index.html" class="list-group-item">
+							<h2 class="list-group-item-heading">Python</h2>
+							<p class="list-group-item-text">
+								Python
+ateliers Python - version Python 3.7
+...
+							</p>
+						</a>
+						<a href="./category/python/python-i1.html" class="list-group-item">
+							<h2 class="list-group-item-heading">Python</h2>
+							<p class="list-group-item-text">
+								Initiation POO Python
+Implementation - solution
+Voici une proposition d&amp;#39;implementation:
+#!/usr/bin/env python3.7 class Seq(object):     def __init__(self, seq, seqType):         self.seq &#x3D; seq
+        if seqType not in (&amp;quot;nuc&amp;quot;,&amp;quot;prot&amp;quot;):...
+							</p>
+						</a>
+						<a href="./category/python/python-i2.html" class="list-group-item">
+							<h2 class="list-group-item-heading">Python</h2>
+							<p class="list-group-item-text">
+								Suite POO Python
+Implementation - solution
+Voici une proposition d&amp;#39;implementation:
+#!/usr/bin/env python3.7 class AbstractFeature(object):     def __init__(self, seqid, start, end, id):         if self.__class__.__name__ &#x3D;&#x3D; &amp;quot;AbstractFeature&amp;quot;:
+            raise Exception(&amp;quot;Cannot instanciate AbstractFeature class, need to be sub-classed&amp;quot;)...
+							</p>
+						</a>
+						<a href="./category/python/python-i3.html" class="list-group-item">
+							<h2 class="list-group-item-heading">Python</h2>
+							<p class="list-group-item-text">
+								Python tester son code pour le rendre plus fiable
+Implementation - solution
+Voici une proposition d&amp;#39;implémentation.
+Implementation du test unittest dans le script test_System.py:
+#!/usr/bin/env python3.7 import unittest
+import doctest from System import System class TestSystem(unittest.TestCase):     def setUp(self): #        print(&amp;quot;Initializing data for tests&amp;quot;)...
+							</p>
+						</a>
+						<a href="./category/python/python-s1.html" class="list-group-item">
+							<h2 class="list-group-item-heading">Python</h2>
+							<p class="list-group-item-text">
+								Initiation POO Python
+Introduction
+Pour cette première approche de la programmation objet en Python, nous allons principalement faire de la revue de code et une implémentation naive d&amp;#39;un petit use case. Le but principal de cette première session est de s&amp;#39;inspirer de code existant dans le but de comprendre la logique de...
+							</p>
+						</a>
+						<a href="./category/python/python-s2.html" class="list-group-item">
+							<h2 class="list-group-item-heading">POO Python suite</h2>
+							<p class="list-group-item-text">
+								POO Python suite
+Introduction
+Maintenant que nous avons abordé la POO par des exemples simples, nous allons pouvoir rajouter quelques notions plus complexes qui mettent en avant l&amp;#39;intérêt de l&amp;#39;approche objet. De la même façon que pour l&amp;#39;atelier précédent, nous allons extraire du code de logiciel, qui nous servira de support au...
+							</p>
+						</a>
+						<a href="./category/python/python-s3.html" class="list-group-item">
+							<h2 class="list-group-item-heading">Python, tester son code</h2>
+							<p class="list-group-item-text">
+								Python tester son code pour le rendre plus fiable
+Introduction
+Afin de rendre son code plus robuste et plus fiable, il est impératif de mettre en place un ensemble de tests permettant de valider le fonctionnement du code. Les tests sont les garants du résultat. Par ailleurs, pour qu&amp;#39;un code soit facilement...
+							</p>
+						</a>
+						<a href="./index.html" class="list-group-item">
+							<h2 class="list-group-item-heading">Accueil</h2>
+							<p class="list-group-item-text">
+								Welcome!
+...
 							</p>
 						</a>
 					</div>
@@ -96,6 +166,6 @@ Pour cette première approche de la programmation objet en Python, nous allons p
 			});
 		</script>
 		
-		<!-- Generated by Vegetables from '' with format '' - '2019-12-12 17:49:14' -->
+		<!-- Generated by Vegetables from '' with format '' - '2019-12-12 17:49:43' -->
 	</body>
 </html>

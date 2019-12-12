@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<title>POO Python suite</title>
+	<link rel="stylesheet" href="../../assets/css/reveal/reveal.css">
+	<link rel="stylesheet" href="../../assets/css/reveal/theme/white.css">
+	<link rel="stylesheet" href="../../assets/css/highlight-hybrid.css">
+	<link rel="stylesheet" href="../../assets/css/slideshow.css">
+	<style>
+	</style>
+	<!--  -->
+</head>
+<body>
+	<div class="reveal">
+		<div class="slides">
+			<section data-markdown
+			data-separator="(^#HSLIDE$|^#HSLIDE\?.*)"
+			data-separator-vertical="(^#VSLIDE$|^#VSLIDE\?.*)"
+			data-separator-notes="^Presentation note:"
+			data-charset="utf-8">
+			<script type="text/template">
+				#HSLIDE
+
+# POO Python suite
+#HSLIDE
+
+## Introduction
+Maintenant que nous avons abordé la POO par des exemples simples, nous allons pouvoir rajouter quelques notions plus complexes qui mettent en avant l&#39;intérêt de l&#39;approche objet. De la même façon que pour l&#39;atelier précédent, nous allons extraire du code de logiciel, qui nous servira de support au explication. 
+
+#HSLIDE
+
+## Encapsulation: public, privé, protected et convention de nommage
+Nous allons tout d&#39;abord aborder la notion d&#39;encapsulation, qui repose sur le fait d&#39;authoriser l&#39;accès à des attributs ou des méthodes dans des situations particulières. Ainsi, un attribut de type privé ne sera accessible que par la classe qui possède l&#39;attribut, dans le cas de protégé l&#39;attribut sera aussi accessible par les classes filles (héritage) et dans le cas publique, il n&#39;y a pas de restriction. En python pour différencier les 3 types on utilise les _. Ainsi on ajoute 2 _ pour le type privé, 1 _ pour protégé. Il n&#39;y a rien à faire dans le cas publique.
+Dans le cas de Python, il est important de comprendre que l&#39;encapsulation n&#39;est pas quelque-chose d&#39;important par rapport à l&#39;esprit du langage qui se veut simple. Ainsi, il n&#39;y a pas de mécanisme fort d&#39;encapsulation, ni de pratique commune, chacun peux implementer des fonctionnements différents.
+
+Voici un exemple d&#39;une classe `Network` de la biopython ([ici](https://github.com/biopython/biopython/blob/master/Bio/Pathway/__init__.py)). Nous allons utiliser ce code pour visualiser différents mécanismes possibles.
+
+**Implementation initiale:**
+
+```python
+class System(object):
+    """Abstraction for a collection of reactions.
+    This class is used in the Bio.Pathway framework to represent an arbitrary
+    collection of reactions without explicitly defined links.
+    Attributes:
+     - None
+    """
+
+    def __init__(self, reactions=()):
+        """Initialize a new System object."""
+        self.__reactions = set(reactions)
+
+    def __repr__(self):
+        """Return a debugging string representation of self."""
+        return "System(" + ",".join(map(repr, self.__reactions)) + ")"
+
+    def __str__(self):
+        """Return a string representation of self."""
+        return "System of " + str(len(self.__reactions)) + \
+               " reactions involving " + str(len(self.species())) + \
+               " species"
+
+    def add_reaction(self, reaction):
+        """Add reaction to self."""
+        self.__reactions.add(reaction)
+
+    def remove_reaction(self, reaction):
+        """Remove reaction from self."""
+        self.__reactions.remove(reaction)
+
+    def reactions(self):
+        """Return a list of the reactions in this system.
+        Note the order is arbitrary!
+        """
+        # TODO - Define __lt__ so that Reactions can be sorted on Python?
+        return list(self.__reactions)
+```
+Ainsi, si vous appelez directement l&#39;attribut privé `__reactions`, vous obtenez une erreur:
+
+```python
+from Bio.Pathway import System, Reaction
+
+reac1 = Reaction()
+reac2 = Reaction()
+syst = System((reac1, reac2))
+print(syst.__reactions)
+
+Traceback (most recent call last):
+  File "./python-s2-implementation.py", line 8, in <module>
+    print(syst.__reactions)
+AttributeError: 'System' object has no attribute '__reactions' 
+```
+Vous êtes obligés, d&#39;utiliser la méthode d&#39;accès proposée: `reactions()`
+
+```python
+print(syst.reactions())
+
+[Reaction({},[],None,0)]
+```
+Mais il faut savoir que Python triche, il renomme simplement l&#39;attribut de façon à le masquer. Il reste accessible avec cette petite astuce:
+
+```python
+# ref instance._Class__nameAttribute
+print(syst._System__reactions)
+
+set([Reaction({},[],None,0)])
+```
+**Implementation avec accesseurs**
+
+Nous allons faire une implementation basique avec nos propres accesseurs (=mutators)
+
+```python
+class System(object):
+
+    def __init__(self, reactions=()):
+        """Initialize a new System object."""
+        self.__reactions = set(reactions)
+
+    def get_reactions(self):
+        return self.__reactions
+
+    def set_reactions(self, reactions):
+        self.__reactions = set(reactions)
+```
+**Implementation avec accesseurs dunder**
+
+Nous allons remplacer nos accesseurs &quot;maison&quot; par des méthodes dunder. Cette implementation qui n&#39;a pas vraiement d&#39;intérêt, permet de comprendre que l&#39;accès ou la modification des valeurs des attributs d&#39;objet se fait à travers des méthodes dunder. On va pouvoir modifier le comportement de ces méthodes en autorisant par exemple l&#39;accès aux attributs privés. On va ainsi garder la convention de nommage double _ pour spécifier le type privé, mais néanmoins pouvoir accéder aux données.
+
+```python
+class System(object):
+
+    def __init__(self, reactions=()):
+        """Initialize a new System object."""
+        self.__reactions = set(reactions)
+
+    def __getattr__(self, name):
+        if name.startswith("__"):
+            # get private attribute
+            return self.__dict__["".join(["_",self.__class__.__name__,name])]
+        else:
+            return self.__dict__[name]
+
+    def __setattr__(self, name, value):
+        if name.startswith("__"):
+            # set private attribute
+            self.__dict__["".join(["_",self.__class__.__name__,name])]=value
+        else:
+            self.__dict__[name]=value
+```
+**Implementation avec décorateurs**
+
+Pour finir, je vous propose de voir une implémenation avec un décorateur, particularité du langage Python. Nous reviendrons dans un atelier futur sur les décorateurs, pour l&#39;instant vous pouvez simplement retenir qu&#39;un décorateur est une fonction qui va permettre d&#39;executer des pré/post traitements lorsqu&#39;il est associé à une autre fonction/méthode. Dans ce cas nous allons utiliser des décorateurs déjà fournis par le langage Python, &quot;Property&quot;, à savoir qu&#39;il est tout à fait possible de coder ses propores décorateurs. Pour plus d&#39;info un très bon blog avec de très bons liens et ressources [ici](http://gillesfabio.com/blog/2010/12/16/python-et-les-decorateurs/)
+
+```python
+class System(object):
+
+    def __init__(self, reactions=()):
+        """Initialize a new System object."""
+        self.__reactions = set(reactions)
+
+    @property
+    def reactions(self):
+        return self.__reactions
+
+    @reactions.setter
+    def reactions(self, reactions=()):
+        self.__reactions = set(reactions)
+
+reac1 = Reaction("1")
+reac2 = Reaction("1")
+syst = System((reac1, reac2))
+print(syst.reactions)
+syst.reactions = (reac1, Reaction("2"))
+print(syst.reactions)
+```
+**Implementation avec property()**
+
+L&#39;implementation des décorateurs vu au dessus est inspiré de la primitive `property()` `(property(fget=None, fset=None, fdel=None, doc=None))`qui peut aussi permettre d&#39;implémenter un accès aux données:
+
+```python
+class System(object):
+
+    def __init__(self, reactions=()):
+        """Initialize a new System object."""
+        self.__reactions = set(reactions)
+
+    def __get_reactions(self):
+        return self.__reactions
+
+    def __set_reactions(self, reactions=()):
+        self.__reactions = set(reactions)
+
+    reactions=property(__get_reactions, __set_reactions)
+
+reac1 = Reaction("1")
+reac2 = Reaction("1")
+syst = System((reac1, reac2))
+print(syst.reactions)
+syst.reactions = (reac1, Reaction("2"))
+print(syst.reactions)
+```
+Nous avons vu ici le mécanisme de decorateur et de property pour contrôler l&#39;accès aux données. Attention, il est recommandé d&#39;éviter ce genre d&#39;implementation si il y a nécéssité d&#39;accès important et récurrent aux données. 
+
+Si nous résumons cette partie, il faut garder à l&#39;esprit que la notion d&#39;encapsulation en python n&#39;est pas aussi restrictive que dans d&#39;autres langages comme Java par exemple. Elle est surtout utilisée pour vous aider à structurer votre code en choisissant d&#39;exposer plus ou moins certaines parties du code. L&#39;encapsulation se fait par convention de nommage et il est possible d&#39;utiliser plusieurs mécanismes pour accéder aux données ou méthodes.
+
+#HSLIDE
+
+## Attributs de Classe, methodes de Classe, méthodes statiques
+**Attributs de Classe**
+
+Les attributs de classe sont des attributs liés au type de la classe et non à une instance de celle-ci. Reprenons notre classe `System` et rajoutons un attribut de classe qui va permettre de connaitre le nombre d&#39;instance en cours de la classe. Celui se rajoute directement sous la déclaration de la classe hors de la méthode d&#39;initialisation. 
+
+```python
+class System(object):
+
+    nbSystems = 0
+
+    def __init__(self, reactions=()):
+        """Initialize a new System object."""
+        self.__reactions = set(reactions)
+        self.__class__.nbSystems += 1
+
+    def __del__(self):
+        self.__class__.nbSystems -= 1
+
+
+if __name__ == "__main__":
+
+    reac1 = Reaction()
+    reac2 = Reaction()
+    syst = System((reac1, reac2))
+    print(System.nbSystems)
+    syst = System([reac1])
+    print(System.nbSystems)
+    syst2 = System([reac1])
+    print(System.nbSystems)
+    del(syst)
+    print(System.nbSystems)
+
+1
+1
+2
+1
+```
+A chaque fois qu&#39;un nouvel objet est initialisé, le compteur `nbSystems` est incrémenté de 1. De même si un objet est supprimé, le compteur décroit de 1. 
+
+**Méthodes de Classe - Méthodes statiques**
+
+Il est possible aussi d&#39;avoir des méthodes sur des classes qui sont utilisables s&#39;en avoir instancié un objet au préalable. Il y a les méthodes de classe, dont le rôle est en général de permettre l&#39;instanciation d&#39;objet différemment que par l&#39;instanciation normale. Ces méthodes ont simplement besoin d&#39;avoir en argument le type de la classe. Il exsite aussi les méthodes statiques, qui elles n&#39;ont aucun pré-requis et peuvent être directement appelées depuis le type de la classe. Elles sont souvent utilisées pour faire des classes dites utilitaires.
+
+Modifions notre classe `System` en créant une méthode de classe qui va nous permettre de générer un nouveau `System` en réunissant une liste de `System` passée en arguments. Simultanément, nous allons implémenter une méthode statique qui va nous permettre d&#39;avoir la somme des réactions présents dans une liste de `System`.  
+
+```python
+class System(object):
+
+    nbSystems = 0
+
+    def __init__(self, reactions=()):
+        """Initialize a new System object."""
+        self.__reactions = set(reactions)
+        self.__class__.nbSystems += 1
+
+    def __del__(self):
+        self.__class__.nbSystems -= 1
+
+    @property
+    def reactions(self):
+        return self.__reactions
+
+    @reactions.setter
+    def reactions(self, reactions=()):
+        self.__reactions = set(reactions)
+
+    @classmethod
+    def merge_systems(cls,systems=[]):
+
+        lreactions = []
+        for sys in systems:
+            lreactions.extend(sys.reactions)
+
+        return cls(set(lreactions))
+
+    @staticmethod
+    def count_reactions(systems=[]):
+
+        return sum([len(syst.reactions) for syst in systems])
+
+if __name__ == "__main__":
+
+   syst = System(("reac1", "reac2"))
+   print(System.nbSystems)
+   print(syst.reactions)
+   syst2 = System(("reac1", "reac3"))
+   print(System.nbSystems)
+   print(syst2.reactions)
+   syst3 = System.merge_systems([syst,syst2])
+   print(System.nbSystems)
+   print(syst3.reactions)
+   print(System.count_reactions([syst,syst2,syst3]))
+
+
+1
+set(['reac1', 'reac2'])
+2
+set(['reac1', 'reac3'])
+3
+set(['reac1', 'reac2', 'reac3'])
+7
+```
+Pour info, il est possible de ne pas utiliser de decorator pour spécifier le type `classmethod` ou `staticmethod` en utilisant des primitives:
+
+```python
+    def merge_systems(cls,systems=[]):
+
+        lreactions = []
+        for sys in systems:
+            lreactions.extend(sys.reactions)
+
+        return cls(set(lreactions))
+    merge_systems = classmethod(merge_systems)
+
+    def count_reactions(systems=[]):
+
+        return sum([len(syst.reactions) for syst in systems])
+    count_reactions = staticmethod(count_reactions)
+
+```
+#HSLIDE
+
+## Héritage, Polymorphisme, Surchage d'opérateurs
+L&#39;héritage consiste à dériver des classes en sous-classes. Une sous-classe (classe fille) hérite alors de toutes les caractéristiques (attributs, méthodes) de la classe (classe mère). La classe fille peut en plus ajouter ses propres méthodes/attributs, ou même modifier des méthodes existantes, dans ce cas on parle de surcharge d&#39;opérateurs. La classe fille est une spécilisation de la classe mère.
+Pour exemple, prenons une partie du code de l&#39;outil web Galaxy et plus précisement l&#39;implémentation des types d&#39;exceptions:
+
+```python
+class MessageException(Exception):
+    """Most generic Galaxy exception - indicates merely that some exceptional condition happened."""
+    # status code to be set when used with API.
+    status_code = 400
+    # Error code information embedded into API json responses.
+    err_code = "UNKNOWN"
+
+    def __init__(self, err_msg=None, type="info", **extra_error_info):
+        self.err_msg = err_msg or self.err_code
+        self.type = type
+        self.extra_error_info = extra_error_info
+
+    def __str__(self):
+        return self.err_msg
+
+class DuplicatedSlugException(MessageException):
+    status_code = 400
+    err_code = "USER_SLUG_DUPLICATE"
+
+class DuplicatedIdentifierException(MessageException):
+    status_code = 400
+    err_code = "USER_IDENTIFIER_DUPLICATE"
+
+
+if __name__ == "__main__":
+
+    print(MessageException())
+    print(MessageException("unknown"))
+    print(DuplicatedSlugException())
+    print(DuplicatedSlugException("duplicate"))
+```
+résultats:
+
+```
+UNKNOWN
+unknown
+USER_SLUG_DUPLICATE
+duplicate
+```
+Dans le cas où un message est passé à l&#39;exception demandée, c&#39;est le message en argument qui est affiché. Sans message explicite, c&#39;est l&#39;`err_code` qui est retourné selon la classe. L&#39;affichage est réalisé grâce à l&#39;implémentation de la méthode `__str__` dans la classe mère `MessageException`.
+Nous allons maintenant réaliser une surcharge de la méthode `__str__` dans la classe `DuplicatedIdentifierException` afin de spécialiser son affichage.
+
+```Python
+class MessageException(Exception):
+    """Most generic Galaxy exception - indicates merely that some exceptional condition happened."""
+    # status code to be set when used with API.
+    status_code = 400
+    # Error code information embedded into API json responses.
+    err_code = "UNKNOWN"
+
+    def __init__(self, err_msg=None, type="info", **extra_error_info):
+        self.err_msg = err_msg or self.err_code
+        self.type = type
+        self.extra_error_info = extra_error_info
+
+    def __str__(self):
+        return self.err_msg
+
+class DuplicatedSlugException(MessageException):
+    status_code = 400
+    err_code = "USER_SLUG_DUPLICATE"
+
+class DuplicatedIdentifierException(MessageException):
+    status_code = 400
+    err_code = "USER_IDENTIFIER_DUPLICATE"
+
+    def __str__(self):
+        return f"my specialized method:{self.err_msg}"
+
+
+if __name__ == "__main__":
+
+    print(MessageException())
+    print(MessageException("unknown"))
+    print(DuplicatedSlugException())
+    print(DuplicatedSlugException("duplicate"))
+    print(DuplicatedIdentifierException(""))
+    print(DuplicatedIdentifierException("duplicate"))
+```
+résulats:
+
+````
+UNKNOWN
+unknown
+USER_SLUG_DUPLICATE
+duplicate
+my specialized method:USER_IDENTIFIER_DUPLICATE
+my specialized method:duplicate
+```
+En surchargeant notre methode, nous avons introduit un polymorphisme d&#39;héritage. La méthode `__str__` est devenue polymorphique, car elle propose une implémentation différente selon la classe de l&#39;objet.
+
+#HSLIDE
+
+## Abstraction, Interfaces
+Nous allons maintenant nous intéresser très brièvement au concept de classe abstraite et d&#39;interface. Pour cet atelier, ce paragraphe sera relativement court pour ne pas tout de suite introduire trop d&#39;élèment complexe du langage Python. En effet cette partie sera grandement plus couverte dans un prochain atelier avec des approches plus &quot;pythonesques&quot; via le module `abc`, les Abstract Base Class du module `collections` et les `metaclass`. Pour l&#39;instant concentrons nous sur une approche généraliste.
+
+De façon simple, une classe abstraite est une classe qui ne peut pas être instanciée, mais dont il faut absolument hériter pour en utiliser les méthodes. Par ailleurs, ses méthodes peuvent être implémentées ou non. Dans ce dernier cas, il est alors nécessaire de les surcharger dans les classes filles.
+
+Afin d&#39;illustrer ce concept, nous allons nous intéresser à la classe abstraite `AbstractCommandline` de la Biopython. Cette classe sert de base pour appeler un programme et l&#39;executer. Elle contient tout un ensemble de méthodes pour construire la ligne de commande à lancer, ainsi que lancer le programme demandé. Grâce à ce mécanisme, la création d&#39;un nouveau &quot;wrapper&quot; d&#39;outil est très simplifié. Dans ce cas précis, la seule contrainte demandé au classe filles est de définir la liste des paramètres nécéssaires à la construction de la ligne de commande. Voyons ça en détails:
+
+```python
+class AbstractCommandline(object):
+    r"""Generic interface for constructing command line strings.
+
+    This class shouldn't be called directly; it should be subclassed to
+    provide an implementation for a specific application.
+...
+    """
+    parameters = None  # will be a list defined in subclasses
+
+    def __init__(self, cmd, **kwargs):
+        """Create a new instance of a command line wrapper object."""
+        # Init method - should be subclassed!
+        #
+        # The subclass methods should look like this:
+        #
+        # def __init__(self, cmd="muscle", **kwargs):
+        #     self.parameters = [...]
+        #     AbstractCommandline.__init__(self, cmd, **kwargs)
+        #
+
+        self.program_name = cmd
+        try:
+            parameters = self.parameters
+        except AttributeError:
+            raise AttributeError("Subclass should have defined self.parameters")
+        # Create properties for each parameter at run time
+        aliases = set()
+...
+```
+Utilisation de la classe abstraite pour générer une commande `samtools view`:
+
+```Python
+class SamtoolsViewCommandline(AbstractCommandline):
+    """Command line wrapper for samtools view.
+
+...
+    def __init__(self, cmd="samtools", **kwargs):
+        """Initialize the class."""
+        self.program_name = cmd
+        self.parameters = [
+            _StaticArgument("view"),
+            _Switch(["-b", "b"], "Output in the BAM format"),
+...
+            _Argument(["region"], "Region", is_required=False),
+        ]
+        AbstractCommandline.__init__(self, cmd, **kwargs)
+```
+Modifions la classe abstraite de façon à ce qu&#39;elle impose aux classes filles l&#39;implementation d&#39;une méthode `dry_run`:
+
+```python
+class AbstractCommandline(object):
+    ...
+
+        def dry_run(self):
+            raise NotImplementedError('need to be implemented')
+```
+Ainsi, dans le cas où une classe fille souhaiterait appeler la méthode `dry_run`, si cette dernière n&#39;implemente pas sa propre méthode, une exception sera levée. 
+
+#HSLIDE
+
+## Implémentation
+L&#39;exercice consiste à se placer dans la situation de lecture d&#39;un fichier d&#39;annotation sur lequel on souhaite faire quelques statistiques basiques. Pour cela nous allons implémenter une classe Abstraite `AbstractFeature` qui servira de base à la création de 2 classes filles `Gene` et `Transcript`. Ces 2 sous-classes ont aussi une relation de composition, puisqu&#39;un gène peut avoir 1 ou plusieurs transcripts. En 
+parallèle, nous allons implémenter une classe &quot;utilitaire&quot; `Stats`, qui nous permettra de réaliser des statistiques simples sur nos Features. Pour vous aider voici la modélisation de UML de l&#39;implémentation attendue:
+
+![Abstract](../../images/poo-suite.png)
+
+Implementez les 4 classes dans le même fichier et rajoutez le code suivant, à la suite des 4 classes.
+
+```python
+if __name__ == "__main__":
+
+    gene1 = Gene("chr1", 1000, 2000, "gene1")
+    mRNA1 = Transcript("chr1", 1000, 2000, "mRNA1", "gene1")
+    gene2 = Gene("chr1", 10000, 12000, "gene2")
+    mRNA2 = Transcript("chr1", 10000, 12000, "mRNA2", "gene2")
+    mRNA3 = Transcript("chr1", 10000, 11400, "mRNA3", "gene2")
+
+    print(gene1+gene2)
+    print(sum((gene1,gene2)))
+    print(f"Gene mean length: {Stats.mean([gene1,gene2])}")
+    print(f"Transcript mean length: {Stats.mean([mRNA1,mRNA2,mRNA3])}")
+```
+Executez le script, voici le résultat que vous devez obtenir:
+
+```
+3002
+3002
+Gene mean length: 1501.0
+Transcript mean length: 1467.6666666666667
+```
+La solution est [ici](python-i2.html)
+
+#HSLIDE
+
+## Retour sur l'atelier
+Nous avons rajouter de nouveaux éléments dans l&#39;utilisation de la POO en Python. 
+
+Pour rappel, Python est un langage assez permissif et ne propose pas de typage fort. L&#39;implementation de certains concepts objets peut se faire à l&#39;encontre de la philosophie du langage, mais peut néanmoins être intéressant pour structurer son code et son programme. Dans un futur atelier nous aborderons des concepts très &quot;pythonesques&quot; que sont le duck-typing, les metaclasse et le module ABC.
+
+#HSLIDE
+
+## Références
+Quelques liens intéressants qui ont servi à faire cet atelier:
+
+
+- [encapsulation](https://openclassrooms.com/fr/courses/4302126-decouvrez-la-programmation-orientee-objet-avec-python/4313211-comprenez-lencapsulation)
+- [properties-decorateurs](https://www.python-course.eu/python3_properties.php)
+- [decorateurs](http://gillesfabio.com/blog/2010/12/16/python-et-les-decorateurs/)
+- [decorateurs](https://wiki.python.org/moin/PythonDecoratorLibrary)
+- [decorateurs](https://realpython.com/primer-on-python-decorators/)
+
+
+			</script>
+		</section>
+	</div>
+</div>
+
+<script src="../../assets/js/reveal/reveal.js"></script>
+<script src="../../assets/js/reveal/lib/head.min.js"></script>
+<script src="../../assets/js/jquery.js"></script>
+<script>
+Reveal.initialize({
+	embedded: true,
+	margin: 0.0,
+	showNotes: false,
+	transition: 'slide',
+	autoSlide: 0,
+	loop: false,
+	center: true,
+	rtl: false,
+	shuffle: false,
+	mouseWheel: false,
+	history: true,
+
+	// disabled for now
+	// math: {
+	// 	mathjax: 'https://cdn.mathjax.org/mathjax/latest/MathJax.js',
+	// 	config: 'TeX-AMS_HTML-full'
+	// },
+
+	dependencies: [
+		{ src: "../../assets/js/reveal/plugin/markdown/marked.js"},
+		{ src: "../../assets/js/reveal/plugin/markdown/markdown.js"},
+		{ src: "../../assets/js/reveal/plugin/notes/notes.js"},
+		// { src: "../../assets/js/reveal/plugin/math/math.js", async: true }
+		{ src: "../../assets/js/reveal/plugin/highlight/highlight.js", async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
+	]
+});
+
+Reveal.configure({
+	keyboard: {
+		67: function() { // bind "s" key to "select" code block content
+
+		var currentSlide = Reveal.getCurrentSlide();
+		var preBlock = $(currentSlide).find("pre");
+
+		if(preBlock.length > 0) {
+
+			if (window.getSelection) {
+				var range = document.createRange();
+				range.selectNodeContents(preBlock[0]);
+				var selection = window.getSelection();
+				selection.removeAllRanges();
+				selection.addRange(range);
+			}
+		}
+	}
+}
+});
+
+</script>
+
+</body>
+</html>

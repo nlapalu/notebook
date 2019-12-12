@@ -1,0 +1,558 @@
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Python, tester son code - Nicolas Lapalu</title>
+		<link rel="stylesheet" href="../../assets/css/highlight.min.css">
+		<link rel="stylesheet" href="../../assets/css/bootstrap.min.css">
+		<link rel="stylesheet" href="../../assets/css/tipuesearch.css">
+		<link rel="stylesheet" href="../../assets/css/main.css">
+	</head>
+	<body>
+		<header class="navbar navbar-default navbar-fixed-top">
+			<div class="container-fluid">
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse-1">
+						<span class="sr-only">Toggle navigation</span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+					<a class="navbar-brand" href="../../">Nicolas Lapalu</a> <p class="navbar-text hidden-xs">Python, tester son code</p>
+				</div>
+
+				<div class="collapse navbar-collapse" id="navbar-collapse-1">
+					<form action="../../search.html" class="navbar-form navbar-right" role="search">
+						<div class="form-group">
+							<input type="text" name="q" id="tipue_search_input" autocomplete="off" required class="form-control" placeholder="Search">
+						</div>
+					</form>
+					<ul class="nav navbar-nav navbar-right">
+						<li><a href="../../category/python/python-s3-slideshow.html" target="_blank">View as slideshow</a></li>
+						<!--li><a href="../../category/python/python-s3-raw.html">View Markdown</a></li-->
+					</ul>
+				</div>
+			</div>
+		</header>
+
+		<!--
+<div class="toc">
+<p class="lead">Table of contents:</p>
+<p class="toc-1">
+<a href="#python-tester-son-code-pour-le-rendre-plus-fiable">Python tester son code pour le rendre plus fiable</a>
+</p>
+<p class="toc-2">
+<a href="#introduction">Introduction</a>
+</p>
+<p class="toc-2">
+<a href="#les-tests-qu-39-est-ce-que-c-39-est-">Les tests, qu&amp;#39;est ce que c&amp;#39;est ?</a>
+</p>
+<p class="toc-2">
+<a href="#doctest-le-m-lange-de-la-documentation-et-du-test">Doctest: le mélange de la documentation et du test</a>
+</p>
+<p class="toc-2">
+<a href="#cohabitation-unittest-et-doctest-">Cohabitation &#x60;unittest&#x60; et &#x60;doctest&#x60;</a>
+</p>
+<p class="toc-2">
+<a href="#les-diff-rents-modules-de-tests">Les différents modules de tests</a>
+</p>
+<p class="toc-2">
+<a href="#int-gration-dans-le-packaging-de-module">Intégration dans le packaging de module</a>
+</p>
+<p class="toc-2">
+<a href="#impl-mentation">Implémentation</a>
+</p>
+<p class="toc-2">
+<a href="#retour-sur-l-39-atelier">Retour sur l&amp;#39;atelier</a>
+</p>
+<p class="toc-2">
+<a href="#r-f-rences">Références</a>
+</p>
+</div>
+-->
+
+		<div class="container">
+			<div class="row">
+				<nav id="sidebar" class="col-lg-2 col-sm-3">
+					<ul class="nav nav-pills nav-stacked">
+						<li role="presentation" class=""><a href="../../category/python/python-s1.html">Initiation POO Python</a></li>
+						<li role="presentation" class=""><a href="../../category/python/python-s2.html">POO Python suite</a></li>
+						<li role="presentation" class="active"><a href="../../category/python/python-s3.html">Python, tester son code</a></li>
+					</ul>
+					<!--
+Available versions:<br>
+raw<br>
+->category/python/python-s3-raw.html<br>
+slideshow<br>
+->category/python/python-s3-slideshow.html<br>
+default<br>
+->category/python/python-s3.html<br>
+<br>
+Document informations:<br>
+category/python/python-s3.md<br><br>
+active
+-->
+				</nav>
+				<header>
+					<div class="entry-meta text-right">
+
+					</div>
+				</header>
+				<article id="content" class="col-lg-10 col-sm-9">
+					<h1 id="python-tester-son-code-pour-le-rendre-plus-fiable">Python tester son code pour le rendre plus fiable</h1>
+<h2 id="introduction">Introduction</h2>
+<p>Afin de rendre son code plus robuste et plus fiable, il est impératif de mettre en place un ensemble de tests permettant de valider le fonctionnement du code. Les tests sont les garants du résultat. Par ailleurs, pour qu&#39;un code soit facilement testable, il faut qu&#39;il soit modulable et atomique. Un code sera d&#39;autant plus facilement testable que l&#39;on pourra isoler de petites parties et controller spécifiquement l&#39;execution. Il y a énormément de choses à dire autour des tests de code. Cet atelier permet d&#39;aborder les bases et de pouvoir mettre en place un jeu de tests autour d&#39;un module. Pour aller plus loin, vous pouvez vous intéresser au TDD (Test Driven Development), dont la mentalité est le test avant tout. </p>
+<h2 id="les-tests-qu-est-ce-que-c-est-">Les tests, qu&#39;est ce que c&#39;est ?</h2>
+<p>Pour appréhender ce qu&#39;est un test, le plus simple est d&#39;aller faire un peu de revue de code sur notre package bioinfo préféré: la biopython. Si vous récupérez le code de la biopython ou que vous naviguez sur sa documentation <a href="https://github.com/biopython/biopython">ici</a>, vous remarquerez qu&#39;il y a un dossier <code>Tests</code>. Ce dossier contient l&#39;ensemble des tests immplémentés pour les modules de la Biopython. Comme nous le verrons plus loin en plus d&#39;aider au développement ils pourront être joués lors de l&#39;installation du package. Les tests ont donc un intérêt lors du développement mais aussi pendant le déploiement du code.</p>
+<p>Regardons de plus près le fichier de test: <a href="https://github.com/biopython/biopython/blob/master/Tests/test_File.py"><code>test_File.py</code></a></p>
+<pre><code class="lang-python">from __future__ import print_function
+
+import os.path
+import shutil
+import sys
+import tempfile
+import unittest
+
+from Bio import bgzf
+from Bio import File
+from Bio._py3k import StringIO
+
+data = &quot;&quot;&quot;This
+is
+a multi-line
+file&quot;&quot;&quot;
+
+...
+
+
+class RandomAccess(unittest.TestCase):
+
+    def test_plain(self):
+        with File._open_for_random_access(&quot;Quality/example.fastq&quot;) as handle:
+            self.assertTrue(&quot;r&quot; in handle.mode)
+            self.assertTrue(&quot;b&quot; in handle.mode)
+
+    def test_bgzf(self):
+        with File._open_for_random_access(&quot;Quality/example.fastq.bgz&quot;) as handle:
+            self.assertIsInstance(handle, bgzf.BgzfReader)
+
+    def test_gzip(self):
+        self.assertRaises(ValueError,
+                          File._open_for_random_access,
+                          &quot;Quality/example.fastq.gz&quot;)
+</code></pre>
+<p>Le fichier de tests comporte plusieurs classes qui héritent toute de <code>unittest.TestCase</code>, classe <code>TestCase</code> du module de test <code>unittest</code>. Chaque classe implémente plusieurs méthodes commençant par <strong><em>test</em></strong>, qui correspond plus ou moins à un test. Néanmoins chaque test peut comporter plusieurs valeurs testées. En héritant de <code>TestCase</code>, les classes créées vont bénéficier d&#39;un grand ensemble de méthodes de test. Par exemple, la première méthode <code>test_plain()</code> va éssayer 2 assertions. <strong><em>Quand j&#39;ouvre le fichier fastq (de test) &quot;Quality/example.fastq&quot; via la méthode</em></strong> <code>_open_for_random_access()</code><strong><em>, est ce que le fichier est en mode &#39;r&#39; et &#39;b&#39; ?</em></strong></p>
+<p>Regardons maintenant la classe de test suivante. </p>
+<pre><code class="lang-python">class AsHandleTestCase(unittest.TestCase):
+
+    def setUp(self):
+        # Create a directory to work in
+        self.temp_dir = tempfile.mkdtemp(prefix=&#39;biopython-test&#39;)
+
+    def tearDown(self):
+        shutil.rmtree(self.temp_dir)
+
+    def _path(self, *args):
+        return os.path.join(self.temp_dir, *args)
+
+    def test_handle(self):
+        &quot;Test as_handle with a file-like object argument&quot;
+        p = self._path(&#39;test_file.fasta&#39;)
+        with open(p, &#39;wb&#39;) as fp:
+            with File.as_handle(fp) as handle:
+                self.assertEqual(fp, handle, &quot;as_handle should &quot;
+                                 &quot;return argument when given a &quot;
+                                 &quot;file-like object&quot;)
+                self.assertFalse(handle.closed)
+
+            self.assertFalse(handle.closed,
+                             &quot;Exiting as_handle given a file-like object &quot;
+                             &quot;should not close the file&quot;)
+
+    def test_string_path(self):
+        &quot;Test as_handle with a string path argument&quot;
+        p = self._path(&#39;test_file.fasta&#39;)
+        mode = &#39;wb&#39;
+        with File.as_handle(p, mode=mode) as handle:
+            self.assertEqual(p, handle.name)
+            self.assertEqual(mode, handle.mode)
+            self.assertFalse(handle.closed)
+        self.assertTrue(handle.closed)
+
+    @unittest.skipIf(
+        sys.version_info &lt; (3, 6),
+        &#39;Passing Path objects to File.as_handle requires Python &gt;= 3.6&#39;,
+    )
+    def test_path_object(self):
+        &quot;Test as_handle with a pathlib.Path object&quot;
+        from pathlib import Path
+        p = Path(self._path(&#39;test_file.fasta&#39;))
+        mode = &#39;wb&#39;
+        with File.as_handle(p, mode=mode) as handle:
+            self.assertEqual(str(p.absolute()), handle.name)
+            self.assertEqual(mode, handle.mode)
+            self.assertFalse(handle.closed)
+        self.assertTrue(handle.closed)
+
+    @unittest.skipIf(
+        sys.version_info &lt; (3, 6),
+        &#39;Passing path-like objects to File.as_handle requires Python &gt;= 3.6&#39;,
+    )
+    def test_custom_path_like_object(self):
+        &quot;Test as_handle with a custom path-like object&quot;
+        class CustomPathLike:
+            def __init__(self, path):
+                self.path = path
+
+            def __fspath__(self):
+                return self.path
+
+        p = CustomPathLike(self._path(&#39;test_file.fasta&#39;))
+        mode = &#39;wb&#39;
+        with File.as_handle(p, mode=mode) as handle:
+            self.assertEqual(p.path, handle.name)
+            self.assertEqual(mode, handle.mode)
+            self.assertFalse(handle.closed)
+        self.assertTrue(handle.closed)
+
+    def test_stringio(self):
+        s = StringIO()
+        with File.as_handle(s) as handle:
+            self.assertIs(s, handle)
+
+
+if __name__ == &quot;__main__&quot;:
+    runner = unittest.TextTestRunner(verbosity=2)
+    unittest.main(testRunner=runner)
+</code></pre>
+<p>Plusieurs choses intéressantes sont à noter. L&#39;héritage de <code>TestCase</code> vous donne la possibilité de surcharger les méthodes <code>setUp()</code> et <code>tearDown()</code> qui seront utilisées respectivement avant les tests et après les tests. Vous pouvez donc via ces méthodes, configurer plus facilement votre environnement de test en spécifiant des attributs partagés. </p>
+<p>Nous pouvons voir aussi que certaines méthodes comportent des décorateurs (<a href="mailto:`@unittest.skipIf">`@unittest.skipIf</a>`). Plusieurs décorateurs existent permettant par exemple de ne pas executer le test, ce qui est utile en phase de développement ou de résolution de bugs, ou encore de spéficier des contraintes pour son execution (module necessaire, version de Python, ...).</p>
+<p>Il existe donc un grand nombre de méthodes d&#39;assertion ou de control d&#39;execution des tests. Afin de ne pas reprendre l&#39;ensemble des possibilités ici, le plus simple est d&#39;explorer la documentation de <a href="https://docs.python.org/3/library/unittest.html">unittest</a>. </p>
+<p>Exécutons maintenant les tests. Grâce au <code>__main__</code> implémenté dans le fichier nous pouvons lancer la suite de tests:</p>
+<p><code>python test_File.py</code></p>
+<pre><code>test_custom_path_like_object (__main__.AsHandleTestCase)
+Test as_handle with a custom path-like object ... skipped &#39;Passing path-like objects to File.as_handle requires Python &gt;= 3.6&#39;
+test_handle (__main__.AsHandleTestCase)
+Test as_handle with a file-like object argument ... ok
+test_path_object (__main__.AsHandleTestCase)
+Test as_handle with a pathlib.Path object ... skipped &#39;Passing Path objects to File.as_handle requires Python &gt;= 3.6&#39;
+test_string_path (__main__.AsHandleTestCase)
+Test as_handle with a string path argument ... ok
+test_stringio (__main__.AsHandleTestCase) ... ok
+test_bgzf (__main__.RandomAccess) ... ok
+test_gzip (__main__.RandomAccess) ... FAIL
+test_plain (__main__.RandomAccess) ... ok
+test_one (__main__.UndoHandleTests) ... ok
+test_read (__main__.UndoHandleTests)
+Test read method ... ok
+test_undohandle_read_block (__main__.UndoHandleTests) ... ok
+
+======================================================================
+FAIL: test_gzip (__main__.RandomAccess)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File &quot;test_File.py&quot;, line 85, in test_gzip
+    &quot;Quality/example.fastq.gz&quot;)
+AssertionError: ValueError not raised
+
+----------------------------------------------------------------------
+Ran 11 tests in 0.002s
+
+FAILED (failures=1, skipped=2)
+</code></pre><p>Nous pouvons voir que les tests se sont executés les uns après les autres dans l&#39;orde alphabétique. Un test a échoué, le détail apparaît alors en fin de la suite de test. </p>
+<h2 id="doctest-le-m-lange-de-la-documentation-et-du-test">Doctest: le mélange de la documentation et du test</h2>
+<p>Une autre façon de faire des tests est l&#39;utilisation du module <code>doctest</code> de python. Le but principal de <code>doctest</code> est de pouvoir très facilement intégrer des cas de tests du code au plus près de l&#39;implémentation. Cela limite le nombre de fichier crée en revanche cela peut aussi alourdir le code et rendre moins lisible la partie &#39;vrai code&#39; de votre fichier. L&#39;utilisation de <code>doctest</code> n&#39;est pas incompatible avec d&#39;autre type de module, c&#39;est simplement une philosphie différente. </p>
+<p>Le fonctionnement de cas de tests imbriqués au milieu du code, se fait par la recherche de <code>&gt;&gt;&gt;</code> au milieu de commentaires. Les tests peuvent ensuite être joués de différentes manières. Pour bien comprendre le lancement des tests via <code>doctest</code>, il faut s&#39;imaginer l&#39;ouverture d&#39;un shell Python dans lequel vous lancez des commandes. Chaque retour de vos commandes peut être ensuite testé.
+Comme toujours, une revue de code est bien plus efficace que de longues explications. Intéressons nous donc au module <a href="https://github.com/biopython/biopython/blob/master/Bio/Seq.py">Bio.Seq</a> de la biopython. Voici un extrait de sa méthode <code>__init()__</code>:</p>
+<pre><code class="lang-python">def __init__(self, data, alphabet=Alphabet.generic_alphabet):
+    &quot;&quot;&quot;Create a Seq object.
+    Arguments:
+    - seq - Sequence, required (string)
+    - alphabet - Optional argument, an Alphabet object from
+    Bio.Alphabet
+    You will typically use Bio.SeqIO to read in sequences from files as
+    SeqRecord objects, whose sequence will be exposed as a Seq object via
+    the seq property.
+    However, will often want to create your own Seq objects directly:
+    &gt;&gt;&gt; from Bio.Seq import Seq
+    &gt;&gt;&gt; from Bio.Alphabet import IUPAC
+    &gt;&gt;&gt; my_seq = Seq(&quot;MKQHKAMIVALIVICITAVVAALVTRKDLCEVHIRTGQTEVAVF&quot;,
+    ...              IUPAC.protein)
+    &gt;&gt;&gt; my_seq
+    Seq(&#39;MKQHKAMIVALIVICITAVVAALVTRKDLCEVHIRTGQTEVAVF&#39;, IUPACProtein())
+    &gt;&gt;&gt; print(my_seq)
+    MKQHKAMIVALIVICITAVVAALVTRKDLCEVHIRTGQTEVAVF
+    &gt;&gt;&gt; my_seq.alphabet
+    IUPACProtein()
+    &quot;&quot;&quot;
+    # Enforce string storage
+    if not isinstance(data, basestring):
+        raise TypeError(&quot;The sequence data given to a Seq object should &quot;
+                        &quot;be a string (not another Seq object etc)&quot;)
+    self._data = data
+    self.alphabet = alphabet # Seq API requirement
+</code></pre>
+<p>On peut voir que 3 tests ont été implémentés. Le premier qui test le retour de <code>my_seq</code>, le second de <code>print(my_seq)</code> et enfin <code>my_seq.alphabet</code>. Maintenant, si nous regardons la fin du fichier, le <code>__main__</code> de l&#39;objet a été implémenté avec:</p>
+<pre><code class="lang-python">def _test():
+    &quot;&quot;&quot;Run the Bio.Seq module&#39;s doctests (PRIVATE).&quot;&quot;&quot;
+    print(&quot;Running doctests...&quot;)
+    import doctest
+    doctest.testmod(optionflags=doctest.IGNORE_EXCEPTION_DETAIL)
+    print(&quot;Done&quot;)
+
+if __name__ == &quot;__main__&quot;:
+_test()
+
+</code></pre>
+<p>Ainsi, l&#39;objet (module) peut-être directement utilisé comme un script si il est appelé directement (via <code>__main__</code>). Dans ce cas, il y aura execution des tests <code>doctest</code> via la méthode <code>doctest.testmod()</code>. C&#39;est ce que nous faisons si dessous:</p>
+<pre><code>python3.7 -m Bio.Seq
+
+Running doctests...
+/home/nlapalu/Workspace/Github/biopython/Bio/Seq.py:441: BiopythonDeprecationWarning: This method is obsolete; please use str(my_seq) instead of my_seq.tostring().
+  BiopythonDeprecationWarning)
+/home/nlapalu/Workspace/Github/biopython/Bio/Seq.py:2626: BiopythonWarning: This table contains 2 codon(s) which code(s) for both STOP and an amino acid (e.g. &#39;TGA&#39; -&gt; &#39;W&#39; or STOP). Such codons will be translated as amino acid.
+  BiopythonWarning)
+Done
+</code></pre><p>Pour avoir plus d&#39;info, il faut demander le mode verbose</p>
+<pre><code>python3.7 -m Bio.Seq -v 
+
+/home/nlapalu/Workspace/Github/biopython/Bio/Seq.py:441: BiopythonDeprecationWarning: This method is obsolete; please use str(my_seq) instead of my_seq.tostring().
+  BiopythonDeprecationWarning)
+Running doctests...
+Trying:
+    from Bio.Seq import MutableSeq
+Expecting nothing
+ok
+Trying:
+    from Bio.Alphabet import generic_dna
+Expecting nothing
+ok
+Trying:
+    my_seq = MutableSeq(&quot;ACTCGTCGTCG&quot;, generic_dna)
+Expecting nothing
+ok
+Trying:
+    my_seq
+Expecting:
+    MutableSeq(&#39;ACTCGTCGTCG&#39;, DNAAlphabet())
+ok
+
+...
+
+   6 tests in __main__.UnknownSeq.transcribe
+  10 tests in __main__.UnknownSeq.translate
+  10 tests in __main__.UnknownSeq.ungap
+   7 tests in __main__.UnknownSeq.upper
+  10 tests in __main__._translate_str
+   1 tests in __main__.back_transcribe
+   1 tests in __main__.complement
+   1 tests in __main__.reverse_complement
+   1 tests in __main__.transcribe
+  15 tests in __main__.translate
+449 tests in 103 items.
+449 passed and 0 failed.
+Test passed.
+Done
+</code></pre><p>Un des problème de doctest est sa sensibilité au retour du test. En effet, ce qui est vraiment testé est une chaine de caractères qui correspond à l&#39;affichage interactif de votre commande. Il suffit donc d&#39;un léger écart dans la chaîne de retour pour que le test soit faux (exemple un espace vide à la fin de votre test). Si vous souhiatez donc utiliser <code>doctest</code> il faut essayer de faire des tests qui limiteront ces possibles problèmes. De même si vous souhaitez connaître toutes les subtilités du module, la documentation officielle est ici: <a href="https://docs.python.org/3.7/library/doctest.html"><code>doctest</code></a></p>
+<h2 id="cohabitation-unittest-et-doctest">Cohabitation <code>unittest</code> et <code>doctest</code></h2>
+<p>Nous venons de voir 2 façons de faire des tests via <code>unittest</code> ou <code>doctest</code>. Les 2 ont des pours et des contres. On veut vouloir par exemple plutôt faire du <code>doctest</code> sur des objets de type entité et plutôt de l&#39;<code>unittest</code> sur du traitement. Bref, le mélange des 2 apparaît une bonne solution. Il est tout à fait possible de pouvoir appeler par exemple les tests générés via <code>doctest</code> dans une classe <code>TestCase</code> cela grâce à une méthode spéciale  <a href="https://docs.python.org/3/library/unittest.html#load-tests-protocol"><code>load_tests()</code></a>. Nous ne détaillerons pas plus ici cette possibilité, mais nous essayerons de nous en servir dans l&#39;implémentation à réaliser. </p>
+<h2 id="les-diff-rents-modules-de-tests">Les différents modules de tests</h2>
+<p>Clairement il y a de gandes chances qu&#39;il ne vous soit pas nécessaire d&#39;utiliser d&#39;autres modules de tests que <code>unittest</code> et <code>doctest</code>. Neanmoins sachez qu&#39;il existe d&#39;autres modules:</p>
+<ul>
+<li>py.test</li>
+<li>Nose</li>
+<li>tox</li>
+<li>unittest2</li>
+</ul>
+<p>Plus d&#39;info <a href="https://python-guide-pt-br.readthedocs.io/fr/latest/writing/tests.html">ici</a></p>
+<h2 id="int-gration-dans-le-packaging-de-module">Intégration dans le packaging de module</h2>
+<p>Le dernier point que nous aborderons est lié au packaging de vos modules. Nous ferons un atelier spécifique sur cet aspect, mais sachez que tous les tests que vous avez implémentés peuvent vous servir de pré-requis à l&#39;installation de votre package. En effet, il est tres courant d&#39;avoir une tache (commande) <code>test</code> lors de l&#39;installation de votre package. Elle est la plupart du temps accessoire et il faut la forcer en faisant: <code>python setup.py test</code>. Si nous regardons le fichier de packaging <code>setup.py</code> de la biopython, cette tache est bien présente:</p>
+<pre><code class="lang-python">setup(name=&#39;biopython&#39;,
+      version=__version__,
+      author=&#39;The Biopython Contributors&#39;,
+      author_email=&#39;biopython@biopython.org&#39;,
+      url=&#39;https://biopython.org/&#39;,
+      description=&#39;Freely available tools for computational molecular biology.&#39;,
+      long_description=readme_rst,
+      classifiers=[
+          &#39;Development Status :: 5 - Production/Stable&#39;,
+          &#39;Intended Audience :: Developers&#39;,
+          &#39;Intended Audience :: Science/Research&#39;,
+          &#39;License :: Freely Distributable&#39;,
+          # Technically the &quot;Biopython License Agreement&quot; is not OSI approved,
+          # but is almost https://opensource.org/licenses/HPND so might put:
+          # &#39;License :: OSI Approved&#39;,
+          # To resolve this we are moving to dual-licensing with 3-clause BSD:
+          # &#39;License :: OSI Approved :: BSD License&#39;,
+          &#39;Operating System :: OS Independent&#39;,
+          &#39;Programming Language :: Python&#39;,
+          &#39;Programming Language :: Python :: 2&#39;,
+          &#39;Programming Language :: Python :: 2.7&#39;,
+          &#39;Programming Language :: Python :: 3&#39;,
+          &#39;Programming Language :: Python :: 3.4&#39;,
+          &#39;Programming Language :: Python :: 3.5&#39;,
+          &#39;Programming Language :: Python :: 3.6&#39;,
+          &#39;Topic :: Scientific/Engineering&#39;,
+          &#39;Topic :: Scientific/Engineering :: Bio-Informatics&#39;,
+          &#39;Topic :: Software Development :: Libraries :: Python Modules&#39;,
+      ],
+      cmdclass={
+          &quot;install&quot;: install_biopython,
+          &quot;build_py&quot;: build_py_biopython,
+          &quot;build_ext&quot;: build_ext_biopython,
+          &quot;test&quot;: test_biopython,
+      },
+      packages=PACKAGES,
+      ext_modules=EXTENSIONS,
+      package_data={
+          &#39;Bio.Entrez&#39;: [&#39;DTDs/*.dtd&#39;,
+                         &#39;DTDs/*.ent&#39;,
+                         &#39;DTDs/*.mod&#39;,
+                         &#39;XSDs/*.xsd&#39;],
+      },
+      install_requires=REQUIRES,
+      ) 
+</code></pre>
+<p>La tache appelle la classe <code>test_biopython</code> qui hérite de <code>Command</code>, dont la méthode <code>run()</code> permettra l&#39;execution de l&#39;ensemble des fichiers de tests:</p>
+<pre><code class="lang-python">class test_biopython(Command):
+    &quot;&quot;&quot;Run all of the tests for the package.
+
+    This is a automatic test run class to make distutils kind of act like
+    perl. With this you can do:
+
+    python setup.py build
+    python setup.py install
+    python setup.py test
+
+    &quot;&quot;&quot;
+
+    description = &quot;Automatically run the test suite for Biopython.&quot;
+    user_options = []
+
+    def initialize_options(self):
+        &quot;&quot;&quot;No-op, initialise options.&quot;&quot;&quot;
+        pass
+
+    def finalize_options(self):
+        &quot;&quot;&quot;No-op, finalise options.&quot;&quot;&quot;
+        pass
+
+    def run(self):
+        &quot;&quot;&quot;Run the tests.&quot;&quot;&quot;
+        this_dir = os.getcwd()
+
+        # change to the test dir and run the tests
+        os.chdir(&quot;Tests&quot;)
+        sys.path.insert(0, &#39;&#39;)
+        import run_tests
+        run_tests.main([])
+
+        # change back to the current directory
+        os.chdir(this_dir)
+</code></pre>
+<h2 id="impl-mentation">Implémentation</h2>
+<p>Nous allons utiliser l&#39;implémentation de la class <code>System</code> réalisée dans l&#39;atelier <a href="/category/python/python-s2.html">POO Python suite</a> pour mettre en place une série de tests. Afin de couvrir les notions vues dans l&#39;atelier, nous allons à la fois implémenter des tests unitaires avec <code>unittest</code> et <code>doctest</code>. Pour rappel, voici l&#39;implémentation de la class <code>System</code>: </p>
+<pre><code class="lang-python">class System(object):
+
+    nbSystems = 0
+
+    def __init__(self, reactions=()):
+        &quot;&quot;&quot;Initialize a new System object.&quot;&quot;&quot;
+        self.__reactions = set(reactions)
+        self.__class__.nbSystems += 1
+
+    def __del__(self):
+        self.__class__.nbSystems -= 1
+
+    @property
+    def reactions(self):
+        return self.__reactions
+
+    @reactions.setter
+    def reactions(self, reactions=()):
+        self.__reactions = set(reactions)
+
+    @classmethod
+    def merge_systems(cls,systems=[]):
+
+        lreactions = []
+        for sys in systems:
+            lreactions.extend(sys.reactions)
+
+        return cls(set(lreactions))
+
+    @staticmethod
+    def count_reactions(systems=[]):
+
+        return sum([len(syst.reactions) for syst in systems])
+
+if __name__ == &quot;__main__&quot;:
+
+   syst = System((&quot;reac1&quot;, &quot;reac2&quot;))
+   print(System.nbSystems)
+   print(syst.reactions)
+   syst2 = System((&quot;reac1&quot;, &quot;reac3&quot;))
+   print(System.nbSystems)
+   print(syst2.reactions)
+   syst3 = System.merge_systems([syst,syst2])
+   print(System.nbSystems)
+   print(syst3.reactions)
+   print(System.count_reactions([syst,syst2,syst3]))
+
+
+1
+set([&#39;reac1&#39;, &#39;reac2&#39;])
+2
+set([&#39;reac1&#39;, &#39;reac3&#39;])
+3
+set([&#39;reac1&#39;, &#39;reac2&#39;, &#39;reac3&#39;])
+7
+</code></pre>
+<p>Tout d&#39;abord, vous allez implementer une classe de test <code>TestSystem</code> qui héritera de <code>unittest.TestCase</code>. Cette classe implémentera 2 méthodes qui vous permettront de tester <code>merge_systems()</code> et <code>count_reactions()</code> de la classe <code>System</code>. Point important, il vous sera nécessaire de modifier l&#39;implémentation de la classe <code>System</code> pour pouvoir tester l&#39;égalité de 2 instances de <code>System</code>. Pour cela souvenez vous (<a href="">atelier 1: POO</a>) des méthodes dunder qui permettent de comparer des objets et des instances d&#39;objets. </p>
+<p>Par la suite, vous éliminez le code situé dans le <code>__main__</code> de <code>System</code> pour le placer sous forme de <code>doctest</code> dans l&#39;<code>__init__</code> de System.</p>
+<p>Nous verrons ensuite ensemble comment appeler les <code>doctest</code> depuis votre fichier de tests, grâce à la méthode <code>load_tests()</code>.</p>
+<p>La solution est <a href="python-i3.html">ici</a></p>
+<h2 id="retour-sur-l-atelier">Retour sur l&#39;atelier</h2>
+<p>Vous êtes maintenant capable d&#39;implémenter des tests sur votre code. Retenez bien que l&#39;intérêt des tests est multiple:</p>
+<ul>
+<li>contrôle des bugs et de la régression du code</li>
+<li>maintenabilité du code</li>
+<li>aide au développement</li>
+<li>facilite l&#39;intégration dans des environnements divers</li>
+</ul>
+<p>Il faut néanmoins faire attention à ne pas sur-tester votre code. Maintenir et écrire des tests à un coût, il faut que cela soit justifié.</p>
+<p>Pour compléter cet atelier sur les tests, nous aurions pu aussi aborder la notion de couverture de code. Cette métrique suplémentaire permet de vérifier que l&#39;ensemble du code écrit est utilisé dans au moins un cas et que chacun de ces cas est vérifé par un ou des tests (à voir pour un prochain atelier).</p>
+<h2 id="r-f-rences">Références</h2>
+<ul>
+<li><a href="https://docs.python.org/3.7/library/doctest.html">doc officielle - doctest</a></li>
+<li><a href="https://docs.python.org/3.7/library/unittest.html">doc officielle - unittest</a></li>
+<li><a href="http://sametmax.com/un-gros-guide-bien-gras-sur-les-tests-unitaires-en-python-partie-4/">test-unitaires</a></li>
+<li><a href="https://www.python-course.eu/python3_tests.php">test tous les aspects</a></li>
+<li><a href="https://openclassrooms.com/fr/courses/235344-apprenez-a-programmer-en-python/2235416-creez-des-tests-unitaires-avec-unittest">test</a></li>
+</ul>
+
+				</article>
+			</div>
+		</div>
+
+		<footer><a href="../../site-index.html">Pages index</a>
+</footer>
+
+		<script src="../../assets/js/jquery.js"></script>
+		<script src="../../assets/js/bootstrap.min.js"></script>
+		<script src="../../assets/js/highlight.min.js"></script>
+		<script src="../../assets/js/tipuesearch_set.js"></script>
+		<script src="../../assets/js/tipuesearch.min.js"></script>
+		<script>
+			$(function() {
+				hljs.initHighlightingOnLoad();
+				$('#tipue_search_input').tipuesearch({
+					mode: 'json',
+					contentLocation: '../../index.json'
+				});
+			});
+		</script>
+		
+		<!-- Generated by Vegetables from 'category/python/python-s3.md' with format 'default' - '2019-12-12 17:49:43' -->
+	</body>
+</html>
