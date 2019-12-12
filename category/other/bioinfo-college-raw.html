@@ -4,12 +4,26 @@
 
 ## Introduction
 
-Qu'est ce que la bioinformatique ? Pour répondre à cette question, je vous propose de lire cet article:
-Qu'est ce que la [bioinformatique](https://www.rts.ch/decouverte/sciences-et-environnement/4637771-qu-est-ce-que-la-bioinformatique-.html)
+Qu'est ce que la bioinformatique ? Pour répondre à cette question, je vous propose de lire cet article et d'en discuter ensemble après:
+[Qu'est ce que la bioinformatique](https://www.rts.ch/decouverte/sciences-et-environnement/4637771-qu-est-ce-que-la-bioinformatique-.html)
 
+Ensemble nous allons réaliser un petit TP de phylogénie moléculaire. C'est à dire que nous allons récupérer des séquences de génome de différents organismes et grâce à ces séquences nous allons construire un arbre. Cet arbre montrera la distance évolutive entre les organismes, c'est à dire "la ressemblance" plus ou moins importantdes espèces entre elles.
 
+Quelles sont les étapes que nous allons réaliser ?
+
+1) Explorer des banques de données pour récupérer les séquences de génome de différents organismes
+2) Comparer ces séquences pour extraire les informations identiques et différentes
+3) Utiliser les informations de comparaison pour construire un arbre qui transformera les différences de séquences en branches de différentes longueurs
 
 ## Les grandes banques de données
+
+Comme vous avez pu le lire, un des aspects de la bioinformatique concerne la creation de grandes banques de données. Cela permet de rendre les données scientifique facilement accessible à tout le monde et pouvoir ainsi centraliser les informations. Pour que cela soit possible, il faut pouvoir disposer de grands centres de stockage de la même façon que vous utilisez des centres de stockage ("datacenter", "cloud") pour stocker les photos ou la musique de votre téléphone. Les données biologiques peuvent générer des fichiers très gros, ce qui nécessite beaucoup de place et donc beaucoup d'argent. La gestion de ces grandes banques de données est donc assurée par de grands centres de recherche internationaux qui disposent de très grosses machines. 
+
+Il existe un institut incontournable pour les données biologiques: [NCBI (National Center for Biotechnology Information) qui est originellement un institut de medecine américain](https://fr.wikipedia.org/wiki/National_Center_for_Biotechnology_Information).  
+
+Le NCBI abrite la plus grande banque de données internationale concernant les informations genomiques, à savoir les séquences des génomes, les données d'expression des gènes, les protéines, ... Pour explorer cette grande banque de données: [ici](https://www.ncbi.nlm.nih.gov/)
+
+Tapez n'importe quel mot (en anglais) et lancer la recherche. Nous allons regarder ensemble les résultats.
 
 ## L'alignement de séquence
 
