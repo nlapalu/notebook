@@ -33,6 +33,10 @@
 					{
 						"uri": "category/python/python-s3.html",
 						"label":"Python, tester son code"
+					},
+					{
+						"uri": "category/python/python-s4.html",
+						"label":"Python scientifique - session 1"
 					}
 				]
 					        },
