@@ -2,6 +2,7 @@
     "tags": {
 	        "globalTitle": "Nicolas Lapalu"
     },
+    "additionalMedia": ["pdf", "fasta"],
 	   
 	       "pageOptions": {
   	       "index.md": {
@@ -12,7 +13,7 @@
                     "label": "Python"
                     },
                     {
-	            "uri": "another-page.html",
+	            "uri": "category/other/index.html",
 	            "label": "Other"
 	            }
 	            ]
@@ -34,8 +35,17 @@
 						"label":"Python, tester son code"
 					}
 				]
-					        }
+					        },
+                     "category/other/*": {
+			     "title": "Other",
+			     "menu": [
+                                     {
+                                         "uri": "category/other/bioinfo-college.html",
+					 "label": "Découverte bioinformatique collège"
+				     }
+			     ]
 
-		    }
+		     }
+}
 }
 
