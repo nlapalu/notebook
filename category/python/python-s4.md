@@ -8,4 +8,6 @@ title: Python scientifique - session 1
 
 blbla plusieurs session 1 
 
+Tester le temps d'execution du code:
 
+Tester l'empreinte mémoire du code:
