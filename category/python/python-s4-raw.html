@@ -71,14 +71,32 @@ execution:
 Pour info, `perf_counter()` et `process_time()` existent en version nanoseconds pour les executions rapides `perf_counter_ns()` et `process_time_ns()` 
 
 
-module timeit : _timeit.py_
-
 Le module timeit a été pensé pour tester des fragments de code. Il est facilement utilisable dans un code, mais aussi par appel direct en ligne de commande. Le module permet d'utiliser principalement 2 fonctions: timeit() ou repeat(), pour lesquels on peut spécifier le code à tester, le nombre d'itérations, une instanciation de paramètres grâce au paramètre setup et posssiblement le nombre de fois que l'on lance le chronomètre.
 
 en ligne de commande:
 ```sh
 python3 -m timeit -n 1000 -r 3 -s 'a = "a\tb\tc\td"' 'values = a.split("\t")' 
 1000 loops, best of 3: 287 nsec per loop
+```
+
+module timeit : _test\_timeit.py_
+```python
+#!/usr/bin/env python3
+
+import timeit
+
+def sp(a):
+    values = a.split("\t")
+
+if __name__ == '__main__':
+    a = "a\tb\tc\td"
+    res = timeit.repeat("sp(a)", repeat=3, number=1000, globals=globals())
+    print(res)
+```
+execution
+```
+./test_timeit.py
+[0.0005122157745063305, 0.0005096318200230598, 0.0005084439180791378]
 ```
 
 
