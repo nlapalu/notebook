@@ -98,6 +98,28 @@ execution
 ./test_timeit.py
 [0.0005122157745063305, 0.0005096318200230598, 0.0005084439180791378]
 ```
+Par rapport à l'appel direct de la ligne de commande, on perd en temps d'execution (500 nsec vs 280 nsec). Dans ce cas cela est grandement due au coup d'appel de la fonction. Pour éviter de prendre ça en compte, on peut faire l'appel à timeit() dans la fonction.
+
+```python
+#!/usr/bin/env python3
+
+import timeit
+
+def sp(a):
+    snippet = 'values = a.split("\t")'
+    res = timeit.repeat(snippet, repeat=3, number=1000, globals=locals())
+    print(res)
+
+if __name__ == '__main__':
+    a = "a\tb\tc\td"
+    sp(a)
+```
+execution
+```
+./test_timeit2.py
+[0.00037665385752916336, 0.0003682738170027733, 0.0003675050102174282]
+```
+
 
 
 https://docs.python.org/fr/3/library/time.html 
