@@ -126,7 +126,7 @@ execution
 ./test_timeit.py
 [0.0005122157745063305, 0.0005096318200230598, 0.0005084439180791378]
 ```
-Par rapport à l&#39;appel direct de la ligne de commande, on perd en temps d&#39;execution (500 nsec vs 280 nsec). Dans ce cas cela est grandement due au coup d&#39;appel de la fonction. Pour éviter de prendre ça en compte, on peut faire l&#39;appel à timeit() dans la fonction.
+Par rapport à l&#39;appel direct de la ligne de commande, on perd en temps d&#39;execution (500 nsec vs 280 nsec). Dans ce cas c&#39;est l&#39;appel de la fonction qui est couteux. Pour éviter de prendre ce temps d&#39;initialisation en compte, on peut faire l&#39;appel à timeit() dans la fonction.
 
 ```python
 #!/usr/bin/env python3
