@@ -45,7 +45,7 @@ Si vous êtes sous linux et que vous souhaitez simplement tester le temps d&#39;
 import time
 time.sleep(5)
 ```
-execute:
+execution:
 
 ```sh
 time ./time.py
@@ -59,7 +59,26 @@ Pour un affichage plus complet:
 ```sh
 /usr/bin/time -v ./time.py
 ```
-Si vous souhaitez mesurer le temps d&#39;execution de seulement une partie de votre code, il existe plusieurs modules qui vous permettront de faire cela.
+Si vous souhaitez mesurer le temps d&#39;execution de seulement une partie de votre code, il existe plusieurs modules qui vous permettront de faire cela. Néanmoins, ils ne vous permettront pas tous de pouvoir controler finement le vrai temps d&#39;execution.
+
+module time: *time.py*
+
+```python
+#!/usr/bin/env python3
+
+import time
+start = time.time()
+time.sleep(5)
+print("{} sec".format(time.time()-start))
+```
+execution:
+
+```
+./time.py
+
+5.005172491073608 sec
+```
+module ..: ...
 
 #VSLIDE
 
