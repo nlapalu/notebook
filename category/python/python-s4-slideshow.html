@@ -68,16 +68,32 @@ module time: *time.py*
 
 import time
 start = time.time()
+print(start)
 time.sleep(5)
 print("{} sec".format(time.time()-start))
+start = time.perf_counter()
+time.sleep(5)
+print(start)
+print("{} sec".format(time.perf_counter()-start))
+start = time.process_time()
+print(start)
+time.sleep(5)
+print("{} sec".format(time.process_time()-start))
 ```
 execution:
 
 ```
 ./time.py
 
-5.005172491073608 sec
+1590570012.7908258  # temps depuis epoch, dependant system
+5.005113124847412 sec
+3783981.080605406 # counter
+5.005108261015266 sec
+0.038772806 # somme du temps system et cpu depuis du process en cours, sans le temps d'inactivité 
+4.544399999999865e-05 sec
 ```
+Pour info, `perf_counter()&#39; et`process_time()`existent en version nanoseconds pour les executions rapides`perf_counter_ns()&#39; et `process_time_ns()` 
+
 module ..: ...
 
 #VSLIDE
