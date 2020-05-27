@@ -20,13 +20,25 @@ import time
 time.sleep(5)
 ```
 execute:
-```
-time time.py
+```sh
+time ./time.py
 
 real    0m5.050s
 user    0m0.036s
 sys     0m0.008s
 ```
+
+Pour un affichage plus complet:
+```sh
+/usr/bin/time -v ./time.py
+```
+
+Si vous souhaitez mesurer le temps d'execution de seulement une partie de votre code, il existe plusieurs modules qui vous permettront de faire cela.
+
+
+
+ 
+
 
 ### Calculer l'empreinte mémoire
 
