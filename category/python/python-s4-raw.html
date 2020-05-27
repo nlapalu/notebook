@@ -40,14 +40,17 @@ module time: _time.py_
 #!/usr/bin/env python3
 
 import time
+# timing with system date
 start = time.time()
 print(start)
 time.sleep(5)
 print("{} sec".format(time.time()-start))
+# timing with counter
 start = time.perf_counter()
 time.sleep(5)
 print(start)
 print("{} sec".format(time.perf_counter()-start))
+# timing with execution time without sleep time
 start = time.process_time()
 print(start)
 time.sleep(5)
